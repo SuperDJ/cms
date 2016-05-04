@@ -1,0 +1,16 @@
+# Disable server signature
+ServerSignature Off
+#ServerTokens Prod
+
+# Prevent Libwww acces
+RewriteCond %{HTTP_USER_AGENT} libwww-perl.*
+RewriteRule .* ? [F,L]
+
+# Redirect url
+RewriteEngine on
+RewriteCond %{HTTP_HOST} !^www.cms.dsuper.nl$ [NC]
+RewriteRule ^(.*)$ http://www.cms.dsuper.nl/$1 [L,R=301]
+
+# Redirect url
+RewriteCond %{HTTP_HOST} ^159.253.0.82
+RewriteRule (.*) http://www.cms.dsuper.nl/$1 [L,R=301]

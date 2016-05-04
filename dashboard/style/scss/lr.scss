@@ -1,0 +1,34 @@
+@import 'app-lr';
+
+$background-color: #FAFAFA;
+$blue: #2199E8;
+
+html, body {
+	padding: 0;
+	margin: 0;
+}
+
+body {
+	background: $blue;
+
+	@include breakpoint(large) {
+		background: url('/dashboard/style/images/background.jpg') fixed center center no-repeat;
+		background-size: cover;
+	}
+
+	main {
+		background: $background-color;
+		margin: 0 auto;
+		padding: rem-calc(10px);
+		width: 90%;
+
+		@include breakpoint(large) {
+			width: 30%;
+		}
+	}
+}
+
+.captcha {
+	visibility: hidden;
+	display: none;
+}
