@@ -31,6 +31,9 @@ spl_autoload_register(function( $class ) {
 	require_once ROOT.'/dashboard/classes/'.$class.'.php';
 });
 
+// Load Facebook
+require_once ROOT.'/vendor/autoload.php';
+
 $db = new Database();
 $user = new User();
 $session = new Session();

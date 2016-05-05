@@ -35,6 +35,7 @@ if( $_POST ) {
 	if( empty( $form->errors ) ) {
 		if( $user->login($validation) ) {
 			echo '<div class="callout success" data-closable>'.$language->translate('You have are logged in').'</div>';
+			$user->to('?path=overview/overview');
 		} else {
 			echo '<div class="callout alert" data-closable>'.$language->translate('Something went wrong logging you in').'</div>';
 		}
