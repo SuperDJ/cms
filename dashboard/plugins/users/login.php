@@ -8,7 +8,6 @@ $form = new Form();
 if( $_POST ) {
 	$validation = $form->check( $_POST, array(
 		'email'              => array(
-			'unique'   => 'users',
 			'required' => true,
 			'email'    => true,
 			'remember' => true,
@@ -77,6 +76,8 @@ if( $_POST ) {
 		<input type="password" name="password_encrypted" id="password_encrypted" class="captcha">
 
 		<button class="button"><?php echo $language->translate('Login'); ?> <i class="fa fa-sign-in"></i></button>
+		<a href="?path=users/facebook-login" class="button facebook"><i class="fa fa-facebook"></i> <?php echo $language->translate('Facebook login'); ?></a>
+		<a href="?path=users/google-login" class="button google"><i class="fa fa-google"></i> <?php echo $language->translate('Google login'); ?></a>
 		<a href="?path=users/register" class="button"><?php echo $language->translate('Register'); ?> <i class="fa fa-cloud-upload"></i></a>
 	</div>
 </form>

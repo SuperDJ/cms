@@ -14,3 +14,8 @@ RewriteRule ^(.*)$ http://www.cms.dsuper.nl/$1 [L,R=301]
 # Redirect url
 RewriteCond %{HTTP_HOST} ^159.253.0.82
 RewriteRule (.*) http://www.cms.dsuper.nl/$1 [L,R=301]
+
+<FilesMatch "\.htaccess|credentials\.json">
+  Order allow,deny
+  Deny from all
+</FilesMatch>

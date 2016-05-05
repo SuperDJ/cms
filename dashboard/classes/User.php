@@ -70,6 +70,46 @@ class User extends Database {
 	}
 
 	/**
+	 * Login user using Facebook
+	 *
+	 * @param array $data
+	 *
+	 * @return bool
+	 *
+	 * TODO add profile picture, timezone, language
+	 */
+	public function facebookLogin( array $data ) {
+		$date = date('Y-m-d H:i:s');
+
+		// Check if email exists
+		if( $this->exists('email', 'users', 'email', $data['email']) ) {
+			$stmt = $this->mysqli->prepare("UPDATE `users` SET `first_name` = ?, `last_name` = ?, `active_date` = ?, `facebook_id` = ? WHERE `email` = ?");
+			$stmt->bind_param("sssis", $data['first_name'], $data['last_name'], $date, $data['id'], $data['email']);
+			$stmt->execute();
+
+			if( $stmt->affected_rows >= 1 ) {
+				$stmt->close();
+				return true;
+			} else {
+				$stmt->close();
+				return false;
+			}
+		} else {
+			$stmt = $this->mysqli->prepare("INSERT INTO `users` (`first_name`, `last_name`, `email`, `register_date`, `active_date`, `active`, `facebook_id`) VALUES (?, ?, ?, ?, ?, ?, ?)");
+			$stmt->bind_param('sssssii', $data['first_name'], $data['last_name'], $data['email'], $date, $date, 1, $data['id']);
+			$stmt->execute();
+
+			if( $stmt->affected_rows >= 1 ) {
+				$stmt->close();
+				return true;
+			} else {
+				$stmt->close();
+				return false;
+			}
+		}
+	}
+
+	/**
 	 * Generate a password
 	 *
 	 * @param $password

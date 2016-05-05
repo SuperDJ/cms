@@ -3,15 +3,13 @@ class Database {
 	public $mysqli;
 
 	// Set database credentials
-	private $_db = array(
-		'username' => 'derkjkn43_cms',
-		'password' => 'ZDRKsbYSNX',
-		'host' => '10.3.0.103',
-		'database' => 'derkjkn43_cms'
-	);
+	private $_db = array();
 
 	function __construct() {
-		$this->mysqli = new mysqli($this->_db['host'], $this->_db['username'], $this->_db['password'], $this->_db['database']);
+		// Credentials
+		$this->_db = json_decode( file_get_contents( ROOT.'/credentials.json' ) );
+
+		$this->mysqli = new mysqli($this->_db->database->host, $this->_db->database->username, $this->_db->database->password, $this->_db->database->database);
 
 		if( !$this->mysqli ) {
 			echo $this->mysqli->error;
