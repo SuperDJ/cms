@@ -1,7 +1,6 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT'].'/dashboard/core/engine.php';
 
-
 // Check if path has been set
 if( !empty( $_GET['path'] ) ) {
  	$path = $db->sanitize( $_GET['path'] );
@@ -10,7 +9,7 @@ if( !empty( $_GET['path'] ) ) {
 	// Check if path exists
 	if( $plugins->check($plugins->path) ) {
 		if( $user->isLoggedIn() ) {
-			// Add Group
+			// TODO Add Group
 		}
 
 		require_once ROOT.'/dashboard/plugins/'.$plugins->path.'.php';
@@ -18,5 +17,7 @@ if( !empty( $_GET['path'] ) ) {
 		echo $language->translate('The path').': <i><b>'.$plugins->path.'</b></i> '.$language->translate("does not exists");
 	}
 } else {
+	echo 3;
+	die();
 	$user->to('?path=users/login');
 }

@@ -10,8 +10,9 @@ class User extends Database {
 		if( $this->isLoggedIn() ) {
 			$this->_id = base64_decode( $_SESSION['user'] );
 
-			if( !empty( $this->_id ) ) {
-				$this->data = $this->details($this->_id);
+			// Check if user data already has been stored
+			if( !empty( $this->data ) ) {
+				$this->data = $this->data($this->_id);
 			}
 		}
 	}
@@ -89,19 +90,37 @@ class User extends Database {
 
 			if( $stmt->affected_rows >= 1 ) {
 				$stmt->close();
-				return true;
+
+				// Get user ID
+				$id = $this->detail('id', 'users', 'email', $data['email']);
+				$_SESSION['user'] = base64_encode( $id );
+
+				if( !empty( $_SESSION['user'] ) ) {
+					return true;
+				} else {
+					return false;
+				}
 			} else {
 				$stmt->close();
 				return false;
 			}
 		} else {
 			$stmt = $this->mysqli->prepare("INSERT INTO `users` (`first_name`, `last_name`, `email`, `register_date`, `active_date`, `active`, `facebook_id`) VALUES (?, ?, ?, ?, ?, ?, ?)");
-			$stmt->bind_param('sssssii', $data['first_name'], $data['last_name'], $data['email'], $date, $date, 1, $data['id']);
+			$stmt->bind_param('sssssii', $data['first_name'], $data['last_name'], $data['email'], $date, $date, $i = 1, $data['id']);
 			$stmt->execute();
 
 			if( $stmt->affected_rows >= 1 ) {
 				$stmt->close();
-				return true;
+
+				// Get user ID
+				$id = $this->detail('id', 'users', 'email', $data['email']);
+				$_SESSION['user'] = base64_encode( $id );
+
+				if( !empty( $_SESSION['user'] ) ) {
+					return true;
+				} else {
+					return false;
+				}
 			} else {
 				$stmt->close();
 				return false;
@@ -142,7 +161,7 @@ class User extends Database {
 		if( headers_sent() ) {
 			// For JavaScript and when JavaScript is turned off
 			echo '	<script>window.location = "'.$url.'";</script>
-				<noscript><meta http-equiv="refresh" content="0;url='.$url.'"></noscript>';
+					<noscript><meta http-equiv="refresh" content="0;url='.$url.'"></noscript>';
 		} else {
 			header( 'Location: '.$url );
 			exit();
@@ -157,7 +176,6 @@ class User extends Database {
 	 * @return array|bool
 	 */
 	public function data( $id  ) {
-		$id = (int)$id; // Convert to integer
 		$stmt = $this->mysqli->prepare("SELECT `id`, `first_name`, `last_name`, `email`, `register_date`, `active_date` FROM `users` WHERE `id` = ?");
 		$stmt->bind_param('i', $id);
 		$stmt->execute();
