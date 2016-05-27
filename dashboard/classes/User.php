@@ -76,7 +76,7 @@ class User extends Database {
 	 *
 	 * @return bool
 	 *
-	 * TODO add profile picture, timezone, language
+	 * TODO add profile picture, language
 	 */
 	public function facebookLogin( array $data ) {
 		$date = date('Y-m-d H:i:s');

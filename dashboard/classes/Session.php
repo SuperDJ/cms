@@ -9,7 +9,7 @@ class Session {
 	 * @return bool
 	 */
 	public function set( $name, $value ) {
-		if( is_array( $value ) ) {
+		if( is_array( $value ) || is_object( $value ) ) {
 			$_SESSION[$name] = $value;
 			return true;
 		} else {
@@ -27,10 +27,10 @@ class Session {
 	 */
 	public function get( $name ) {
 		if( $this->exists( $name ) ) {
-			if( is_array( $_SESSION[$name] ) ) {
+			if( is_array( $_SESSION[$name] ) || is_object( $_SESSION[$name] ) ) {
 				return $_SESSION[$name];
 			} else {
-				return base64_decode($_SESSION[$name]);
+				return base64_decode( $_SESSION[$name] );
 			}
 		} else {
 			return false;

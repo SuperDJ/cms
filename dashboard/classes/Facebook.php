@@ -69,16 +69,16 @@ class Facebook extends \Facebook\Facebook {
 	 */
 	public function setAccessToken() {
 		// Logged in!
-		$_SESSION['facebook_token'] = (string) $this->accessToken();
+		$_SESSION['facebook'] = $this->accessToken();
 
 		// Replace short lived access token with long lived access token
 		$oAuth2Client = $this->getOAuth2Client();
-		$_SESSION['facebook_token'] =  $oAuth2Client->getLongLivedAccessToken($_SESSION['facebook_token']);
+		$_SESSION['facebook'] =  $oAuth2Client->getLongLivedAccessToken($_SESSION['facebook']);
 
 		// Set default access token so it doesn't need to be called each time
-		$this->setDefaultAccessToken($_SESSION['facebook_token']);
+		$this->setDefaultAccessToken($_SESSION['facebook']);
 
-		if( !empty( $_SESSION['facebook_token'] ) ) {
+		if( !empty( $_SESSION['facebook'] ) ) {
 			return true;
 		} else {
 			return false;
@@ -95,7 +95,6 @@ class Facebook extends \Facebook\Facebook {
 		} catch( Facebook\Exceptions\FacebookResponseException $e ) {
 			// When Graph returns an error
 			echo 'Graph returned an error: ' . $e->getMessage();
-			echo 2;
 			exit;
 		} catch( Facebook\Exceptions\FacebookSDKException $e ) {
 			// When validation fails or other local issues
@@ -104,5 +103,19 @@ class Facebook extends \Facebook\Facebook {
 		}
 
 		return $response->getDecodedBody();
+	}
+
+	public function logout() {
+		if( !empty( $_SESSION['facebook'] ) ) {
+			unset( $_SESSION['facebook'] );
+
+			if( empty( $_SESSION['facebook'] ) ) {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return true;
+		}
 	}
 }

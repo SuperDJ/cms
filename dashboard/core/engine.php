@@ -38,6 +38,7 @@ $db = new Database();
 $user = new User();
 $session = new Session();
 $cookie = new Cookie();
+$fb = new Facebook();
 
 // If the $_GET[] is set and not empty
 if( !empty( $_GET['language'] ) ) {
