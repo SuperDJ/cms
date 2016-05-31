@@ -17,7 +17,5 @@ if( !empty( $_GET['path'] ) ) {
 		echo $language->translate('The path').': <i><b>'.$plugins->path.'</b></i> '.$language->translate("does not exists");
 	}
 } else {
-	echo 3;
-	die();
 	$user->to('?path=users/login');
 }
