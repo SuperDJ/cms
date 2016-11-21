@@ -1,0 +1,144 @@
+/**************************************
+ * Remove browser default styles
+ *
+ * https://material.google.com/motion/duration-easing.html
+ **************************************/
+
+html, body {
+	background: $background;
+	margin: 0;
+	padding: 0;
+}
+
+html {
+	font-size: #{$font-size}px;
+}
+
+label {
+	cursor: pointer;
+}
+
+figure {
+	margin: 0;
+
+	img {
+		max-width: 100%;
+	}
+}
+
+img {
+	height: auto;
+	max-width: 100%;
+	display: block;
+	/*
+	@include animation(img-loader $transition-small-duration $element-enter-transition);
+
+	@media #{$medium-only} {
+		@include animation(img-loader $transition-medium-duration $element-enter-transition);
+	}
+
+	@media #{$medium-up} {
+		@include animation(img-loader $transition-large-duration $element-enter-transition);
+	}
+
+	@include keyframes(img-loader) {
+		0% {
+			@include opacity(0);
+			@include filter(saturate(0%));
+		}
+		100% {
+			@include opacity(1);
+			@include filter(saturate(100%));
+		}
+	}*/
+}
+
+h1, h2, h3, h4, h5, h6 {
+	word-wrap: break-word;
+}
+
+@include scrollbar();
+
+@include selection() {
+	background: $select-background;
+}
+
+* {
+	@include box-sizing(border-box);
+}
+
+a {
+	color: $link-color;
+	outline: none;
+	text-decoration: none;
+	@include transition(color 300ms cubic-bezier(0.4, 0.0, 0.2, 1));
+
+	@media #{$medium-up} {
+		@include transition(color 390ms cubic-bezier(0.4, 0.0, 0.2, 1));
+	}
+
+	@media #{$large-up} {
+		@include transition(color 200ms cubic-bezier(0.4, 0.0, 0.2, 1));
+	}
+
+	&:hover {
+		color: $link-hover;
+	}
+
+	img {
+		outline: none;
+	}
+}
+
+main {
+	bottom: 0;
+	left: 0;
+	overflow: auto;
+	padding: rem-calc($gutter);
+	position: fixed;
+	right: 0;
+	top: rem-calc(48px);
+
+	@media #{$small-up} {
+		top: rem-calc(56px);
+	}
+
+	@media only screen and (min-width: 600px) {
+		padding: $large-gutter;
+	}
+
+	@media #{$medium-only} {
+		left: $drawer-medium-width;
+	}
+
+	@media #{$medium-up} {
+		top: rem-calc(64px);
+		left: $drawer-small-width;
+	}
+}
+
+.sc-circle {
+	@include border-radius(50%);
+}
+
+.sc-left {
+	float: left;
+}
+
+.sc-right {
+	float: right;
+}
+
+.sc-center {
+	text-align: center;
+	vertical-align: middle;
+}
+
+.sc-divider {
+	background: if( $theme == light, rgba($black, .12), rgba($white, .12) );
+	height: rem-calc(1px);
+}
+
+.sc-trigger {
+	cursor: pointer;
+}

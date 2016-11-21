@@ -1,0 +1,55 @@
+/**************************************
+ * Dialogs
+ *
+ * http://www.google.com/design/spec/components/dialogs.html
+ **************************************/
+
+.sc-dialog {
+	@include material-shadow(24);
+	background: $white;
+	display: none;
+	//max-width: 50%;
+	position: fixed;
+	width: auto;
+	z-index: 4;
+
+	@media #{$medium-up} {
+		max-width: 90%;
+	}
+
+	&.sc-expanded {
+		display: block;
+	}
+
+	.sc-dialog-container {
+		padding: rem-calc(24px);
+	}
+
+	.sc-dialog-title {
+		@extend .sc-title;
+		margin-bottom: rem-calc(20px);
+	}
+
+	.sc-dialog-actions {
+		float: right;
+		height: rem-calc(52px);
+		padding: rem-calc(8px);
+
+		.sc-flat-button, .sc-raised-button {
+			height: rem-calc(36px);
+			line-height: rem-calc(36px);
+			margin: 0 0 0 rem-calc(8px);
+			padding: 0 rem-calc(8px);
+			min-width: rem-calc(64px);
+		}
+	}
+
+	@if( in-array( 'full-screen', $dialog ) ) {
+		&-fullscreen {
+			bottom: rem-calc(20px);
+			left: rem-calc(20px);
+			right: rem-calc(20px);
+			top: rem-calc(20px);
+		}
+	}
+}

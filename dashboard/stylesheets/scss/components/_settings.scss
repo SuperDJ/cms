@@ -1,0 +1,284 @@
+/**************************************
+********** Table of Contents **********
+***************************************
+- Colors
+- Global
+- Typography
+	- Font paths
+	- Font size
+	- Colors
+- Appbar
+	- Basic
+	- Colors
+- Bottom navigation
+- Bottom sheet
+- Buttons
+- Cards
+- Chips
+- Dialogs
+- Grid
+- Icons
+- Progress
+- Selection controls
+	- Checkbox
+	- Radio button
+	- Switch
+- Navigation drawer / sidebar
+- Sliders
+- Snackbars & Toasts
+- Tables
+- Tabs
+- Text fields
+- Tooltips
+
+/**************************************
+ * Colors
+ **************************************/
+/*
+ * Add / remove colors you would like to use in CSS
+ * NOTE In SCSS all color variables stay accessible
+ *
+ * All colors below
+ * 	$allowed-colors: (
+ 		'red', 'pink', 'purple', 'deep-purple', 'indigo', 'blue', 'light-blue', 'cyan', 'teal', 'green', 'light-green', 'lime',
+ 		'yellow', 'amber', 'orange', 'deep-orange', 'brown', 'grey', 'blue-grey', 'shades');
+ */
+
+$allowed-colors: (
+	'red', 'indigo', 'blue', 'teal', 'deep-orange', 'shades');
+
+$main-color: $indigo;
+$secondary-color: $blue;
+
+$link-color: $main-color;
+$link-hover: $secondary-color;
+
+/**************************************
+ * Global
+ **************************************/
+$theme: light; // Default either light or dark
+$typography: english; // Default english, dense or tall
+$select-background: $cyan-a200; // Default $cyan-a200
+$basic-transition: cubic-bezier(0.4, 0.0, 0.2, 1); // Default cubic-bezier(0.4, 0.0, 0.2, 1)
+$element-enter-transition: cubic-bezier(0.0, 0.0, 0.2, 1); // Default cubic-bezier(0.0, 0.0, 0.2, 1)
+$element-exit-transition: cubic-bezier(0.4, 0.0, 1, 1); // Default cubic-bezier(0.4, 0.0, 1, 1)
+$returning-transition: cubic-bezier(0.0, 0.0, 0.2, 1); // Default cubic-bezier(0.0, 0.0, 0.2, 1)
+$transition-small-duration: 300ms; // Default 300ms
+$transition-medium-duration: 390ms; // Default 390ms
+$transition-large-duration: 200ms; // Default 200ms
+$background: $white; // Default $white
+$text-direction: ltr; // Default either ltr or rtl
+
+/**************************************
+ * Typography settings
+ **************************************/
+// Font paths
+$roboto-font-path: '/dashboard/stylesheets/scss/components/fonts/Roboto/';
+$noto-font-path: '/stylesheets/scss/components/fonts/Noto/';
+
+// Font size
+$font-size: 14; //px Default 14 or 15
+
+// Colors
+$font-color-display-4: if( $theme == light, rgba($black, .54), rgba($white, .54) ); // Default rgba($black, .54)
+$font-color-display-3: $font-color-display-4; // Default $font-color-display-4
+$font-color-display-2: $font-color-display-4; // Default $font-color-display-4
+$font-color-display-1: $font-color-display-4; // Default $font-color-display-4
+$font-color-headline: if( $theme == light, rgba($black, .87), rgba($white, .87) ); // Default rgba($black, .87)
+$font-color-title: $font-color-headline; // Default $font-color-headline
+$font-color-subhead: $font-color-headline; // Default $font-color-headline
+$font-color-body-2: $font-color-headline; // Default $font-color-headline
+$font-color-body-1: $font-color-headline; // Default $font-color-headline
+$font-color-caption: $font-color-display-4; // Default $font-color-display-4
+$font-color-label: $font-color-display-4; // Default $font-color-display-4
+$font-color-menu: $font-color-headline; // Default $font-color-headline
+$font-color-button: $font-color-headline; // Default $font-color-headline
+
+/**************************************
+ * AppBar
+ **************************************/
+// Basic (Don't change these, they influence the drawer (sidenav) and tabs as well)
+$appbar-small-height: rem-calc(48px); // Default rem-calc(48px)
+$appbar-medium-height: rem-calc(56px); // Default rem-calc(56px)
+$appbar-large-height: rem-calc(64px); // Default rem-calc(64px)
+
+// Colors
+$appbar-background: $main-color; // Default $main-color
+$appbar-text: $white; // Default $white
+$appbar-title: $white; // Default $white
+
+/**************************************
+ * Bottom navigation
+ **************************************/
+$bottom-nav-background: $main-color; // Default $main-color
+$bottom-nav-off-color: rgba($white, .7); // Default rgba($white, .7)
+$bottom-nav-on-color: $white; // Default $white
+
+/**************************************
+ * Bottom sheet
+ **************************************/
+$bottom-sheet-background: $background; // Default $background
+$bottom-sheet-font-color: rgba($black, .87); // Default rgba($black, .87)
+$bottom-sheet-header-font-color: rgba($black, .54); // Default rgba($black, .54)
+$bottom-sheet-icons-color: $bottom-sheet-header-font-color; // Default $bottom-sheet-header-font-color
+
+/**************************************
+ * Buttons
+ **************************************/
+$raised-background: $main-color; // Default $main-color
+$raised-font-color: $white; // Default $white
+$raised-icon-color: $raised-font-color; // Default $raised-font-color
+$raised-disabled-background: if( $theme == light, rgba($black, .12), rgba($white, .12) ); // Default if( $theme == light, rgba($black, .12), rgba($white, .12) )
+$raised-disabled-font-color: if( $theme == light, rgba($black, .26), rgba($white, .3) ); // Default if( $theme == light, rgba($black, .26), rgba($white, .3) )
+
+$flat-color: $main-color; // Default $main-color
+$flat-icon-color: $main-color; // Default $main-color
+$flat-active-background: if( $theme == light, rgba(153, 153, 153, .4), rgba(204, 204, 204, .25) ); // Default if( $theme == light, rgba(153, 153, 153, .4), rgba(204, 204, 204, .25) )
+$flat-disabled-color: if( $theme == light, rgba($black, .26), rgba($white, .3) ); // Default if( $theme == light, rgba($black, .26), rgba($white, .3) )
+
+$floating-background: $main-color; // Default $main-color
+$floating-icon-color: $white; // Default $white
+
+/**************************************
+ * Chips
+ **************************************/
+$chips-font-color: $font-color-headline; // Default $font-color-headline
+$chips-font-hover-color: $white; // Default $white
+$chips-background: $grey-200; // Default $grey-200
+$chips-background-hover: $grey-600; // Default $grey-600
+$chips-delete-cross: $chips-background; // Default $chips-background
+$chips-delete-cross-hover: $chips-background-hover; // Default $chips-background-hover
+$chips-delete-background: rgba($black, .54); // Default rgba($black, .54)
+$chips-delete-background-hover: $chips-font-hover-color; // Default $chips-font-hover-color
+
+/**************************************
+ * Grid lists
+ **************************************/
+$grid-background: rgba($black, .3); // Default rgba($black, .3)
+$grid-font-color: $white; // Default $white
+
+/**************************************
+ * Pickers
+ **************************************/
+$picker-color: $main-color;
+
+/**************************************
+ * Progress & activity
+ **************************************/
+$progressbar-background: rgba($main-color, .4); // Default rgba($main-color, .4)
+$progress-background: $main-color; // Default $main-color
+
+// Circular
+$circular-width: rem-calc(50px); // Default rem-calc(50px)
+$circular-path-width: rem-calc(5px); // Default rem-calc(5px)
+$circular-color1: $red;
+$circular-color2: $green;
+$circular-color3: $indigo;
+$circular-color4: $orange;
+
+/**************************************
+ * Selection controls
+ **************************************/
+// Checkbox
+$selection-color: if( $theme == light, rgba($black, .54), rgba($white, .7) );
+$selection-active-color: rgba(color($main-color, 500), 1);
+$selection-disabled-color: if( $theme == light, rgba($black, .26), rgba($white, .3) );
+
+// Switch
+$switch-track-background: if( $theme == light, rgba($black, .38), rgba($white, .3) ); // Default if( $theme == light, rgba($black, .38), rgba($white, .3) )
+$switch-track-background-active: if( $theme == light, rgba($main-color, .5), rgba(color($main-color, 200), .5) ); // Default if( $theme == light, rgba($main-color, .5), rgba(color($main-color, 200), .5) )
+$switch-thumb-background: if( $theme == light ,rgba($grey-50, 1), rgba($grey-400, 1) ); // Default if( $theme == light ,rgba($grey-50, 1), rgba($grey-400, 1) )
+$switch-thumb-background-active: if( $theme == light, rgba($main-color, 1), rgba(color($main-color, 200), 1) ); // Default if( $theme == light, rgba($main-color, 1), rgba(color($main-color, 200), 1) )
+$switch-thumb-radial-background: if( $theme == light, rgba($grey-400, .2), rgba($grey-400, .2) ); // Default if( $theme == light, rgba($grey-400, .2), rgba($grey-400, .2) )
+$switch-thumb-radial-background-active: if( $theme == light, rgba($main-color, .2), rgba(color($main-color, 200), .2) ); // Default if( $theme == light, rgba($main-color, .2), rgba(color($main-color, 200), .2) )
+$switch-track-disabled-background: if( $theme == light, rgba($black, .12), rgba($white, .1) ); // Default if( $theme == light, rgba($black, .12), rgba($white, .1) )
+$switch-thumb-disabled-background: if( $theme == light, rgba($grey-400, 1), rgba($grey-800, 1) ); // Default if( $theme == light, rgba($grey-400, 1), rgba($grey-800, 1) )
+$switch-thumb-radial-disabled-background: rgba($grey-400, .2); // Default rgba($grey-400, .2)
+
+/**************************************
+* Notifications
+***************************************/
+$notification-background: $background; // $background
+
+/**************************************
+ * Navigation drawer
+ **************************************/
+$drawer-background: $background; // Default $background
+$drawer-hover: $main-color; // Default $main-color
+$drawer-small-width: rem-calc(280px);
+$drawer-medium-width: rem-calc(320px);
+
+/**************************************
+ * Sliders
+ **************************************/
+// Track
+$slider-off-color: lighten($black, (100% - 26%)); // Default lighten($black, (100% - 26%));
+$slider-thumb-background: $white; // Default $white
+$slider-on-color: $main-color; // Default $main-color
+
+// Bubble
+$slider-bubble-background: $black; // Default $black
+$slider-bubble-font-color: $white; // Default $white
+
+/**************************************
+ * Snackbars and toasts
+ **************************************/
+$snackbar-color-code: #323232;
+$snackbar-background: rgba($snackbar-color-code, 1); // Default rgba($snackbar-color-code, 1)
+$snackbar-font-color: $white; // Default $white
+
+/**************************************
+ * Steppers
+ **************************************/
+$stepper-circle-off-color: rgba($black, .38); // Default rgba($black, .38)
+$stepper-circle-on-color: $main-color; // Default $main-color
+$stepper-circle-font-color: $white; // Default $white
+$stepper-step-off-font-color: rgba($black, .38); // Default rgba($black, .38)
+$stepper-step-on-font-color: rgba($black, .87); // Default rgba($black, .87)
+
+/**************************************
+ * Tabs
+ **************************************/
+$tab-color: $main-color; // Default $main-color
+$tab-font-color: rgba($white, .7); // Default rgba($white, .7)
+$tab-font-on-color: $white; // Default $white
+$tab-indicator-on-color: $white; // Default $white
+
+/**************************************
+ * Text fields
+ **************************************/
+$textfield-off-color: $grey; // $grey
+$textfield-on-color: $main-color; // Default $main-color
+$textfield-disabled-color: $textfield-off-color; // Default $textfield-off-color
+$textfield-required-color: $red; // Default $red
+
+/**************************************
+ * Tooltips
+ **************************************/
+$tooltip-background: rgba($grey-700, .9); // Default rgba($grey-700, .9)
+$tooltip-font-color: $white; // Default $white
+
+/**************************************
+ * Grid settings
+ **************************************/
+// Break points
+$xsmall-screen: 480px; // Small mobile
+$small-screen: 960px; // Small tablet, medium mobile
+$medium-screen: 1280px; // Large tablet
+$large-screen: 1600px; // Small desktop
+$xlarge-screen: 1920px; // "Normal" desktop
+
+// Columns
+$xsmall-columns: 4; // Default 4
+$small-columns: 8; // Default 8
+$columns: 12; // Default 12
+
+// Gutter
+$gutter: 16px; // Default 16px
+$large-gutter: 24px; // Default 24px
+
+/**************************************
+ * Icons
+ **************************************/
+$icon-size: rem-calc(24px); // Default rem-calc(24px)
+$icon-align: middle; // Default middle

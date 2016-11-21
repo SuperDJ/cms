@@ -1,0 +1,210 @@
+/**************************************
+ * Bottom sheet / modal
+ *
+ * http://www.google.com/design/spec/components/bottom-sheets.html
+ **************************************/
+
+$bottom-sheet-font-weight: 400; // Default 400
+$bottom-sheet-font-size: rem-calc(16px); // Default rem-calc(16px)
+$bottom-sheet-icons-size: rem-calc(24px); // Default rem-calc(24px)
+$bottom-sheet-grid-icon-size: rem-calc(48px); // Default rem-calc(48px)
+$bottom-sheet-grid-content-size: rem-calc(16px); // Default rem-calc(16px)
+$bottom-sheet-music-image-size: rem-calc(52.5px); // Default rem-calc(42.5px)
+$bottom-sheet-music-height: rem-calc(50px); // Default rem-calc(40px)
+
+.sc-bottom-sheet {
+	@include transition(margin $transition-small-duration $basic-transition);
+	@include material-shadow(16);
+	background: $bottom-sheet-background;
+	bottom: 0;
+    display: block;
+	font-size: $bottom-sheet-font-size;
+	font-weight: $bottom-sheet-font-weight;
+	margin: 0 auto -102% auto;
+	height: auto;
+	left: 0;
+	overflow: inherit;
+	padding: rem-calc(8px) rem-calc(16px);
+	position: fixed;
+	right: 0;
+	width: 100%;
+	color: $bottom-sheet-font-color;
+	z-index: 4;
+
+	/*@media #{$medium-down} {
+		&:before {
+			position: absolute;
+			top: 0;
+			left: 0;
+			@include square(100%);
+			background: rgba($black, .2);
+		}
+	}*/
+
+	@media #{$medium-only} {
+		@include transition(margin $transition-medium-duration $basic-transition);
+		width: 60%;
+	}
+
+	@media #{$medium-up} {
+		@include transition(margin $transition-large-duration $basic-transition);
+		width: 40%;
+		@include border-radius-top(rem-calc(2px));
+	}
+
+	&.sc-expanded {
+		margin: 0 auto;
+	}
+
+	ul {
+		list-style-type: none;
+		margin: 0;
+		padding: 0;
+
+		li {
+			font-size: $bottom-sheet-font-size;
+			font-weight: $bottom-sheet-font-weight;
+			padding: 0;
+
+			.material-icons {
+				color: $bottom-sheet-icons-color;
+				font-size: $bottom-sheet-icons-size;
+				@include square($bottom-sheet-icons-size);
+				margin: 0 rem-calc(32px) 0 0 ;
+				vertical-align: middle;
+			}
+
+			&.sc-divider {
+				margin: rem-calc(7px) rem-calc(-16px) rem-calc(8px) rem-calc(-16px);
+			}
+		}
+	}
+
+	@if( in-array( 'header', $bottom-sheet ) ) {
+		&-header {
+			padding: 0 rem-calc(16px) rem-calc(8px) rem-calc(16px);
+
+			ul li.sc-header {
+				color: $bottom-sheet-header-font-color;
+				height: rem-calc(56px);
+			}
+		}
+	}
+
+	@if( in-array( 'grid', $bottom-sheet ) ) {
+		&-grid {
+			padding: rem-calc(16px) rem-calc(24px) rem-calc(24px) rem-calc(24px);
+
+			ul li {
+				height: rem-calc(64px);
+				margin: 0 0 rem-calc(16px) 0;
+
+				&:last-of-type {
+					margin: 0;
+				}
+
+				.sc-grid-item {
+					@extend .sc-col, .sc-s6, .sc-m4;
+					padding: 0;
+
+					.sc-grid-icon {
+						@extend .sc-center;
+
+						.material-icons {
+							font-size: $bottom-sheet-grid-icon-size;
+							@include square($bottom-sheet-grid-icon-size);
+							margin: 0;
+							vertical-align: middle;
+						}
+					}
+
+					.sc-grid-content {
+						@extend .sc-center;
+						height: $bottom-sheet-grid-content-size;
+						line-height: $bottom-sheet-grid-content-size;
+					}
+				}
+			}
+		}
+	}
+
+	@if( in-array( 'music', $bottom-sheet ) ) {
+		&-music {
+			height: $bottom-sheet-music-height;
+
+			img {
+				@include square($bottom-sheet-music-image-size);
+				position: absolute;
+				top: calc(#{$bottom-sheet-music-height} - #{$bottom-sheet-music-image-size});
+				left: 0;
+			}
+
+			.sc-determinate {
+				background: transparent;
+				top: calc(#{$bottom-sheet-music-height} - #{$bottom-sheet-music-image-size});
+				left: $bottom-sheet-music-image-size;
+				right: 0;
+				position: absolute;
+				width: calc(100% - #{$bottom-sheet-music-image-size});
+			}
+
+			.sc-info {
+				position: absolute;
+				top: rem-calc(5px);
+				padding: 0 rem-calc(10px);
+				left: $bottom-sheet-music-image-size;
+				width: 75%;
+				line-height: $bottom-sheet-music-height;
+
+				@media #{$medium-up} {
+					width: 50%;
+				}
+
+				.sc-band {
+					font-size: rem-calc(16px);
+				}
+
+				.sc-track {
+					font-size: rem-calc(14px);
+					color: rgba($black, .38);
+				}
+
+				> div {
+					width: 100%;
+
+					@media #{$medium-down} {
+						float: left;
+						width: auto;
+					}
+				}
+			}
+
+			.sc-controls {
+				width: calc(100% - 75% - #{$bottom-sheet-music-image-size});
+				position: absolute;
+				left: calc(#{$bottom-sheet-music-image-size} + 50%);
+				top: rem-calc(5px);
+				line-height: $bottom-sheet-music-height;
+
+				.material-icons {
+					width: calc(100% / 3.1); // TODO fix somehow
+					height: 100%;
+					text-align: center;
+					color: rgba($black, .54);
+				}
+
+				@media #{$medium-down} {
+					width: calc(100% - 50% - #{$bottom-sheet-music-image-size});
+
+					.material-icons:first-of-type, .material-icons:last-of-type {
+						display: none;
+					}
+
+					.material-icons {
+						width: 100%;
+					}
+				}
+			}
+		}
+	}
+}

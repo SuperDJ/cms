@@ -12,7 +12,7 @@ if( !empty( $_GET['path'] ) ) {
 			// TODO Add Group
 		}
 
-		require_once ROOT.'/dashboard/plugins/'.$plugins->path.'.php';
+		require_once 'plugins/'.$plugins->path.'.php';
 	} else {
 		echo $language->translate('The path').': <i><b>'.$plugins->path.'</b></i> '.$language->translate("does not exists");
 	}

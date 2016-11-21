@@ -1,0 +1,293 @@
+/**************************************
+ * Grid
+ *
+ * http://www.google.com/design/spec/layout/responsive-ui.html
+ **************************************/
+$xsmall-only: "only screen and (max-width: #{$xsmall-screen})";
+$small-only: "only screen and (min-width: #{$xsmall-screen} + 1px) and (max-width: #{$small-screen})";
+$medium-only: "only screen and (min-width: #{$small-screen} + 1px) and (max-width: #{$medium-screen})";
+$large-only: "only screen and (min-width: #{$medium-screen} + 1px) and (max-width: #{$large-screen})";
+$xlarge-only: "only screen and (min-width: #{$large-screen} + 1px) and (max-width: #{$xlarge-screen})";
+
+$xsmall-up: "only screen and (min-width: #{$xsmall-screen} + 1px)";
+$small-up: "only screen and (min-width: #{$small-screen} + 1px)";
+$medium-up: "only screen and (min-width: #{$medium-screen} + 1px)";
+$large-up: "only screen and (min-width: #{$large-screen} + 1px)";
+$xlarge-up: "only screen and (min-width: #{$xlarge-screen} + 1px)";
+
+$xsmall-down: "only screen and (max-width: #{$xsmall-screen})";
+$small-down: "only screen and (max-width: #{$small-screen})";
+$medium-down: "only screen and (max-width: #{$medium-screen})";
+$large-down: "only screen and (max-width: #{$large-screen})";
+$xlarge-down: "only screen and (max-width: #{$xlarge-screen})";
+
+$portrait: "only screen and (orientation: portrait)";
+$landscape: "only screen and (orientation: landscape)";
+
+.sc-container {
+	margin: 0 auto;
+	width: 90%;
+
+	@media #{$medium-up} {
+		width: 85%;
+	}
+
+	@media #{$large-up} {
+		width: 70%;
+	}
+
+	&.sc-row {
+		margin-left: (-1 * $gutter / 2);
+		margin-right: (-1 * $gutter / 2);
+
+		@media #{$small-only} {
+			@media only screen and (max-width: 600px) {
+				margin-left: (-1 * $gutter / 2);
+				margin-right: (-1 * $gutter / 2);
+			}
+
+			@media only screen and (min-width: 600px) {
+				margin-left: (-1 * $large-gutter / 2);
+				margin-right: (-1 * $large-gutter / 2);
+			}
+		}
+
+		@media #{$medium-up} {
+			margin-left: (-1 * $large-gutter / 2);
+			margin-right: (-1 * $large-gutter / 2);
+		}
+	}
+}
+
+.sc-row {
+	margin: 0 auto rem-calc(20px) auto;
+
+	// Clear floating children
+	&:after {
+		clear: both;
+		content: "";
+		display: table;
+	}
+
+	.sc-col {
+		float: left;
+		@include box-sizing(border-box);
+		padding: 0 $gutter / 2;
+
+		@media #{$xsmall-up} {
+			padding: 0 $gutter / 2;
+		}
+
+		&[class*="push-"],
+		&[class*="pull-"] {
+			position: relative;
+		}
+
+		$i: 1;
+		@while $i <= $xsmall-columns {
+			$percent: unquote( ( 100 / ( $xsmall-columns / $i ) ) + "%" );
+			&.sc-xs#{$i} {
+				width: $percent;
+				margin-left: auto;
+				left: auto;
+				right: auto;
+			}
+			$i: $i + 1;
+		}
+
+		$i: 1;
+		@while $i <= $xsmall-columns {
+			$percent: unquote( ( 100 / ( $xsmall-columns / $i ) ) + "%" );
+			&.sc-offset-xs#{$i} {
+				margin-left: $percent;
+			}
+			&.sc-pull-xs#{$i} {
+				right: $percent;
+			}
+			&.sc-push-xs#{$i} {
+				left: $percent;
+			}
+			$i: $i + 1;
+		}
+
+		@media #{$small-up} {
+			// Change between 8 and 12 columns default
+			// Columns 8
+			@media only screen and (max-width: 720px) {
+				$i: 1;
+				@while $i <= $small-columns {
+					$percent: unquote(( 100 / ( $small-columns / $i ) ) + "%");
+					&.sc-s#{$i} {
+						width: $percent;
+						margin-left: auto;
+						left: auto;
+						right: auto;
+					}
+					$i: $i + 1;
+				}
+
+				$i: 1;
+				@while $i <= $small-columns {
+					$percent: unquote(( 100 / ( $small-columns / $i ) ) + "%");
+					&.sc-offset-s#{$i} {
+						margin-left: $percent;
+					}
+					&.sc-pull-s#{$i} {
+						right: $percent;
+					}
+					&.sc-push-s#{$i} {
+						left: $percent;
+					}
+					$i: $i + 1;
+				}
+			}
+
+			// Columns 12
+			@media only screen and (min-width: 720px) {
+				$i: 1;
+				@while $i <= $columns {
+					$percent: unquote(( 100 / ( $columns / $i ) ) + "%");
+					&.sc-s#{$i} {
+						width: $percent;
+						margin-left: auto;
+						left: auto;
+						right: auto;
+					}
+					$i: $i + 1;
+				}
+
+				$i: 1;
+				@while $i <= $columns {
+					$percent: unquote(( 100 / ( $columns / $i ) ) + "%");
+					&.sc-offset-s#{$i} {
+						margin-left: $percent;
+					}
+					&.sc-pull-s#{$i} {
+						right: $percent;
+					}
+					&.sc-push-s#{$i} {
+						left: $percent;
+					}
+					$i: $i + 1;
+				}
+			}
+		}
+
+		@media #{$medium-up} {
+			$i: 1;
+			@while $i <= $columns {
+				$percent: unquote( ( 100 / ( $columns / $i ) ) + "%" );
+				&.sc-m#{$i} {
+					width: $percent;
+					margin-left: auto;
+					left: auto;
+					right: auto;
+				}
+				$i: $i + 1
+			}
+
+			$i: 1;
+			@while $i <= $columns {
+				$percent: unquote( ( 100 / ( $columns / $i ) ) + "%" );
+				&.sc-offset-m#{$i} {
+					margin-left: $percent;
+				}
+				&.sc-pull-m#{$i} {
+					right: $percent;
+				}
+				&.sc-push-m#{$i} {
+					left: $percent;
+				}
+				$i: $i + 1;
+			}
+		}
+
+		@media #{$large-up} {
+			$i: 1;
+			@while $i <= $columns {
+				$percent: unquote( ( 100 / ( $columns / $i ) ) + "%" );
+				&.sc-l#{$i} {
+					width: $percent;
+					margin-left: auto;
+					left: auto;
+					right: auto;
+				}
+				$i: $i + 1;
+			}
+
+			$i: 1;
+			@while $i <= $columns {
+				$percent: unquote( ( 100 / ( $columns / $i ) ) + "%" );
+				&.sc-offset-l#{$i} {
+					margin-left: $percent;
+				}
+				&.sc-pull-l#{$i} {
+					right: $percent;
+				}
+				&.sc-push-l#{$i} {
+					left: $percent;
+				}
+				$i: $i + 1;
+			}
+		}
+
+		@media #{$xlarge-up} {
+			$i: 1;
+			@while $i <= $columns {
+				$percent: unquote( ( 100 / ( $columns / $i ) ) + "%" );
+				&.sc-xl#{$i} {
+					width: $percent;
+					margin-left: auto;
+					left: auto;
+					right: auto;
+				}
+				$i: $i + 1;
+			}
+
+			$i: 1;
+			@while $i <= $columns {
+				$percent: unquote( ( 100 / ( $columns / $i ) ) + "%" );
+				&.sc-offset-xl#{$i} {
+					margin-left: $percent;
+				}
+				&.sc-pull-xl#{$i} {
+					right: $percent;
+				}
+				&.sc-push-xl#{$i} {
+					left: $percent;
+				}
+				$i: $i + 1;
+			}
+		}
+	}
+}
+
+.sc-xs-hidden {
+	@media #{$xsmall-only} {
+		display: none;
+	}
+}
+
+.sc-s-hidden {
+	@media #{$small-only} {
+		display: none;
+	}
+}
+
+.sc-m-hidden {
+	@media #{$medium-only} {
+		display: none;
+	}
+}
+
+.sc-l-hidden {
+	@media #{$large-only} {
+		display: none;
+	}
+}
+
+.sc-xl-hidden {
+	@media #{$xlarge-only} {
+		display: none;
+	}
+}

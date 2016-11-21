@@ -1,17 +1,17 @@
 <!DOCTYPE html>
-<html class="no-js" lang="EN">
+<html lang="EN">
 	<head>
 		<title><?php echo $title ?></title>
 
 		<meta charset="utf-8">
-		<meta http-equiv="x-ua-compatible" content="ie=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<meta name="author" content="Derkjan Super">
 
-		<link rel="stylesheet" href="/dashboard/style/css/lr.css">
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+		<link rel="stylesheet" href="/dashboard/stylesheets/lr.css">
 	</head>
 
 	<body>
 		<main>
-			<h1><?php echo $title ?></h1>
+			<div class="sc-col sc-xs4 sc-s12">
+				<div class="sc-card">
+					<div class="sc-card-primary sc-card-primary-additional"><?php echo $title; ?></div>

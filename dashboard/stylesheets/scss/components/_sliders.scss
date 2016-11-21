@@ -1,0 +1,332 @@
+/**************************************
+ * Sliders
+ *
+ * http://www.google.com/design/spec/components/sliders.html
+ **************************************/
+
+$slider-track-height: rem-calc(2px); // Default rem-calc(2px)
+$slider-thumb-size: rem-calc(14px); // Default rem-calc(14px)
+$slider-thumb-active-size: rem-calc(16px); // Default rem-calc(16px)
+$slider-thumb-margin: calc( ( (#{$slider-thumb-size} / 2) - #{$slider-track-height}) * -1);
+$slider-thumb-on-margin: calc( ( (#{$slider-thumb-active-size} / 2) - #{$slider-track-height}) * -1);
+$slider-bubble-active-size: rem-calc(25px); // Default rem-calc(25px)
+$slider-bubble-font-size: rem-calc(10px); // Default 10px
+$slider-triangle-size: rem-calc(10px);
+$slider-triangle-border-hidden: $slider-triangle-size solid transparent;
+
+input[type="range"] {
+	background: $slider-off-color;
+	height: $slider-track-height;
+	margin: 0;
+	outline: none;
+	@include appearance(none);
+
+	&:hover {
+		cursor: pointer;
+	}
+
+	@include range-track() {
+		@include appearance(none);
+		height: $slider-track-height;
+		@include transition(background $transition-small-duration $basic-transition);
+
+		@media #{$medium-up} {
+			@include transition(background $transition-medium-duration $basic-transition);
+		}
+
+		@media #{$large-up} {
+			@include transition(background $transition-large-duration $basic-transition);
+		}
+
+		&:focus, &:active {
+			background: $slider-on-color;
+		}
+	}
+
+	&::-moz-range-track {
+		@include opacity(0);
+	}
+
+	&::-ms-tooltip {
+		display: none;
+	}
+
+	@include range-thumb() {
+		@include square($slider-thumb-size);
+		background: $slider-thumb-background;
+		border: $slider-track-height solid $slider-off-color;
+		@include border-radius(50%);
+		margin: $slider-thumb-margin 0 0 0;
+		@include appearance(none);
+		@include transition(background $transition-small-duration $basic-transition unquote(',')
+							border $transition-small-duration $basic-transition unquote(',')
+							height $transition-small-duration $basic-transition unquote(',')
+							width $transition-small-duration $basic-transition unquote(',')
+							margin $transition-small-duration $basic-transition);
+
+		@media #{$medium-only} {
+			@include transition(background $transition-medium-duration $basic-transition unquote(',')
+								border $transition-medium-duration $basic-transition unquote(',')
+								height $transition-medium-duration $basic-transition unquote(',')
+								width $transition-medium-duration $basic-transition unquote(',')
+								margin $transition-medium-duration $basic-transition);
+		}
+
+		@media #{$medium-up} {
+			@include transition(background $transition-large-duration $basic-transition unquote(',')
+								border $transition-large-duration $basic-transition unquote(',')
+								height $transition-large-duration $basic-transition unquote(',')
+								width $transition-large-duration $basic-transition unquote(',')
+								margin $transition-large-duration $basic-transition);
+		}
+
+		&:focus, &:active {
+			@include square($slider-thumb-active-size);
+			background: $slider-on-color;
+			border: $slider-track-height solid $slider-on-color;
+			margin: $slider-thumb-on-margin 0 0 0;
+		}
+	}
+
+	&:disabled {
+		@include range-thumb() {
+			@include square($slider-thumb-size);
+			margin: $slider-thumb-margin 0 0 0;
+			background: $slider-off-color;
+			border: $slider-track-height solid $background;
+		}
+
+		&:active, &:focus {
+			@include range-track() {
+				background: none;
+			}
+		}
+	}
+}
+
+.sc-range {
+	display: inline-block;
+	position: relative;
+	// Hide track
+	input[type="range"] {
+		background: transparent;
+		position: relative;
+		z-index: 3;
+		@include appearance(none);
+
+		@include range-track() {
+			&:focus, &:active {
+				background: transparent;
+			}
+		}
+
+		@if( in-array( 'discrete', $slider ) ) {
+			&.sc-slider-discrete, &.sc-slider-discrete.sc-not-null {
+				@include range-thumb() {
+					background: transparent;
+					border: $slider-track-height solid transparent;
+				}
+			}
+		}
+
+		// When thumb over 0%
+		&.sc-not-null {
+			@include range-thumb() {
+				@include border-radius(50%);
+				@include square($slider-thumb-size);
+				background: $slider-on-color;
+				border: $slider-track-height solid $slider-on-color;
+				margin: $slider-thumb-margin 0 0 0;
+
+				&:active, &:focus {
+					@include square($slider-thumb-active-size);
+					margin: $slider-thumb-on-margin 0 0 0;
+				}
+			}
+		}
+	}
+
+	.sc-range-track {
+		height: $slider-track-height;
+		margin: calc( ( #{$slider-thumb-active-size} + ( #{$slider-track-height} * 2 ) ) * -1) 0 0 0;
+		position: relative;
+		width: 100%;
+		z-index: 1;
+
+		> div {
+			display: inline-block;
+			height: 100%;
+		}
+
+		.sc-range-track-before {
+			background: $slider-on-color;
+		}
+
+		.sc-range-track-after {
+			background: $slider-off-color;
+		}
+	}
+
+	&:active, &:focus {
+		.sc-slider-bubble {
+			@include square($slider-bubble-active-size);
+			background: $slider-off-color;
+			border: none;
+			bottom: $slider-track-height;
+			color: $slider-bubble-font-color;
+			font-size: $slider-bubble-font-size;
+			margin: 0 0 0 calc( (#{$slider-bubble-active-size} / 2) * -1);
+			text-align: center;
+
+			&:before {
+				border-left: $slider-triangle-border-hidden;
+				border-right: $slider-triangle-border-hidden;
+				border-top: $slider-triangle-size solid $slider-off-color;
+				right: rem-calc(3.5px);
+				top: calc(#{$slider-bubble-active-size} - (#{$slider-track-height} * 2));
+			}
+
+			&.sc-not-null {
+				background: $slider-on-color;
+				border: none;
+				font-size: $slider-bubble-font-size;
+
+				&:before {
+					border-left: $slider-triangle-border-hidden;
+					border-right: $slider-triangle-border-hidden;
+					border-top: $slider-triangle-size solid $slider-on-color;
+				}
+			}
+		}
+	}
+
+	@if( in-array( 'discrete', $slider ) ) {
+		.sc-slider-bubble {
+			@include border-radius(50%);
+			@include square($slider-thumb-size);
+			background: $slider-bubble-background;
+			border: $slider-track-height solid $slider-bubble-background;
+			bottom: calc((#{$slider-thumb-active-size} + (#{$slider-track-height} * 2)) * -1);
+			color: $slider-bubble-font-color;
+			font-size: 0;
+			margin: 0;
+			position: absolute;
+			z-index: 2;
+			@include transition(background $transition-small-duration $basic-transition unquote(',')
+								width $transition-small-duration $basic-transition unquote(',')
+								height $transition-small-duration $basic-transition unquote(',')
+								border $transition-small-duration $basic-transition unquote(',')
+								bottom $transition-small-duration $basic-transition unquote(',')
+								margin $transition-small-duration $basic-transition unquote(',')
+			);
+
+			@media #{$medium-only} {
+				@include transition(background $transition-medium-duration $basic-transition unquote(',')
+									width $transition-medium-duration $basic-transition unquote(',')
+									height $transition-medium-duration $basic-transition unquote(',')
+									border $transition-medium-duration $basic-transition unquote(',')
+									bottom $transition-medium-duration $basic-transition unquote(',')
+									margin $transition-medium-duration $basic-transition unquote(',')
+				);
+			}
+
+			@media #{$medium-up} {
+				@include transition(background $transition-large-duration $basic-transition unquote(',')
+									width $transition-large-duration $basic-transition unquote(',')
+									height $transition-large-duration $basic-transition unquote(',')
+									border $transition-large-duration $basic-transition unquote(',')
+									bottom $transition-large-duration $basic-transition unquote(',')
+									margin $transition-large-duration $basic-transition unquote(',')
+				);
+			}
+
+			&:before {
+				@include square(0);
+				border-left: none;
+				border-right: none;
+				border-top: none;
+				content: '';
+				position: absolute;
+				right: 0;
+				top: 0;
+				@include transition(border-left $transition-small-duration $basic-transition unquote(',')
+									border-right $transition-small-duration $basic-transition unquote(',')
+									border-top $transition-small-duration $basic-transition unquote(',')
+									top $transition-small-duration $basic-transition unquote(',')
+				);
+
+				@media #{$medium-only} {
+					@include transition(border-left $transition-medium-duration $basic-transition unquote(',')
+										border-right $transition-medium-duration $basic-transition unquote(',')
+										border-top $transition-medium-duration $basic-transition unquote(',')
+										top $transition-medium-duration $basic-transition unquote(',')
+					);
+				}
+
+				@media #{$medium-up} {
+					@include transition(border-left $transition-large-duration $basic-transition unquote(',')
+										border-right $transition-large-duration $basic-transition unquote(',')
+										border-top $transition-large-duration $basic-transition unquote(',')
+										top $transition-large-duration $basic-transition unquote(',')
+					);
+				}
+			}
+
+			&.sc-not-null {
+				background: $slider-on-color;
+				border: $slider-track-height solid $slider-on-color;
+				color: $slider-bubble-font-color;
+				font-size: 0;
+			}
+		}
+	}
+
+	&:disabled {
+		input[type="range"] {
+			@include range-thumb() {
+				background: $slider-thumb-background;
+				border: $slider-track-height solid $slider-off-color;
+			}
+
+			&.sc-not-null {
+				@include range-thumb() {
+					background: $slider-off-color;
+					border: $slider-track-height solid $background;
+				}
+			}
+
+			@if( in-array( 'discrete', $slider ) ) {
+				&.sc-slider-discrete {
+					@include range-thumb() {
+						background: transparent;
+						border: $slider-track-height solid transparent;
+					}
+				}
+			}
+		}
+
+		.sc-range-track-before {
+			background: $slider-off-color;
+		}
+
+		.sc-slider-bubble {
+			background: $slider-off-color;
+			border: $slider-track-height solid $background;
+		}
+
+		@if( in-array( 'discrete', $slider ) ) {
+			&:active, &:focus {
+				.sc-slider-bubble {
+					background: $slider-off-color;
+					border: none;
+
+					&:before {
+						border-left: $slider-triangle-border-hidden;
+						border-right: $slider-triangle-border-hidden;
+						border-top: $slider-triangle-size solid $slider-off-color;
+					}
+				}
+			}
+		}
+	}
+}

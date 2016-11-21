@@ -9,7 +9,7 @@ class Plugins extends Database {
 	function __construct( $path ) {
 		parent::__construct();
 
-		$this->_dir = ROOT.'/dashboard/plugins';
+		$this->_dir = ROOT.'plugins';
 		$this->_plugins = $this->get($this->_dir); // Get all installed plugins
 		$this->path = $path; // Save path
 	}
@@ -79,11 +79,11 @@ class Plugins extends Database {
 	 */
 	public function getHeader( $name = '' ) {
 		if( !empty( $name ) ) {
-			if( file_exists( ROOT.'/dashboard/includes/'.$name.'-header.php' ) ) {
-				return ROOT.'/dashboard/includes/'.$name.'-header.php';
+			if( file_exists( ROOT.'includes/'.$name.'-header.php' ) ) {
+				return ROOT.'includes/'.$name.'-header.php';
 			}
 		} else {
-			return ROOT.'/dashboard/includes/header.php';
+			return ROOT.'includes/header.php';
 		}
 	}
 
@@ -96,11 +96,11 @@ class Plugins extends Database {
 	 */
 	public function getFooter( $name = '' ) {
 		if( !empty( $name ) ) {
-			if( file_exists( ROOT.'/dashboard/includes/'.$name.'-footer.php' ) ) {
-				return ROOT.'/dashboard/includes/'.$name.'-footer.php';
+			if( file_exists( ROOT.'includes/'.$name.'-footer.php' ) ) {
+				return ROOT.'includes/'.$name.'-footer.php';
 			}
 		} else {
-			return ROOT.'/dashboard/includes/footer.php';
+			return ROOT.'includes/footer.php';
 		}
 	}
 }

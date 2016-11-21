@@ -11,11 +11,13 @@ mb_internal_encoding( 'UTF-8' );
 $date = new DateTime( null, new DateTimeZone( 'Europe/Amsterdam' ) );
 
 // Set global variables
-define( 'ROOT', $_SERVER['DOCUMENT_ROOT'] );
+$root = $_SERVER['DOCUMENT_ROOT'].'/dashboard/';
+set_include_path( $root );
+define( 'ROOT', $root );
 define( 'TEST', true );
 
 // Global functions
-require_once ROOT.'/dashboard/core/functions.php';
+require_once 'core/functions.php';
 
 if( TEST === true ) {
 	// Force PHP to show errors
@@ -28,19 +30,15 @@ if( TEST === true ) {
 
 // Individually load classes
 spl_autoload_register(function( $class ) {
-	require_once ROOT.'/dashboard/classes/'.$class.'.php';
+	require_once 'classes/'.$class.'.php';
 });
-
-// Load Facebook
-require_once ROOT.'/vendor/autoload.php';
 
 $db = new Database();
 $user = new User();
 $session = new Session();
 $cookie = new Cookie();
-$fb = new Facebook();
-$client = new Google();
 
+//TODO make cookie time a setting
 // If the $_GET[] is set and not empty
 if( !empty( $_GET['language'] ) ) {
 	$lang = $db->sanitize($_GET['language']);

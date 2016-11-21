@@ -16,8 +16,6 @@ class Form extends Database {
 			unset( $_SESSION['form'] );
 		}
 		$this->_page = $_SESSION['page'];
-
-
 	}
 
 	/**
@@ -58,7 +56,7 @@ class Form extends Database {
 					// Validate email and make sure its in lower case
 					case 'email':
 						if( !filter_var( $value, FILTER_VALIDATE_EMAIL ) && !preg_match( '^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$^', $value ) ) {
-							$this->addError($value.' '.$translate("is not a valid email"));
+							$this->addError($value.' '.$translate('is not a valid email'));
 						} else {
 							$source[$item] = strtolower( $value );
 						}
@@ -66,19 +64,21 @@ class Form extends Database {
 					// Validate for numeric value
 					case 'numeric':
 						if( !is_numeric( $value ) ) {
-							$this->addError($rules['name'].' '.$translate("has to be a number"));
+							$this->addError($rules['name'].' '.$translate('has to be a number'));
 						}
 						break;
 					// Maximum length
 					case 'maxLength':
 						if( mb_strlen( $value) > $rule_value ) {
-							$this->addError($rules['name'].' '.$translate("has a maximum of").' '.$rule_value.' '.$translate("characters"));
+							$this->addError($rules['name'].' '.$translate('has a maximum of').' '.$rule_value.' '.$translate('characters'));
 						}
 						break;
 					// Minimal length
 					case 'minLength':
-						if( mb_strlen( $value ) < $rule_value ) {
-							$this->addError($rules['name'].' '.$translate("has a minimum of").' '.$rule_value.' '.$translate("characters"));
+						if( !empty( $rules['required'] ) && $rules['required'] == true ) {
+							if( mb_strlen( $value ) < $rule_value ) {
+								$this->addError($rules['name'].' '.$translate('has a minimum of').' '.$rule_value.' '.$translate('characters'));
+							}
 						}
 						break;
 					// Unique in database
@@ -91,25 +91,25 @@ class Form extends Database {
 							if( $current_value != $value ) {
 								// Check if the value is unique in the database
 								if ( $this->exists($item, $rule_value, $item, $value) ) {
-									$this->addError($rules['name'].' '.$value.' '.$translate("already exists"));
+									$this->addError($rules['name'].' '.$value.' '.$translate('already exists'));
 								}
 							}
 						} else {
 							if ( $this->exists($item, $rule_value, $item, $value) ) {
-								$this->addError($rules['name'].' '.$value.' '.$translate("already exists"));
+								$this->addError($rules['name'].' '.$value.' '.$translate('already exists'));
 							}
 						}
 						break;
 					// Check against other value
 					case 'matches':
 						if( $value != $source[$rule_value] ) {
-							$this->addError($rules['name'].' '.$translate("does not match").' '.$rule_value);
+							$this->addError($rules['name'].' '.$translate('does not match').' '.$rule_value);
 						}
 						break;
 					// Check if something already exists
 					case 'exists':
 						if( !$this->exists($item, $rule_value, $item, $value) ) {
-							$this->addError($rules['name'].' '.$value.' '.$translate("does not exists"));
+							$this->addError($rules['name'].' '.$value.' '.$translate('does not exists'));
 						}
 						break;
 					// base64 encode
@@ -185,7 +185,7 @@ class Form extends Database {
 	public function outputErrors() {
 		$html = '';
 		if( !empty( $this->errors ) ) {
-			$html .= '<div class="callout alert" data-closable>
+			$html .= '<div class="error">
 						<ul>';
 			foreach( $this->errors as $error ) {
 				$html .= '<li>' . $error . '</li>';
@@ -193,9 +193,6 @@ class Form extends Database {
 			$html .=    '</ul>
 					';
 		}
-		$html .= '	<button class="close-button" aria-label="Dismiss alert" type="button" data-close>
-    					<span aria-hidden="true">&times;</span>
-  					</button></div>';
 		return $html;
 	}
 

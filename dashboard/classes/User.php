@@ -8,7 +8,7 @@ class User extends Database {
 		parent::__construct();
 
 		if( $this->isLoggedIn() ) {
-			$this->_id = base64_decode( $_SESSION['user'] );
+			$this->_id = (int)base64_decode( $_SESSION['user'] );
 
 			// Check if user data already has been stored
 			if( !empty( $this->data ) ) {
@@ -71,64 +71,6 @@ class User extends Database {
 	}
 
 	/**
-	 * Login user using Facebook
-	 *
-	 * @param array $data
-	 *
-	 * @return bool
-	 *
-	 * TODO add profile picture, language
-	 */
-	public function facebookLogin( array $data ) {
-		$date = date('Y-m-d H:i:s');
-
-		// Check if email exists
-		if( $this->exists('email', 'users', 'email', $data['email']) ) {
-			$stmt = $this->mysqli->prepare("UPDATE `users` SET `first_name` = ?, `last_name` = ?, `active_date` = ?, `facebook_id` = ? WHERE `email` = ?");
-			$stmt->bind_param("sssis", $data['first_name'], $data['last_name'], $date, $data['id'], $data['email']);
-			$stmt->execute();
-
-			if( $stmt->affected_rows >= 1 ) {
-				$stmt->close();
-
-				// Get user ID
-				$id = $this->detail('id', 'users', 'email', $data['email']);
-				$_SESSION['user'] = base64_encode( $id );
-
-				if( !empty( $_SESSION['user'] ) ) {
-					return true;
-				} else {
-					return false;
-				}
-			} else {
-				$stmt->close();
-				return false;
-			}
-		} else {
-			$stmt = $this->mysqli->prepare("INSERT INTO `users` (`first_name`, `last_name`, `email`, `register_date`, `active_date`, `active`, `facebook_id`) VALUES (?, ?, ?, ?, ?, ?, ?)");
-			$stmt->bind_param('sssssii', $data['first_name'], $data['last_name'], $data['email'], $date, $date, $i = 1, $data['id']);
-			$stmt->execute();
-
-			if( $stmt->affected_rows >= 1 ) {
-				$stmt->close();
-
-				// Get user ID
-				$id = $this->detail('id', 'users', 'email', $data['email']);
-				$_SESSION['user'] = base64_encode( $id );
-
-				if( !empty( $_SESSION['user'] ) ) {
-					return true;
-				} else {
-					return false;
-				}
-			} else {
-				$stmt->close();
-				return false;
-			}
-		}
-	}
-
-	/**
 	 * Generate a password
 	 *
 	 * @param $password
@@ -169,56 +111,78 @@ class User extends Database {
 	}
 
 	/**
-	 * Get all data from logged in user or a specific user
+	 * Recover password
 	 *
-	 * @param int $id
-	 *
-	 * @return array|bool
-	 */
-	public function data( $id  ) {
-		$stmt = $this->mysqli->prepare("SELECT `id`, `first_name`, `last_name`, `email`, `register_date`, `active_date` FROM `users` WHERE `id` = ?");
-		$stmt->bind_param('i', $id);
-		$stmt->execute();
-		$stmt->bind_result($userID, $first_name, $last_name, $email, $register_date, $active_date);
-
-		// Set all data in array
-		$data = array();
-		while( $stmt->fetch() ) {
-			$data['id'] = $userID;
-			$data['first_name'] = $first_name;
-			$data['last_name'] = $last_name;
-			$data['email'] = $email;
-			$data['register_date'] = $register_date;
-			$data['active_date'] = $active_date;
-		}
-
-		if( !empty( $data ) ) {
-			$stmt->close();
-			return $data;
-		} else {
-			$stmt->close();
-			return false;
-		}
-	}
-
-	/**
-	 * Edit user
-	 *
-	 * @param array $data
+	 * @param array    $data 		All data required
+	 * @param callable $translate	Translations for email
+	 * @param string   $code		Email code
 	 *
 	 * @return bool
 	 */
-	public function edit( array $data ) {
-		$stmt = $this->mysqli->prepare("UPDATE `users` SET `first_name` = ?, `last_name` = ?, `email` = ? WHERE `id` = ?");
-		$stmt->bind_param('sssi', $data['first_name'], $data['last_name'], $data['email'], $this->_id);
-		$stmt->execute();
+	public function recover( array $data, callable $translate, $code = '' ) {
+		if( !empty( $code ) ) {
+			$explode = explode( '|', base64_decode( $code ) );
+			$active_date = $explode[0];
+			$email = $explode[1];
 
-		if( $stmt->affected_rows >= 1 ) {
-			$stmt->close();
-			return true;
+			if( $email == $data['email'] && $this->detail('active_date', 'users', 'email', $data['email']) === $active_date ) {
+				$password = password_hash( $this->passwordGenerate( $data['password_encrypted'] ), PASSWORD_DEFAULT );
+				$active = 1;
+
+				$stmt = $this->mysqli->prepare("UPDATE `users` SET `password` = ?, active = ? WHERE `email` = ?");
+				$stmt->bind_param('sis', $password, $active, $email);
+				$stmt->execute();
+
+				if( $stmt->affected_rows >= 1 ) {
+					$stmt->close();
+					return true;
+				} else {
+					$stmt->close();
+					return false;
+				}
+			} else {
+				return false;
+			}
 		} else {
+			$stmt = $this->mysqli->prepare("SELECT `first_name`, `last_name`, `active_date` FROM `users` WHERE `email` = ?");
+			$stmt->bind_param('s', $data['email']);
+			$stmt->execute();
+			$stmt->bind_result( $first_name, $last_name, $active_date );
+			$stmt->fetch();
+
+			$code = base64_encode( $active_date.'|'.$data['email'] );
+
+			// TODO get name from database
+			// TODO get url from database
+			// TODO get email form database
+			$subject = $translate( 'Password recovery' ).' DSuper';
+			$message = $translate( 'Hello' )." ".substr( $first_name, 0, 1 )." ".$last_name.",\r\n\r\n".
+				$translate( 'Go to the following link to reset your password' ).": http://www.cms.dsuper.nl/dashboard/?path=users/recover&code={$code}\r\n\r\n".
+				$translate( 'Greetings' ).",\r\nDSuper";
+			$header = "From: <info@dsuper.nl> DSuper\r\n";
+
+			// Close first query
 			$stmt->close();
-			return false;
+
+			// Set active to 0 if necessary
+			if( $this->detail('active', 'users', 'email', $data['email']) !== 0 ) {
+				$active = null;
+				$stmt = $this->mysqli->prepare( "UPDATE `users` SET `active` = ? WHERE `email` = ?" );
+				$stmt->bind_param( 'is', $active, $data['email'] );
+				$stmt->execute();
+
+				if( $stmt->affected_rows === 0 ) {
+					$stmt->close();
+					return false;
+				}
+				$stmt->close();
+			}
+
+			if( mail( $data['email'], $subject, $message, $header ) ) {
+				return true;
+			} else {
+				return false;
+			}
 		}
 	}
 }

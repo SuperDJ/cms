@@ -1,0 +1,189 @@
+/**************************************
+ * AppBar
+ *
+ * http://www.google.com/design/spec/layout/structure.html#structure-app-bar
+ * http://www.google.com/design/spec/layout/structure.html#structure-toolbars
+ **************************************/
+// Title
+$appbar-title-small-padding: rem-calc(12px) 0 rem-calc(12px) rem-calc(16px); // Default rem-calc(12px) 0 rem-calc(12px) 0
+$appbar-title-medium-padding: rem-calc(20px) 0 rem-calc(20px) rem-calc(24px); // Default rem-calc(20px) 0 rem-calc(20px) 0
+
+// Icons
+$appbar-icon-font-size: rem-calc(32px); // Default rem-calc(32px)
+$appbar-icon-small-padding: rem-calc(8px); // Default rem-calc(8px)
+$appbar-icon-medium-padding: rem-calc(16px); // Default rem-calc(16px);
+
+// More menu
+$appbar-more-margin: rem-calc(4px); // Default rem-calc(4px)
+
+.sc-appbar {
+	@include material-shadow(4);
+	background: $appbar-background;
+	color: $appbar-text;
+	height: $appbar-small-height;
+	line-height: normal;
+	position: fixed;
+	width: 100%;
+	z-index: 2;
+
+	@media #{$small-up} {
+		height: $appbar-medium-height;
+	}
+
+	@media #{$medium-up} {
+		height: $appbar-large-height;
+	}
+
+	.material-icons {
+		font-size: $appbar-icon-font-size;
+		height: auto;
+		padding: $appbar-icon-small-padding;
+		width: auto;
+
+		@media #{$small-up} {
+			padding: $appbar-icon-medium-padding;
+		}
+	}
+
+	> div {
+		height: $appbar-small-height;
+		float: left;
+		position: absolute;
+
+		a {
+			color: $appbar-text;
+			overflow: hidden;
+			position: absolute;
+		}
+
+		@media #{$small-up} {
+			height: $appbar-medium-height;
+		}
+
+		@media #{$medium-up} {
+			height: $appbar-large-height;
+		}
+	}
+
+	.sc-appbar-nav {
+		left: 0;
+		@include square($appbar-small-height);
+
+		@media #{$small-up} {
+			@include square($appbar-medium-height);
+		}
+
+		@media #{$medium-up} {
+			@include square($appbar-large-height);
+		}
+	}
+
+	.sc-appbar-title {
+		left: $appbar-small-height;
+		padding: $appbar-title-small-padding;
+		@include font($font-size-title, 0, $font-weight-title, $line-height-title, $appbar-title, $letter-spacing-title);
+
+		@media #{$small-up} {
+			padding: $appbar-title-medium-padding;
+			left: $drawer-small-width;
+		}
+
+		@media #{$medium-only} {
+			left: $drawer-medium-width;
+		}
+
+		h1, h2, h3, h4, h5, h6 {
+			line-height: normal;
+			margin: 0;
+			@include font($font-size-title, 0, $font-weight-title, $line-height-title, $appbar-title, $letter-spacing-title);
+			padding: 0;
+		}
+	}
+
+	.sc-appbar-actions {
+		display: none;
+		right: $appbar-small-height;
+
+		@media #{$small-up} {
+			right: $appbar-medium-height;
+		}
+
+		@media #{$medium-up} {
+			display: block;
+		}
+
+		a {
+			float: right;
+			position: relative;
+		}
+
+		.sc-search-input {
+			@include border-radius(rem-calc(2px));
+			background: $white;
+			display: none;
+			position: relative;
+			width: 100%;
+		}
+	}
+
+	.sc-appbar-menu {
+		@include square($appbar-small-height);
+		right: 0;
+
+		@media #{$small-up} {
+			@include square($appbar-medium-height);
+		}
+
+		@media #{$medium-up} {
+			@include square($appbar-large-height);
+		}
+
+		&-more {
+			@include material-shadow(9);
+			background: $white;
+			list-style-type: none;
+			margin: 0;
+			padding: 0;
+			position: absolute;
+			right: $appbar-more-margin;
+			top: $appbar-more-margin;
+			width: auto;
+			visibility: hidden;
+			@include opacity(0);
+			max-height: 0;
+			max-width: 0;
+			@include transition(
+					visibility $transition-small-duration $basic-transition unquote(',')
+					opacity $transition-small-duration $basic-transition unquote(',')
+					max-height $transition-small-duration $basic-transition unquote(',')
+					max-width $transition-small-duration $basic-transition
+			);
+
+			@media #{$medium-only} {
+				@include transition(
+						visibility $transition-medium-duration $basic-transition unquote(',')
+						opacity $transition-medium-duration $basic-transition unquote(',')
+						max-height $transition-medium-duration $basic-transition unquote(',')
+						max-width $transition-medium-duration $basic-transition
+				);
+			}
+
+			@media #{$medium-up} {
+				@include transition(
+						visibility $transition-large-duration $basic-transition unquote(',')
+						opacity $transition-large-duration $basic-transition unquote(',')
+						max-height $transition-large-duration $basic-transition unquote(',')
+						max-width $transition-large-duration $basic-transition
+				);
+			}
+
+
+			&.sc-expanded {
+				visibility: visible;
+				@include opacity(1);
+				max-height: rem-calc(1000px);
+				max-width: rem-calc(300px);
+			}
+		}
+	}
+}

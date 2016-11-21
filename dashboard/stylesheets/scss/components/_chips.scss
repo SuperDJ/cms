@@ -1,0 +1,81 @@
+/**************************************
+ * Chips
+ *
+ * http://www.google.com/design/spec/components/chips.html
+ **************************************/
+
+
+$chips-size: rem-calc(32px); // Default rem-calc(32px)
+$chips-font-size: rem-calc(13px);
+$chips-delete-size: rem-calc(15px); // Default rem-calc(15px)
+
+.sc-chip {
+	@include border-radius($chips-size);
+	background: $chips-background;
+	color: $chips-font-color;
+	display: inline-block;
+	font-size: $chips-font-size;
+	font-weight: 400;
+	height: $chips-size;
+	line-height: $chips-size;
+	padding: 0 rem-calc(12px);
+
+	&-deletable {
+		.sc-chip-delete {
+			@include border-radius(50%);
+			@include transition(color $transition-small-duration $basic-transition unquote(',') background $transition-small-duration $basic-transition);
+			background: $chips-delete-background;
+			color: $chips-delete-cross;
+			display: inline-block;
+			height: $chips-delete-size;
+			margin: 0 rem-calc(-8px) 0 rem-calc(4px);
+			line-height: $chips-delete-size;
+			text-align: center;
+			vertical-align: middle;
+			width: $chips-delete-size;
+			font-size: $chips-font-size;
+			cursor: pointer;
+
+			@media #{$medium-only} {
+				@include transition(color $transition-medium-duration $basic-transition unquote(',') background $transition-medium-duration $basic-transition);
+			}
+
+			@media #{$medium-up} {
+				@include transition(color $transition-large-duration $basic-transition unquote(',') background $transition-large-duration $basic-transition);
+			}
+		}
+
+		&:hover {
+			background: $chips-background-hover;
+			color: $chips-font-hover-color;
+
+			.sc-chip-delete {
+				background: $chips-delete-background-hover;
+				color: $chips-delete-cross-hover;
+			}
+		}
+	}
+
+	&-contact {
+		font-size: rem-calc(14px);
+		@include transition(box-shadow $transition-small-duration $basic-transition);
+
+		@media #{$medium-only} {
+			@include transition(box-shadow $transition-medium-duration $basic-transition);
+		}
+
+		@media #{$medium-up} {
+			@include transition(box-shadow $transition-large-duration $basic-transition);
+		}
+
+		img {
+			@include border-radius(50%);
+			@include square($chips-size);
+			margin: 0 rem-calc(8px) 0 rem-calc(-12px);
+		}
+
+		&:hover {
+			@include material-shadow(2);
+		}
+	}
+}

@@ -2,11 +2,11 @@
 if( $user->isLoggedIn() ) {
 	echo 2;
 	die();
-	$user->to('?path=overview/overview');
+	//$user->to('?path=overview/overview');
 } else {
-	$title = $language->translate( 'Login' );
-
-	require_once $plugins->getHeader( 'lr' );
+	// Define page title
+	$title = $language->translate('Login');
+	require_once $plugins->getHeader('lr');
 
 	$form = new Form();
 	// Check form
@@ -16,19 +16,19 @@ if( $user->isLoggedIn() ) {
 				'required' => true,
 				'email'    => true,
 				'remember' => true,
-				'name'     => $language->translate( 'Email' )
+				'name'     => $language->translate('Email')
 			),
 			'password'           => array(
 				'base64_decode' => true,
 				'required'      => true,
 				'minLength'     => 6,
-				'name'          => $language->translate( 'Password' )
+				'name'          => $language->translate('Password')
 			),
 			'password_encrypted' => array(
 				'required'  => true,
 				'minLength' => 32,
 				'maxLength' => 33,
-				'name'      => $language->translate( 'Password encrypted' )
+				'name'      => $language->translate('Password encrypted')
 			),
 			'captcha'            => array(
 				'captcha' => true,
@@ -39,10 +39,13 @@ if( $user->isLoggedIn() ) {
 		// If there are no errors register user else show errors
 		if( empty( $form->errors ) ) {
 			if( $user->login( $validation ) ) {
-				echo '<div class="callout success" data-closable>'.$language->translate( 'You have are logged in' ).'</div>';
-				$user->to( '?path=overview/overview' );
+				if( $session->set('user', $db->detail('id', 'users', 'email', $validation['email'])) ) {
+					$user->to( '?path=overview/overview' );
+				} else {
+					echo '<div class="alert sc-card-supporting sc-card-supporting-additional">'.$language->translate('Something went wrong logging you in').'</div>';
+				}
 			} else {
-				echo '<div class="callout alert" data-closable>'.$language->translate( 'Something went wrong logging you in' ).'</div>';
+				echo '<div class="alert sc-card-supporting sc-card-supporting-additional">'.$language->translate('Something went wrong logging you in').'</div>';
 			}
 		} else {
 			// Show errors
@@ -51,43 +54,46 @@ if( $user->isLoggedIn() ) {
 	}
 	?>
 
-	<form action="" method="post" onsubmit="encrypt()">
-		<div class="row">
-			<label for="email"><?php echo $language->translate( 'Email' ); ?></label>
-			<input type="email" name="email" id="email" required value="<?php echo $form->input( 'email' ); ?>">
-		</div>
+	<form action="" method="post">
+		<div class="sc-card-supporting sc-card-supporting-additional">
+			<div class="sc-floating-input">
+				<input type="email" name="email" id="email" value="<?php echo $form->input('email'); ?>" required>
+				<label for="email"><?php echo $language->translate('Email'); ?></label>
+			</div>
 
-		<div class="row">
-			<label for="password"><?php echo $language->translate( 'Password' ); ?></label>
-			<input type="password" name="password" id="password" required onkeyup="hash()">
-		</div>
+			<div class="sc-floating-input">
+				<input type="password" name="password" id="password" required>
+				<label for="password"><?php echo $language->translate('Password'); ?></label>
+			</div>
 
-		<div class="row">
-			<div class="columns small-12 medium-6"><?php echo $language->translate( 'Remember me' ); ?></div>
-
-			<div class="columns small-12 medium-6">
-				<div class="switch small">
-					<input class="switch-input" id="remember" type="checkbox" name="remember">
-					<label class="switch-paddle" for="remember">
-						<span class="show-for-sr"><?php echo $language->translate( 'Remember me' ); ?></span>
-						<span class="switch-active" aria-hidden="true">Yes</span>
-						<span class="switch-inactive" aria-hidden="true">No</span>
+			<div class="sc-col sc-xs4 sc-s12">
+				<div class="sc-switch">
+					<label>
+						<?php echo $language->translate('Keep me logged in'); ?>
+						<input type="checkbox">
+						<span class="sc-lever"></span>
 					</label>
 				</div>
 			</div>
+
+			<div class="sc-col sc-xs4 sc-s12">
+				<input type="text" name="captcha" class="captcha">
+				<input type="password" name="password_encrypted" id="password_encrypted" class="captcha">
+			</div>
 		</div>
 
-		<div class="row">
-			<input type="text" name="captcha" class="captcha">
-			<input type="password" name="password_encrypted" id="password_encrypted" class="captcha">
+		<div class="sc-card-actions">
+			<div class="sc-col sc-xs4 sc-s12">
+				<button type="submit" class="sc-raised-button"><?php echo $language->translate('Login' ); ?></button>
 
-			<button class="button"><?php echo $language->translate( 'Login' ); ?> <i class="fa fa-sign-in"></i></button>
-			<a href="?path=users/facebook-login" class="button facebook"><i
-					class="fa fa-facebook"></i> <?php echo $language->translate( 'Facebook login' ); ?></a>
-			<a href="?path=users/google-login" class="button google"><i
-					class="fa fa-google"></i> <?php echo $language->translate( 'Google login' ); ?></a>
-			<a href="?path=users/register" class="button"><?php echo $language->translate( 'Register' ); ?> <i
-					class="fa fa-cloud-upload"></i></a>
+				<!--<a href="?path=users/facebook-login" class="button facebook"><i	class="fa fa-facebook"></i> <?php echo $language->translate( 'Facebook login' ); ?></a>
+				<a href="?path=users/google-login" class="button google"><i	class="fa fa-google"></i> <?php echo $language->translate( 'Google login' ); ?></a>-->
+				<a href="?path=users/register" class="sc-flat-button"><?php echo $language->translate( 'Register' ); ?></a>
+			</div>
+
+			<div class="sc-col sc-xs4 sc-s12">
+				<a href="?path=users/recover-request"><?php echo $language->translate('Forgot password?'); ?></a>
+			</div>
 		</div>
 	</form>
 

@@ -1,0 +1,33 @@
+/**************************************
+ * Pickers
+ *
+ * https://material.google.com/components/pickers.html
+***************************************/
+
+.sc-picker {
+	@include material-shadow(24);
+	@include border-radius(rem-calc(2px));
+	background: $background;
+	width: 100%;
+
+	&-titlebar {
+		@include border-radius-top(rem-calc(2px));
+		background: $picker-color;
+		color: rgba($white, .54);
+		padding: rem-calc(24px);
+
+		&-year {
+			font-size: rem-calc(16px);
+			line-height: rem-calc(20px);
+		}
+
+		&-date {
+			font-size: rem-calc(24px);
+			line-height: rem-calc(30px);
+		}
+
+		.sc-active {
+			color: $white;
+		}
+	}
+}

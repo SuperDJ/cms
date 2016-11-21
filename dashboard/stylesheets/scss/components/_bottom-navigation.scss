@@ -1,0 +1,118 @@
+/**************************************
+ * Bottom navigation
+ *
+ * http://www.google.com/design/spec/components/bottom-navigation.html
+ **************************************/
+
+$bottom-nav-height: rem-calc(56px); // Default rem-calc(56px)
+$bottom-nav-icon-size: rem-calc(24px); // Default rem-calc(24px)
+
+.sc-bottom-nav, .sc-bottom-shifting {
+	background: $bottom-nav-background;
+	bottom: 0;
+	left: 0;
+	position: fixed;
+	@include material-shadow(8);
+	width: 100%;
+	margin: 0 0 -102% 0;
+	@include transition(margin $transition-small-duration $basic-transition);
+
+	@media #{$medium-only} {
+		left: $drawer-medium-width;
+		@include transition(margin $transition-medium-duration $basic-transition);
+	}
+
+	@media #{$medium-up} {
+		left: $drawer-small-width;
+		@include transition(margin $transition-large-duration $basic-transition);
+	}
+
+	ul {
+		list-style-type: none;
+		margin: 0;
+		padding: 0;
+
+		li {
+			float:left;
+			line-height: normal;
+			padding: 0;
+			text-align: center;
+		}
+	}
+
+	&.sc-expanded {
+		margin: 0;
+	}
+}
+
+.sc-bottom-nav ul li a, .sc-bottom-shifting ul li a {
+	color: $bottom-nav-off-color;
+	display: block;
+	line-height: normal;
+
+	&:hover {
+		color: $bottom-nav-on-color;
+	}
+
+	&.sc-active {
+		color: $bottom-nav-on-color;
+
+		.material-icons {
+			color: $bottom-nav-on-color;
+		}
+	}
+}
+
+@if( in-array( 'bottom-nav', $bottom-nav ) ) {
+	.sc-bottom-nav ul li a {
+		font-size: rem-calc(12px);
+		height: $bottom-nav-height;
+		max-width: rem-calc(168px);
+		min-width: rem-calc(80px);
+		padding: rem-calc(8px) rem-calc(12px) rem-calc(10px) rem-calc(12px);
+
+		@media #{$medium-up} {
+			min-width: rem-calc(120px);
+		}
+
+		.material-icons {
+			font-size: $bottom-nav-icon-size;
+			@include square($bottom-nav-icon-size);
+		}
+
+		&.sc-active {
+			font-size: rem-calc(14px);
+			padding: rem-calc(6px) rem-calc(12px) rem-calc(10px) rem-calc(12px);
+		}
+	}
+}
+
+@if( in-array( 'bottom-shifting', $bottom-nav ) ) {
+	.sc-bottom-shifting ul li a {
+		height: $bottom-nav-height;
+		max-width: rem-calc(96px);
+		min-width: rem-calc(56px);
+		padding: rem-calc(16px) 0;
+
+		.material-icons {
+			font-size: $bottom-nav-icon-size;
+			@include square($bottom-nav-icon-size);
+		}
+
+		.sc-content {
+			display: none;
+		}
+
+		&.sc-active {
+			font-size: rem-calc(14px);
+			max-width: rem-calc(168px);
+			min-width: rem-calc(96px);
+			padding: rem-calc(6px) 0 rem-calc(10px) 0;
+
+			.sc-content {
+				display: block;
+				margin: rem-calc(6px) 0 0 0;
+			}
+		}
+	}
+}

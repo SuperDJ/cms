@@ -1,0 +1,133 @@
+/**************************************
+ * Typography
+ *
+ * http://www.google.com/design/spec/style/typography.html
+ * http://codepen.io/zavoloklom/pen/IkaFL/
+ * https://www.google.com/fonts
+ **************************************/
+
+// Load requested fonts
+@import './fonts/fonts';
+
+// Typographic Scale
+$font-size-display-4: 112; // Default 112
+$font-size-display-3: 56; // Default 56
+$font-size-display-2: 45; // Default 45
+$font-size-display-1: 34; // Default 43
+$font-size-headline: 24; // Default 24
+$font-size-title: 20; // Default 20
+$font-size-subhead-2: 15; // Default 15
+$font-size-subhead-1: 15; // Default 15
+$font-size-body-2: 13; // Default 13
+$font-size-body-1: 13; // Default 13
+$font-size-caption: 12; // Default 12
+$font-size-label: 12; // Default 12
+$font-size-menu: 13; // Default 13
+$font-size-button: 14; // Default 14
+
+// Typographic Scale for devices (max-width: 960px)
+$font-size-small-subhead: 16; // Default  16
+$font-size-small-body: 14; // Default 14
+
+// Basic Styles
+$font-weight-display-4: 300; // Default 300
+$font-weight-display-3: 400; // Default 400
+$font-weight-display-2: 400; // Default 400
+$font-weight-display-1: 400; // Default 400
+$font-weight-headline: 400; // Default 400
+$font-weight-title: 500; // Default 500
+$font-weight-subhead-2: 400; // Default 400
+$font-weight-subhead-1: 300; // Default 300
+$font-weight-body-2: 500; // Default 500
+$font-weight-body-1: 400; // Default 400
+$font-weight-caption: 400; // Default 400
+$font-weight-label: 300; // Default 300
+$font-weight-menu: 400; // Default 400
+$font-weight-button: 500; // Default 500
+
+// Line Height
+$line-height-display-4: 128; // Default 128
+$line-height-display-3: 84; // Default 84
+$line-height-display-2: 64; // Default 48 According to Google specs 48 but 64 looks better
+$line-height-display-1: 40; // Default 40
+$line-height-headline: 32; // Default 32
+$line-height-title: 28; // Default 28
+$line-height-subhead-2: 28; // Default  28
+$line-height-subhead-1: 24; // Default 24
+$line-height-body-2: 24; // Default 24
+$line-height-body-1: 20; // Default 20
+$line-height-caption: 20; // Default 20
+$line-height-label: 20; // Default 20
+$line-height-menu: 20; // Default 20
+$line-height-button: 20; // Default 20
+
+// Tracking and kerning
+$letter-spacing-display-4: -0.1; // Default -0.1
+$letter-spacing-display-3: -0.05; // Default -0.05
+$letter-spacing-display-2: 0; // Default 0
+$letter-spacing-display-1: 0; // Default 0
+$letter-spacing-headline: 0; // Default 0
+$letter-spacing-title: 0.05; // Default 0.05
+$letter-spacing-subhead-2: 0.1; // Default 0.1
+$letter-spacing-subhead-1: 0.1; // Default 0.1
+$letter-spacing-body-2: 0.1; // Default 0.1
+$letter-spacing-body-1: 0.1; // Default 0.1
+$letter-spacing-caption: 0.2; // Default 0.2
+$letter-spacing-label: 0.1; // Default 0.1
+$letter-spacing-menu: 0.1; // Default 0.1
+$letter-spacing-button: 0.1; // Default 0.1
+
+.sc-display-4, h1 {
+	@include font($font-size-display-4, 0, $font-weight-display-4, $line-height-display-4, $font-color-display-4, $letter-spacing-display-4);
+}
+.sc-display-3, h2 {
+	@include font($font-size-display-3, 0, $font-weight-display-3, $line-height-display-3, $font-color-display-3, $letter-spacing-display-3);
+}
+.sc-display-2, h3 {
+	@include font($font-size-display-2, 0, $font-weight-display-2, $line-height-display-2, $font-color-display-2, $letter-spacing-display-2);
+}
+.sc-display-1, h4 {
+	@include font($font-size-display-1, 0, $font-weight-display-1, $line-height-display-1, $font-color-display-1, $letter-spacing-display-1);
+}
+.sc-headline, h5 {
+	@include font($font-size-headline, 0, $font-weight-headline, $line-height-headline, $font-color-headline, $letter-spacing-headline);
+}
+.sc-title, h6 {
+	@include font($font-size-title, 0, $font-weight-title, $line-height-title, $font-color-title, $letter-spacing-title);
+}
+.sc-subhead-2 {
+	@include font($font-size-subhead-2, $font-size-small-subhead, $font-weight-subhead-2, $line-height-subhead-2, $font-color-subhead, $letter-spacing-subhead-2);
+}
+.sc-subhead-1 {
+	@include font($font-size-subhead-1, $font-size-small-subhead, $font-weight-subhead-1, $line-height-subhead-1, $font-color-subhead, $letter-spacing-subhead-1);
+}
+.sc-body-2 {
+	@include font($font-size-body-2, $font-size-small-body, $font-weight-body-2, $line-height-body-2, $font-color-body-2, $letter-spacing-body-2);
+}
+.sc-body-1 {
+	@include font($font-size-body-1, $font-size-small-body, $font-weight-body-1, $line-height-body-1, $font-color-body-1, $letter-spacing-body-1);
+}
+.sc-caption {
+	@include font($font-size-caption, 0, $font-weight-caption, $line-height-caption, $font-color-caption, $letter-spacing-caption);
+}
+.sc-label, label {
+	@include font($font-size-label, 0, $font-weight-label, $line-height-label, $font-color-label, $letter-spacing-label);
+}
+.sc-menu {
+	@include font($font-size-menu, 0, $font-weight-menu, $line-height-menu, $font-color-menu, $letter-spacing-menu);
+}
+.sc-button, button {
+	@include font($font-size-button, 0, $font-weight-button, $line-height-button, $font-color-button, $letter-spacing-button, uppercase);
+}
+
+body {
+	@include font($font-size-body-1, $font-size-small-body, $font-weight-body-1, $line-height-body-1, $font-color-body-1, $letter-spacing-body-1);
+	direction: $text-direction;
+	font-family: 'Roboto', sans-serif, 'Helvetica Neue', Helvetica, Arial;
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	margin: 0;
+}

@@ -1,0 +1,30 @@
+@import './smaterial';
+
+.captcha {
+	display: none;
+	visibility: hidden;
+}
+
+.success, .edit {
+	color: $teal;
+
+	li {
+		color: $teal;
+	}
+}
+
+.alert {
+	color: $deep-orange;
+}
+
+.info {
+	color: $blue;
+}
+
+.error, .delete {
+	color: $red;
+
+	li {
+		color: $red;
+	}
+}

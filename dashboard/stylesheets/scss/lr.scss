@@ -1,0 +1,30 @@
+@import './main';
+
+main {
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	background: $blue-200;
+
+	@media #{$medium-up} {
+		background: url(/dashboard/stylesheets/images/background.jpg) no-repeat;
+		background-size: cover;
+	}
+}
+
+.sc-card {
+	margin: 0 auto;
+	background: $white;
+	width: 90%;
+
+	@media #{$small-up} {
+		width: 20%;
+	}
+
+	&-primary {
+		background: $main-color;
+		color: $white;
+		@include border-radius-top(rem-calc(2px));
+	}
+}

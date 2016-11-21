@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class Database
+ * Handles database connection and database requests
+ */
 class Database {
 	public $mysqli;
 
@@ -7,7 +11,7 @@ class Database {
 
 	function __construct() {
 		// Credentials
-		$this->_db = json_decode( file_get_contents( ROOT.'/credentials.json' ) );
+		$this->_db = json_decode( file_get_contents( ROOT.'credentials.json' ) );
 
 		$this->mysqli = new mysqli($this->_db->database->host, $this->_db->database->username, $this->_db->database->password, $this->_db->database->database);
 

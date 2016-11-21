@@ -1,0 +1,351 @@
+/**************************************
+ * Notifications
+ *
+ *  https://material.google.com/patterns/notifications.html
+ **************************************/
+
+$notification-header-icon-size: rem-calc(14px);
+$notification-media-icon-size: rem-calc(35px);
+$notification-content-top: rem-calc(5px);
+$notification-content-sides: rem-calc(8px);
+$notification-content-bottom: rem-calc(10px);
+$notification-image-size: rem-calc(40px);
+
+.sc-notification {
+	@include material-shadow(3);
+	@include border-radius(rem-calc(2px));
+	background: $notification-background;
+	float: left;
+	max-width: 100%;
+	position: relative;
+	width: auto;
+
+	&-header {
+		padding: rem-calc(8px) rem-calc(8px) 0 rem-calc(8px);
+		width: 100%;
+
+		> div {
+			display: inline-block;
+		}
+
+		.sc-separator {
+			&:after {
+				color: rgba($black, .54);
+				content: '\25CF';  // \2022
+				padding: rem-calc(5px);
+			}
+		}
+
+		&-app-icon .material-icons {
+			font-size: $notification-header-icon-size;
+			height: auto;
+			width: rem-calc(18px);
+		}
+
+		&-text, &-timestamp {
+			color: rgba($black, .54);
+		}
+
+		&-expand .material-icons {
+			font-size: $notification-header-icon-size;
+			@include square($notification-header-icon-size);
+			cursor: pointer;
+			@include transform(rotate(0deg));
+			@include transition(transform $transition-small-duration $basic-transition);
+
+			@media #{$medium-only} {
+				@include transition(transform $transition-medium-duration $basic-transition);
+
+			}
+
+			@media #{$medium-up} {
+				@include transition(transform $transition-large-duration $basic-transition);
+			}
+		}
+	}
+
+	&-content {
+		padding: $notification-content-top $notification-content-sides $notification-content-bottom $notification-content-sides;
+
+		&-title, .sc-subject {
+		 	color: rgba($black, .87);
+			font-weight: 500;
+		}
+
+		&-text {
+			color: rgba($black, .54);
+		}
+	}
+
+	&-actions {
+		background: transparent;
+		@include transition(visibility $transition-small-duration $basic-transition unquote(',') opacity $transition-small-duration $basic-transition unquote(',') max-height $transition-small-duration $basic-transition unquote(',') background $transition-small-duration $basic-transition);
+		max-height: 0;
+		@include opacity(0);
+		visibility: hidden;
+
+		@media #{$medium-only} {
+			@include transition(visibility $transition-medium-duration $basic-transition unquote(',') opacity $transition-medium-duration $basic-transition unquote(',') max-height $transition-medium-duration $basic-transition unquote(',') background $transition-medium-duration $basic-transition);
+		}
+
+		@media #{$medium-up} {
+			@include transition(visibility $transition-large-duration $basic-transition unquote(',') opacity $transition-large-duration $basic-transition unquote(',') max-height $transition-large-duration $basic-transition unquote(',') background $transition-large-duration $basic-transition);
+		}
+
+		> * {
+			display: inline-block;
+			margin: 0 !important;
+			visibility: hidden;
+			@include opacity(0);
+			@include transition(visibility $transition-small-duration $basic-transition unquote(',') opacity $transition-small-duration $basic-transition);
+
+			@media #{$medium-only} {
+				@include transition(visibility $transition-medium-duration $basic-transition unquote(',') opacity $transition-medium-duration $basic-transition);
+			}
+
+			@media #{$medium-up} {
+				@include transition(visibility $transition-large-duration $basic-transition unquote(',') opacity $transition-large-duration $basic-transition);
+			}
+		}
+	}
+
+	&.sc-standard {
+		.sc-notification-content {
+			position: relative;
+
+			> div {
+				width: 75%;
+			}
+
+			img {
+				@include square($notification-image-size);
+				max-width: 25%;
+				position: absolute;
+				right: $notification-content-sides;
+				@include border-radius(50%);
+				top: $notification-content-top;
+			}
+		}
+	}
+
+	&.sc-big-text {
+		.sc-notification-content {
+			position: relative;
+
+			&-text {
+				max-height: 0;
+				@include opacity(0);
+				visibility: hidden;
+			}
+
+			img {
+				@include square($notification-image-size);
+				position: absolute;
+				right: $notification-content-sides;
+				@include border-radius(50%);
+				top: $notification-content-top;
+
+			}
+		}
+	}
+
+	&.sc-big-picture {
+		.sc-notification-content {
+			position: relative;
+
+			&-text {
+				img {
+					max-width: 100%;
+					visibility: hidden;
+					@include opacity(0);
+					width: 0;
+					@include transition(opacity $transition-small-duration $basic-transition $transition-small-duration unquote(',') visibility $transition-small-duration $basic-transition $transition-small-duration);
+
+					@media #{$medium-only} {
+						@include transition(opacity $transition-medium-duration $basic-transition $transition-medium-duration unquote(',') visibility $transition-medium-duration $basic-transition $transition-medium-duration);
+					}
+
+					@media #{$medium-up} {
+						@include transition(opacity $transition-large-duration $basic-transition $transition-large-duration unquote(',') visibility $transition-large-duration $basic-transition $transition-large-duration);
+					}
+				}
+			}
+
+			> img {
+				@include square(rem-calc(40px));
+				position: absolute;
+				right: $notification-content-sides;
+				top: $notification-content-top;
+				@include opacity(1);
+				@include transition(opacity $transition-small-duration $basic-transition);
+
+				@media #{$medium-only} {
+					@include transition(opacity $transition-medium-duration $basic-transition);
+				}
+
+				@media #{$medium-up} {
+					@include transition(opacity $transition-large-duration $basic-transition);
+				}
+			}
+		}
+	}
+
+	&.sc-progress {
+		.sc-notification-content {
+			.sc-notification-content-title, .sc-notification-content-text {
+				display: inline-block;
+				width: 50%;
+			}
+
+			.sc-notification-content-text {
+				float: right;
+				text-align: right;
+			}
+		}
+	}
+
+	&.sc-media {
+		width: rem-calc(400px);
+
+		.sc-notification-content {
+			position: relative;
+			@include transition(height $transition-small-duration $basic-transition);
+
+			@media #{$medium-only} {
+				@include transition(height $transition-medium-duration $basic-transition);
+
+			}
+
+			@media #{$medium-up} {
+				@include transition(height $transition-large-duration $basic-transition);
+			}
+
+			.sc-actions {
+				left: auto;
+				position: absolute;
+				right: rem-calc(48px);
+				text-align: right;
+				top: $notification-content-top;
+				width: calc(#{$notification-media-icon-size} * 4);
+				@include transition(all $transition-small-duration $basic-transition);
+
+				@media #{$medium-only} {
+					@include transition(all $transition-medium-duration $basic-transition);
+
+				}
+
+				@media #{$medium-up} {
+					@include transition(all $transition-large-duration $basic-transition);
+				}
+
+				.material-icons {
+					@include square($notification-media-icon-size);
+					color: rgba($black, .54);
+					font-size: $notification-media-icon-size;
+					line-height: calc((#{rem-calc($line-height-body-1+0px)} * 2));
+
+					&:first-of-type, &:last-of-type {
+						visibility: hidden;
+						@include opacity(0);
+						width: 0;
+						@include transition(all $transition-small-duration $basic-transition);
+
+						@media #{$medium-only} {
+							@include transition(all $transition-medium-duration $basic-transition);
+
+						}
+
+						@media #{$medium-up} {
+							@include transition(all $transition-large-duration $basic-transition);
+						}
+					}
+				}
+			}
+
+			img {
+				@include square(rem-calc(40px));
+				position: absolute;
+				right: rem-calc(8px);
+				top: rem-calc(5px);
+				@include transition(all $transition-small-duration $basic-transition);
+
+				@media #{$medium-only} {
+					@include transition(all $transition-medium-duration $basic-transition);
+
+				}
+
+				@media #{$medium-up} {
+					@include transition(all $transition-large-duration $basic-transition);
+				}
+			}
+		}
+	}
+
+	&.sc-expanded {
+		.sc-notification-actions {
+			background: $grey-200;
+			@include opacity(1);
+			max-height: rem-calc(2000px);
+			visibility: visible;
+
+			> * {
+				visibility: visible;
+				@include opacity(1);
+			}
+		}
+
+		.sc-notification-header-expand {
+			.material-icons {
+				@include transform(rotate(180deg));
+			}
+		}
+
+		&.sc-big-text {
+			.sc-notification-content-text {
+				max-height: rem-calc(2000px);
+				@include opacity(1);
+				visibility: visible;
+			}
+		}
+
+		&.sc-big-picture {
+			.sc-notification-content {
+				&-text {
+					img {
+						visibility: visible;
+						@include opacity(1);
+						width: 100%;
+					}
+				}
+
+				> img {
+					@include opacity(0);
+				}
+			}
+		}
+
+		&.sc-media {
+			.sc-notification-content {
+				height: calc( (#{rem-calc($line-height-body-1+0px)} * 2) + #{$notification-media-icon-size} + #{$notification-content-top} + #{$notification-content-bottom});
+
+				.sc-actions {
+					left: $notification-content-sides;
+					text-align: left;
+					right: auto;
+					top: calc(#{rem-calc($line-height-body-1+0px)} * 2);
+					width: calc(#{$notification-media-icon-size} * 6);
+
+					.material-icons:first-of-type,:last-of-type {
+						visibility: visible;
+						@include square($notification-media-icon-size);;
+						@include opacity(1);
+					}
+				}
+
+				img {
+					@include square(calc((#{rem-calc($line-height-body-1+0px)} * 2)  + #{$notification-media-icon-size}));
+				}
+			}
+		}
+	}
+}

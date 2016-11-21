@@ -1,0 +1,120 @@
+/**************************************
+ * Tables
+ *
+ * http://www.google.com/design/spec/components/data-tables.html
+ **************************************/
+
+$table-header-size: rem-calc(56px);
+$table-content-size: rem-calc(48px);
+$table-column-padding: rem-calc(56px);
+$table-first-column-padding: rem-calc(24px);
+$table-checkbox-size: rem-calc(18px);
+
+table {
+	border-collapse: collapse;
+	white-space: nowrap;
+	overflow: auto;
+	display: block;
+
+	thead th {
+		color: rgba($black, .54);
+		font-size: rem-calc(12px);
+		font-weight: 500;
+		height: $table-header-size;
+		line-height: $table-header-size;
+		text-align: left;
+		padding-right: $table-column-padding;
+		@include box-sizing(border-box);
+
+		&:last-of-type {
+			padding-right: $table-first-column-padding;
+		}
+
+		&:hover {
+			background: none;
+		}
+	}
+
+	tbody td {
+		@include box-sizing(border-box);
+		color: rgba($black, .87);
+		font-size: rem-calc(13px);
+		font-weight: 400;
+		height: $table-content-size;
+		line-height: $table-content-size;
+		text-align: left;
+
+		&:last-of-type {
+			padding: 0 $table-first-column-padding 0 0;
+		}
+	}
+
+	.sc-numeric-col {
+		text-align: right;
+		padding-left: $table-column-padding;
+		padding-right: 0;
+	}
+
+	.sc-checkbox-col {
+		padding: 0 $table-first-column-padding;
+
+		input[type="checkbox"].sc-checkbox + label {
+			padding: 0;
+		}
+	}
+
+	&.sc-table-hover {
+		tbody tr {
+			@include transition(background .2s ease-in-out);
+
+			&:hover {
+				background: $grey-200;
+			}
+		}
+	}
+
+	&.sc-table-responsive {
+		@media #{$medium-down} {
+			width: 100%;
+			border-collapse: collapse;
+			border-spacing: 0;
+			display: block;
+			position: relative;
+
+			thead {
+				display: block;
+				float: left;
+
+				tr {
+					display: block;
+
+					th {
+						display: block;
+						text-align: right;
+						vertical-align: top;
+					}
+				}
+			}
+
+			tbody {
+				display: block;
+				width: auto;
+				position: relative;
+				overflow-x: auto;
+				white-space: nowrap;
+
+				tr {
+					display: inline-block;
+					vertical-align: top;
+
+					td {
+						display: block;
+						text-align: left;
+						vertical-align: top;
+						min-height: $table-header-size;
+					}
+				}
+			}
+		}
+	}
+}

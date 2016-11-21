@@ -1,0 +1,73 @@
+/**************************************
+ * Grid lists
+ *
+ * https://material.google.com/components/grid-lists.html
+ **************************************/
+
+.sc-grid {
+	margin: 0 rem-calc(4px) rem-calc(4px) 0;
+	position: relative;
+	float: left;
+
+	img {
+		position: relative;
+	}
+
+	.sc-grid-header, .sc-grid-footer {
+		position: absolute;
+		left: 0;
+		width: 100%;
+		color: $grid-font-color;
+		padding: rem-calc(16px);
+		background: $grid-background;
+
+		.material-icons {
+			color: $grid-font-color;
+		}
+	}
+
+	.sc-grid-header {
+		top: 0;
+	}
+
+	.sc-grid-footer {
+		bottom: 0;
+	}
+
+	.sc-grid-single {
+		height: rem-calc(48px);
+		font-size: rem-calc(16px);
+	}
+
+	.sc-grid-two {
+		height: rem-calc(68px);
+
+		.sc-first {
+			&-small {
+				font-size: rem-calc(12px);
+			}
+
+			&-large {
+				font-size: rem-calc(16px);
+			}
+		}
+
+		.sc-second {
+			font-size: rem-calc(14px);
+		}
+	}
+
+	.material-icons.sc-action {
+		padding: rem-calc(16px);
+		font-size: rem-calc(16px);
+		cursor: pointer;
+
+		&.sc-left {
+			left: rem-calc(16px);
+		}
+
+		&.sc-right {
+			right: rem-calc(16px);
+		}
+	}
+}

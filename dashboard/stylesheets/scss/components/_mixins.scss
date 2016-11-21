@@ -1,0 +1,242 @@
+@mixin box-shadow( $settings ) {
+	-moz-box-shadow: $settings;
+	-webkit-box-shadow: $settings;
+	-ms-box-shadow: $settings;
+	-o-box-shadow: $settings;
+	box-shadow: $settings;
+}
+
+@mixin border-radius( $settings ) {
+	-webkit-border-radius: $settings;
+	-moz-border-radius: $settings;
+	-ms-border-radius: $settings;
+	-o-border-radius: $settings;
+	border-radius: $settings;
+}
+
+@mixin box-sizing( $settings ) {
+	-webkit-box-sizing: $settings;
+	-moz-box-sizing: $settings;
+	-ms-box-sizing: $settings;
+	-o-box-sizing: $settings;
+	box-sizing: $settings;
+}
+
+@mixin material-shadow( $dp ) {
+	$ambientY: rem-calc( $dp + 0px );
+	$ambientBlur: rem-calc( if( $dp == 1, 3, $dp * 2 ) + 0px );
+	$ambientAlpha: ( $dp + 10 + ( $dp / 9.38 ) ) / 100;
+
+	$directY: rem-calc( if( $dp < 10, if( $dp % 2 == 0, $dp - ( ( $dp / 2 ) - 1 ), ( $dp - ( ( $dp - 1 ) / 2 ) ) ), $dp - 4 ) + 0px );
+	$directBlur: rem-calc( if( $dp == 1, 3, $dp * 2 ) + 0px );
+	$directAlpha: ( 24 - decimal-round( $dp / 10 ) ) / 100;
+
+	@include box-shadow( 0 $ambientY $ambientBlur 0 rgba(0, 0, 0, $ambientAlpha) unquote(',') 0 $directY $directBlur 0 rgba(0, 0, 0, $directAlpha) );
+}
+
+@mixin transition( $settings ) {
+	-webkit-transition: $settings;
+	-moz-transition: $settings;
+	-ms-transition: $settings;
+	-o-transition: $settings;
+	transition: $settings;
+}
+
+@mixin transform( $settings ) {
+	-webkit-transform: $settings;
+	-moz-transform: $settings;
+	-ms-transform: $settings;
+	-o-transform: $settings;
+	transform: $settings;
+}
+
+@mixin animation( $settings ) {
+	-webkit-animation: $settings;
+	-moz-animation: $settings;
+	-ms-animation: $settings;
+	-o-animation: $settings;
+	animation: $settings;
+}
+
+@mixin keyframes( $name ) {
+	@-webkit-keyframes #{$name} {
+		@content;
+	}
+
+	@-moz-keyframes #{$name} {
+		@content;
+	}
+
+	@-o-keyframes #{$name} {
+		@content
+	}
+
+	@keyframes #{$name} {
+		@content;
+	}
+}
+
+@mixin border-top-left-radius( $px ) {
+	-webkit-border-top-left-radius: $px;
+	-moz-border-radius-topleft: $px;
+	border-top-left-radius: $px;
+}
+
+@mixin border-top-right-radius( $px ) {
+	-webkit-border-top-right-radius: $px;
+	-moz-border-radius-topright: $px;
+	border-top-right-radius: $px;
+}
+
+@mixin border-radius-top( $px ) {
+	@include border-top-left-radius( $px );
+	@include border-top-right-radius( $px );
+}
+
+@mixin border-bottom-left-radius( $px ) {
+	-webkit-border-bottom-left-radius: $px;
+	-moz-border-radius-bottomleft: $px;
+	border-bottom-left-radius: $px;
+}
+
+@mixin border-bottom-right-radius( $px ) {
+	-webkit-border-bottom-right-radius: $px;
+	-moz-border-radius-bottomright: $px;
+	border-bottom-right-radius: $px;
+}
+
+@mixin border-radius-bottom( $px ) {
+	@include border-bottom-left-radius( $px );
+	@include border-bottom-right-radius( $px );
+}
+
+@mixin opacity( $settings ) {
+	-webkit-opacity: $settings;
+	opacity: $settings;
+}
+
+@mixin mask( $settings ) {
+	-webkit-mask: $settings;
+	mask: $settings;
+}
+
+@mixin filter( $settings ) {
+	webkit-filter: $settings;
+	-moz-filter: $settings;
+	-o-filter: $settings;
+	-ms-filter: $settings;
+	filter: $settings;
+}
+
+@mixin transition-delay( $setting ) {
+	-webkit-transition-delay: $setting;
+	-moz-transition-delay: $setting;
+	-ms-transition-delay: $setting;
+	transition-delay: $setting;
+}
+
+@mixin button( $border-radius ) {
+	cursor: pointer;
+	@include border-radius( $border-radius );
+	text-decoration: none;
+	border: none;
+	outline: none;
+	display: inline-block;
+	text-align: center;
+	position: relative;
+	text-rendering: optimizeLegibility;
+}
+
+@mixin font( $font-size, $small-font-size, $weight, $leading, $color, $tracking, $transform: inherit ) {
+	font-size: rem-calc($font-size+0px);
+	line-height: rem-calc($leading+0px);
+	letter-spacing: rem-calc($tracking+0px);
+
+	font-weight: $weight;
+	color: $color;
+	text-transform: $transform;
+
+	@if( $small-font-size > 0 ) {
+		@media #{$medium-down} {
+			font-size: rem-calc($small-font-size+0px);
+		}
+	}
+}
+
+@mixin scrollbar() {
+	::-webkit-scrollbar, ::-webkit-scrollbar-track {
+		background: transparent;
+	}
+
+	::-webkit-scrollbar-button, ::-webkit-scrollbar-corner, ::-webkit-resizer {
+		display: none;
+	}
+
+	::-webkit-scrollbar {
+		@include square(rem-calc(3px));
+
+		@media #{$small-up} {
+			@include square(rem-calc(10px));
+		}
+	}
+
+	::-webkit-scrollbar-thumb {
+		background: rgba($black, .2);
+	}
+}
+
+@mixin square( $setting ) {
+	width: $setting;
+	height: $setting;
+}
+
+@mixin transform-origin( $setting ) {
+	-webkit-transform-origin: $setting;
+	-moz-transform-origin: $setting;
+	-ms-transform-origin: $setting;
+	-o-transform-origin: $setting;
+}
+
+@mixin appearance( $setting ) {
+ 	-webkit-appearance: $setting;
+	-moz-appearance: $setting;
+	appearance: $setting;
+}
+
+@mixin range-track() {
+	&::-webkit-slider-runnable-track {
+		@content;
+	}
+
+	&::-moz-range-track {
+		@content;
+	}
+
+	&::-ms-track {
+		@content;
+	}
+}
+
+@mixin range-thumb() {
+	&::-webkit-slider-thumb {
+		@content;
+	}
+
+	&::-moz-range-thumb {
+		@content;
+	}
+
+	&::-ms-thumb {
+		@content;
+	}
+}
+
+@mixin selection() {
+	::-moz-selection {
+		@content;
+	}
+
+	::selection {
+		@content;
+	}
+}

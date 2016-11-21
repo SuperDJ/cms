@@ -1,0 +1,32 @@
+// Create classes for each color
+@each $color-name, $color in $colors {
+	@if( in-array($color-name, $allowed-colors)) {
+		@each $color-type, $color-value in $color {
+			@if $color-type == 'base' {
+				.sc-#{$color-name} {
+					background: $color-value;
+				}
+
+				.sc-#{$color-name}-text {
+					color: $color-value;
+				}
+			} @else if $color-name == 'shades' {
+				.sc-#{$color-type} {
+					background: $color-value;
+				}
+
+				.sc-#{$color-type}-text {
+					color: $color-value;
+				}
+			} @else {
+				.sc-#{$color-name}-#{$color-type} {
+					background: $color-value;
+				}
+
+				.sc-#{$color-name}-#{$color-type}-text {
+					color: $color-value;
+				}
+			}
+		}
+	}
+}

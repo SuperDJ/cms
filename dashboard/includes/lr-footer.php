@@ -1,11 +1,14 @@
-	  		</main>
+					</div>
+				</div>
+			</main>
 
-		<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
-		<script type="text/javascript" src="/dashboard/style/bower_components/foundation-sites/dist/foundation.min.js"></script>
-		<script type="text/javascript" src="/dashboard/style/js/app.js"></script>
-		<script type="text/javascript" src="/dashboard/style/js/core-min.js"></script>
-		<script type="text/javascript" src="/dashboard/style/js/md5-min.js"></script>
-		<script type="text/javascript" src="/dashboard/style/js/enc-base64-min.js"></script>
-		<script type="text/javascript" src="/dashboard/style/js/lr.js"></script>
+			<script type="application/javascript" src="/dashboard/js/vendor.min.js"></script>
+			<script type="application/javascript" src="/dashboard/js/app.min.js"></script>
+
+			<!-- CryptoJS-->
+			<script type="application/javascript" src="/dashboard/js/core-min.js"></script>
+			<script type="application/javascript" src="/dashboard/js/md5-min.js"></script>
+			<script type="application/javascript" src="/dashboard/js/enc-base64-min.js"></script>
+			<script type="application/javascript" src="/dashboard/js/lr.js"></script>
 	</body>
 </html>

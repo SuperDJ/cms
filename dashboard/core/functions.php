@@ -167,6 +167,7 @@ function array_search_multi( $value, array $array ) {
 			$table = $key;
 		}
 	}
+
 	return $table;
 }
 

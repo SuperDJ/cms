@@ -1,0 +1,546 @@
+/**************************************
+ * Navigation drawer
+ *
+ * https://material.google.com/patterns/navigation-drawer.html
+ **************************************/
+
+$drawer-padding: rem-calc(16px);
+$drawer-item-height: rem-calc(48px);
+$drawer-icon-size: rem-calc(24px);
+$drawer-profile-img: rem-calc(40px);
+$drawer-profile-top: $drawer-padding;
+$drawer-profile-content-height: rem-calc(56px);
+$drawer-profile-bottom-padding: rem-calc(8px);
+$drawer-profile-scrim: to top, rgba($grey-900, 0.4) 15%, rgba($white, 0) 33%;
+$drawer-profile-height: $drawer-padding + $drawer-profile-img + $drawer-profile-content-height + $drawer-profile-bottom-padding;
+
+.sc-drawer {
+	position: fixed;
+	left: 0;
+	top: 0;
+	width: $drawer-small-width;
+	height: 100%;
+	overflow: hidden;
+
+	@media #{$medium-only} {
+		width: $drawer-medium-width;
+	}
+
+	/*@media #{$small-down} {
+		&:before {
+			content: '';
+			display: none;
+			position: fixed;
+			margin: 0 0 0 $drawer-small-width;
+			width: 100%;
+			height: 100%;
+			background: rgba($black, .4);
+			@include opacity(0);
+			@include transition(opacity $transition-small-duration $element-enter-transition);
+		}
+	}*/
+
+	&-container {
+		position: relative;
+		height: 100%;
+		bottom: 0;
+		overflow: auto;
+		background: $drawer-background;
+		width: 100%;
+
+		@media #{$medium-only} {
+			@include transition(transform $transition-medium-duration $element-enter-transition);
+		}
+
+		@media #{$medium-up} {
+			@include transition(transform $transition-large-duration $element-enter-transition);
+		}
+	}
+
+	&-permanent-full-height, &-permanent-clipped, &-permanent-floating, &-persistent, &-temporary {
+		margin: 0 0 0 -102%;
+		@include transition(margin $transition-small-duration $basic-transition);
+
+		@media #{$small-up} {
+			margin: 0;
+		}
+
+		@media #{$medium-only} {
+			@include transition(margin $transition-medium-duration $basic-transition);
+		}
+
+		@media #{$medium-up} {
+			@include transition(margin $transition-large-duration $basic-transition);
+		}
+
+		&.sc-expanded {
+			margin: 0;
+		}
+	}
+
+	.sc-drawer-header {
+		position: relative;
+
+		&:hover {
+			background: none;
+		}
+	}
+
+	@if( in-array( 'persistent', $navigation-drawer ) or in_array( 'temporary', $navigation-drawer ) ) {
+		.sc-drawer-header .sc-drawer-profile-more {
+			ul {
+				display: none;
+				top: calc(#{$drawer-item-height} * -1);
+				left: calc((#{$drawer-icon-size} / 2) * -1);
+				padding: rem-calc(8px) 0;
+				@include material-shadow(2);
+				background: $white;
+				@include border-radius(rem-calc(2px));
+				position: relative;
+				z-index: 4;
+				visibility: hidden;
+				@include opacity(0);
+				max-height: 0;
+				width: 100%;
+				margin: rem-calc(16px);
+				@include transition(visibility $transition-small-duration $basic-transition unquote(',') opacity $transition-small-duration $basic-transition unquote(',') max-height $transition-small-duration $basic-transition);
+
+				@media #{$small-up} {
+					margin: rem-calc(24px);
+				}
+
+				@media #{$medium-only} {
+					@include transition(visibility $transition-medium-duration $basic-transition unquote(',') opacity $transition-medium-duration $basic-transition unquote(',') max-height $transition-medium-duration $basic-transition);
+				}
+
+				@media #{$medium-up} {
+					@include transition(visibility $transition-large-duration $basic-transition unquote(',') opacity $transition-large-duration $basic-transition unquote(',') max-height $transition-large-duration $basic-transition);
+				}
+
+				li {
+					height: $drawer-item-height;
+					font-size: rem-calc(16px);
+					padding: 0 rem-calc(16px) rem-calc(20px) rem-calc(16px);
+
+					&:hover {
+						background: none;
+					}
+				}
+			}
+
+			&.sc-expanded {
+				ul {
+					display: block;
+					visibility: visible;
+					@include opacity(1);
+					max-height: 100%;
+				}
+			}
+		}
+	}
+
+	&-permanent {
+		@if( in-array( 'full-height', $navigation-drawer ) ) {
+			&-full-height {
+				top: 0;
+				border-right: rem-calc(1px) solid if($theme == light, rgba($black, .12), rgba($white, .12));
+				z-index: 3;
+
+				.sc-drawer-header {
+					padding: rem-calc(16px) rem-calc(16px) rem-calc(8px) rem-calc(16px);
+					border-bottom: rem-calc(1px) solid if($theme == light, rgba($black, .12), rgba($white, .12));
+					height: $appbar-small-height;
+
+					@media #{$medium-only} {
+						height: $appbar-medium-height;
+					}
+
+					@media #{$medium-up} {
+						height: $appbar-large-height;
+					}
+				}
+			}
+		}
+
+		@if( in-array( 'clipped', $navigation-drawer ) ) {
+			&-clipped {
+				top: $appbar-small-height;
+				z-index: 1;
+				border-right: rem-calc(1px) solid if($theme == light, rgba($black, .12), rgba($white, .12));
+
+				@media #{$medium-only} {
+					top: $appbar-medium-height;
+				}
+
+				@media #{$medium-up} {
+					top: $appbar-large-height;
+				}
+
+				li:first-of-type {
+					margin: $drawer-profile-bottom-padding 0 0 0;
+				}
+			}
+		}
+
+		@if( in-array( 'floating', $navigation-drawer ) ) {
+			&-floating {
+				top: $appbar-small-height;
+				z-index: 1;
+
+				@media #{$medium-only} {
+					top: $appbar-medium-height;
+				}
+
+				@media #{$medium-up} {
+					top: $appbar-large-height;
+				}
+
+				li:first-of-type {
+					margin: $drawer-profile-bottom-padding 0 0 0;
+				}
+			}
+		}
+	}
+
+	@if( in-array( 'persistent', $navigation-drawer ) ) {
+		&-persistent {
+			top: 0;
+			border-right: rem-calc(1px) solid if($theme == light, rgba($black, .12), rgba($white, .12));
+			z-index: 3;
+
+			.sc-drawer-header {
+				height: $appbar-small-height;
+				line-height: $appbar-small-height;
+				margin: 0 0 $drawer-profile-bottom-padding 0;
+				border-bottom: rem-calc(1px) solid if($theme == light, rgba($black, .12), rgba($white, .12));
+
+				@media #{$medium-only} {
+					height: $appbar-medium-height;
+					line-height: $appbar-medium-height;
+				}
+
+				@media #{$medium-up} {
+					height: $appbar-large-height;
+					line-height: $appbar-large-height;
+				}
+
+				> * {
+					float: left;
+				}
+
+				.sc-drawer-profile-img {
+					@include square($drawer-icon-size);
+					margin: 0 calc(#{rem-calc(72px)} - #{$drawer-icon-size} - #{$drawer-padding}) 0 0;
+					@include border-radius(50%);
+					border: rem-calc(1px) solid if($theme == light, rgba($black, .12), rgba($white, .12));
+					top: 50%;
+					position: inherit;
+					@include transform(translate(0, -50%));
+				}
+			}
+		}
+	}
+
+	/*&-persistent-mini {
+		top: $appbar-small-height;
+
+		// Add extra width for scrollbar TODO somehow fix it
+		width: calc( (#{$drawer-padding} * 2) + #{$drawer-icon-size} + #{rem-calc(3px)});
+
+		@media #{$small-up} {
+			width: calc( (#{$drawer-padding} * 2) + #{$drawer-icon-size} + #{rem-calc(10px)});
+		}
+
+		@media #{$medium-only} {
+			top: $appbar-medium-height;
+		}
+
+		@media #{$medium-up} {
+			top: $appbar-large-height;
+		}
+
+		li:first-of-type {
+			margin: rem-calc(8px) 0 0 0;
+		}
+
+		.sc-divider, .sc-arrow, .sc-drawer-profile-name, .sc-drawer-profile-dropdown, .sc-text {
+			display: none;
+		}
+
+		.sc-drawer-header {
+			height: rem-calc(48px);
+			line-height: rem-calc(48px);
+
+			.sc-drawer-profile-img {
+				@include square($drawer-icon-size);
+				margin: 0 calc(#{rem-calc(72px)} - #{$drawer-icon-size} - #{$drawer-padding}) 0 0;
+				@include border-radius(50%);
+				border: rem-calc(1px) solid if($theme == light, rgba($black, .12), rgba($white, .12));
+				top: 50%;
+				position: inherit;
+				@include transform(translate(0, -50%));
+			}
+		}
+
+		&.sc-expanded {
+			width: 100%;
+			top: 0;
+			border-right: rem-calc(1px) solid if($theme == light, rgba($black, .12), rgba($white, .12));
+			z-index: 3;
+
+			.sc-drawer-header {
+				position: relative;
+				height: $appbar-small-height;
+				line-height: $appbar-small-height;
+				margin: 0 0 rem-calc(8px) 0;
+				border-bottom: rem-calc(1px) solid if($theme == light, rgba($black, .12), rgba($white, .12));
+
+				@media #{$medium-only} {
+					height: $appbar-medium-height;
+					line-height: $appbar-medium-height;
+				}
+
+				@media #{$medium-up} {
+					height: $appbar-large-height;
+					line-height: $appbar-large-height;
+				}
+
+				&:hover {
+					background: none;
+				}
+
+				> * {
+					float: left;
+				}
+		   }
+	   }
+	}*/
+
+	@if( in-array( 'temporary', $navigation-drawer ) ) {
+		&-temporary {
+			top: 0;
+			z-index: 3;
+			@include material-shadow(16);
+
+			.sc-drawer-header {
+				padding: 0 0 $drawer-profile-bottom-padding 0;
+				margin: 0 0 $drawer-profile-bottom-padding 0;
+				height: $drawer-profile-height;
+
+				.sc-drawer-profile-background {
+					top: 0;
+					left: 0;
+					width: 100%;
+					height: $drawer-profile-height;
+				}
+
+				.sc-scrim {
+					background: -moz-linear-gradient($drawer-profile-scrim);
+					background: -webkit-linear-gradient($drawer-profile-scrim);
+					background: linear-gradient($drawer-profile-scrim);
+					bottom: $drawer-profile-bottom-padding;
+					content: '';
+					left: 0;
+					position: absolute;
+					right: 0;
+					top: 0;
+					margin: 0 0 -#{$drawer-profile-bottom-padding} 0;
+				}
+
+				.sc-drawer-profile-background, .sc-drawer-profile-img, .sc-drawer-profile-name, .sc-drawer-profile-email, .sc-drawer-profile-more {
+					position: absolute;
+				}
+
+				.sc-drawer-profile-img {
+					top: $drawer-padding;
+					left: $drawer-padding;
+					@include square($drawer-profile-img);
+					@include border-radius(50%);
+				}
+
+				.sc-drawer-profile-name, .sc-drawer-profile-email {
+					line-height: calc(#{$drawer-profile-content-height} / 2);
+					left: $drawer-padding;
+					height: calc(#{$drawer-profile-content-height} / 2);
+					color: $white;
+				}
+
+				.sc-drawer-profile-name {
+					top: calc(#{$drawer-profile-img} + #{$drawer-padding});
+					font-size: rem-calc(14px);
+					font-weight: 500;
+					right: 0;
+				}
+
+				.sc-drawer-profile-email {
+					top: calc(#{$drawer-profile-img} + #{$drawer-padding} + (#{$drawer-profile-content-height} / 2));
+					font-size: rem-calc(14px);
+					font-weight: 400;
+					right: calc(#{$drawer-profile-content-height} + #{$drawer-padding});
+				}
+
+				.sc-drawer-profile-more {
+					height: calc(#{$drawer-profile-content-height} / 2);
+					line-height: $drawer-profile-content-height;
+					right: $drawer-padding;
+					top: calc(#{$drawer-profile-img} + #{$drawer-padding} + (#{$drawer-profile-content-height} / 2));
+					text-align: right;
+
+					.material-icons {
+						margin: calc((#{$drawer-profile-content-height} / 2) * -1) 0 0 0;
+						color: $white;
+					}
+				}
+			}
+
+			&.sc-expanded {
+				margin: 0;
+			}
+		}
+	}
+
+	&.sc-expanded {
+		@media #{$small-down} {
+			&:before {
+				display: block;
+				@include opacity(1);
+			}
+		}
+	}
+
+	ul {
+		list-style-type: none;
+		margin: 0;
+		padding: 0;
+	}
+
+	li {
+		color: rgba($black, .87);
+		font-weight: 500;
+		font-size: rem-calc(14px);
+		height: $drawer-item-height;
+		display: block;
+		padding: 0 $drawer-padding;
+		position: relative;
+
+		&:hover {
+			background: $grey-200;
+		}
+
+		&.sc-subheader {
+			color: rgba($black, .54);
+		}
+
+		&.sc-no-background {
+			background: transparent;
+
+			&:hover {
+				background: transparent;
+			}
+		}
+	}
+
+	ul li ul a {
+		font-weight: 400;
+	}
+
+	a {
+		color: rgba($black, .87);
+		font-weight: 500;
+		width: 100%;
+		display: block;
+		height: $drawer-item-height;
+		font-size: rem-calc(14px);
+		margin: 0 calc(#{$drawer-padding} * -2) 0 calc(#{$drawer-padding} * -1);
+		padding: 0 $drawer-padding;
+
+		&:hover, &.sc-active {
+			color: $main-color;
+
+			.material-icons {
+				color: $main-color;
+			}
+		}
+	}
+
+	.material-icons {
+		@include square($drawer-icon-size);
+		font-size: $drawer-icon-size;
+		vertical-align: middle;
+		color: rgba($black, .54);
+		margin: 0 calc(#{rem-calc(72px)} - #{$drawer-padding} - #{$drawer-icon-size}) 0 0;
+		@include transition(color $transition-small-duration $basic-transition);
+
+		@media #{$medium-only} {
+			@include transition(color $transition-medium-duration $basic-transition);
+		}
+
+		@media #{$medium-up} {
+			@include transition(color $transition-large-duration $basic-transition);
+		}
+	}
+
+	.sc-drawer-dropdown {
+		cursor: pointer;
+		height: auto;
+
+		ul {
+			display: none;
+			visibility: hidden;
+			opacity: 0;
+			max-height: 0;
+			@include transition(visibility $transition-small-duration $basic-transition unquote(',') opacity $transition-small-duration $basic-transition unquote(',') max-height $transition-small-duration $basic-transition);
+
+			@media #{$medium-only} {
+				@include transition(visibility $transition-medium-duration $basic-transition unquote(',') opacity $transition-medium-duration $basic-transition unquote(',') max-height $transition-medium-duration $basic-transition);
+			}
+
+			@media #{$medium-up} {
+				@include transition(visibility $transition-large-duration $basic-transition unquote(',') opacity $transition-large-duration $basic-transition unquote(',') max-height $transition-large-duration $basic-transition);
+			}
+		}
+	}
+
+	.sc-drawer-dropdown.sc-expanded {
+		.sc-arrow {
+			@include transform(rotate(180deg));
+		}
+
+		ul {
+			display: block;
+			visibility: visible;
+			@include opacity(1);
+			max-height: 100%;
+		}
+
+		ul ul {
+			margin: 0 0 0 rem-calc(10px);
+		}
+	}
+
+	.sc-arrow {
+		position: absolute;
+		right: rem-calc(16px);
+		top: calc( (#{$drawer-item-height} - (#{$drawer-item-height} / 2)) - (#{$drawer-icon-size} / 2) );
+		margin: 0;
+		@include transition(all $transition-small-duration $basic-transition);
+
+		@media #{$medium-only} {
+			@include transition(all $transition-medium-duration $basic-transition);
+		}
+
+		@media #{$medium-up} {
+			@include transition(all $transition-large-duration $basic-transition);
+		}
+	}
+
+	.sc-divider {
+		margin: rem-calc(8px) 0;
+		height: rem-calc(1px);
+		background: if($theme == light, rgba($black, .12), rgba($white, .12));
+
+		&:hover {
+			background: none;
+		}
+	}
+}

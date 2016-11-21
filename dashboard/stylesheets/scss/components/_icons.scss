@@ -1,0 +1,149 @@
+/**************************************
+ * Icons
+ *
+ * http://www.google.com/design/spec/style/icons.html
+ * https://design.google.com/icons/
+ **************************************/
+
+.material-icons {
+	font-size: $icon-size;
+	height: $icon-size;
+	vertical-align: $icon-align;
+	width: $icon-size;
+
+	/* Support for all WebKit browsers. */
+	-webkit-font-smoothing: antialiased;
+	/* Support for Safari and Chrome. */
+	text-rendering: optimizeLegibility;
+
+	/* Support for Firefox. */
+	-moz-osx-font-smoothing: grayscale;
+
+	/* Support for IE. */
+	font-feature-settings: 'liga';
+
+	&.sc-18 {
+		font-size: rem-calc(18px);
+	}
+
+	&.sc-24 {
+		font-size: rem-calc(24px);
+	}
+
+	&.sc-36 {
+		font-size: rem-calc(36px);
+	}
+
+	&.sc-48 {
+		font-size: rem-calc(48px);
+	}
+}
+
+/**************************************
+ * Shadow and tint
+ **************************************/
+// Cool
+$blue-tint: mix($white, $blue, 20%);
+$blue-shadow: mix($indigo-900, $blue, 20%);
+
+$indigo-tint: mix($white, $indigo, 20%);
+$indigo-shadow: mix($indigo-900, $indigo, 20%);
+
+$deep-purple-tint: mix($white, $deep-purple, 20%);
+$deep-purple-shadow: mix($indigo-900, $deep-purple, 20%);
+
+$purple-tint: mix($white, $purple, 20%);
+$purple-shadow: mix($indigo-900, $purple, 20%);
+
+// Fresh
+$blue-grey-tint: mix($white, $blue-grey, 20%);
+$blue-grey-shadow: mix($blue-grey-900, $blue-grey, 20%);
+
+$light-blue-tint: mix($white, $light-blue, 20%);
+$light-blue-shadow: mix($blue-grey-900, $light-blue, 20%);
+
+$cyan-tint: mix($white, $cyan, 20%);
+$cyan-shadow: mix($blue-grey-900, $cyan, 20%);
+
+$teal-tint: mix($white, $teal, 20%);
+$teal-shadow: mix($blue-grey-900, $teal, 20%);
+
+$green-tint: mix($white, $green, 20%);
+$green-shadow: mix($blue-grey-900, $green, 20%);
+
+$light-green-tint: mix($white, $light-green, 20%);
+$light-green-shadow: mix($blue-grey-900, $light-green, 20%);
+
+$lime-tint: mix($white, $lime, 20%);
+$lime-shadow: mix($blue-grey-900, $lime, 20%);
+
+// Warm
+$yellow-tint: mix($white, $yellow, 20%);
+$yellow-shadow: mix($deep-orange-900, $yellow, 20%);
+
+$amber-tint: mix($white, $amber, 20%);
+$amber-shadow: mix($deep-orange-900, $amber, 20%);
+
+$orange-tint: mix($white, $orange, 20%);
+$orange-shadow: mix($deep-orange-900, $orange, 20%);
+
+// Hot
+$deep-orange-tint: mix($white, $deep-orange, 20%);
+$deep-orange-shadow: mix($brown-900, $deep-orange, 20%);
+
+$red-tint: mix($white, $red, 20%);
+$red-shadow: mix($brown-900, $red, 20%);
+
+$pink-tint: mix($white, $pink, 20%);
+$pink-shadow: mix($brown-900, $pink, 20%);
+
+$brown-tint: mix($white, $brown, 20%);
+$brown-shadow: mix($brown-900, $brown, 20%);
+
+// Neutral
+$grey-tint: mix($white, $grey, 20%);
+$grey-shadow: mix($grey-900, $grey, 20%);
+
+$tints: (
+	'red-tint': $red-tint,
+	'pink-tint': $pink-tint,
+	'purple-tint': $purple-tint,
+	'deep-purple-tint': $deep-purple-tint,
+	'indigo-tint': $indigo-tint,
+	'blue-tint': $blue-tint,
+	'light-blue-tint': $light-blue-tint,
+	'cyan-tint': $cyan-tint,
+	'teal-tint': $teal-tint,
+	'green-tint': $green-tint,
+	'light-green-tint': $light-green-tint,
+	'lime-tint': $lime-tint,
+	'yellow-tint': $yellow-tint,
+	'amber-tint': $amber-tint,
+	'orange-tint': $orange-tint,
+	'deep-orange-tint': $deep-orange-tint,
+	'brown-tint': $brown-tint,
+	'grey-tint': $grey-tint,
+	'blue-grey-tint': $blue-grey-tint
+);
+
+$shadows: (
+	'red-shadow': $red-shadow,
+	'pink-shadow': $pink-shadow,
+	'purple-shadow': $purple-shadow,
+	'deep-purple-shadow': $deep-purple-shadow,
+	'indigo-shadow': $indigo-shadow,
+	'blue-shadow': $blue-shadow,
+	'light-blue-shadow': $light-blue-shadow,
+	'cyan-shadow': $cyan-shadow,
+	'teal-shadow': $teal-shadow,
+	'green-shadow': $green-shadow,
+	'light-green-shadow': $light-green-shadow,
+	'lime-shadow': $lime-shadow,
+	'yellow-shadow': $yellow-shadow,
+	'amber-shadow': $amber-shadow,
+	'orange-shadow': $orange-shadow,
+	'deep-orange-shadow': $deep-orange-shadow,
+	'brown-shadow': $brown-shadow,
+	'grey-shadow': $grey-shadow,
+	'blue-grey-shadow': $blue-grey-shadow
+);

@@ -1,0 +1,107 @@
+/**************************************
+ * Tabs
+ *
+ * https://material.google.com/components/tabs.html
+ **************************************/
+$tab-indicator-size: rem-calc(2px);
+$tab-height: rem-calc(48px);
+$tab-icon-size: rem-calc(24px);
+$tab-icon-text-height: rem-calc(72px);
+$tab-padding: rem-calc(12px);
+
+.sc-tabs {
+	@include material-shadow(4);
+	background: $tab-color;
+	overflow: auto;
+	overflow-y: hidden;
+	position: fixed;
+	top: $appbar-small-height;
+	width: 100%;
+	z-index: 2;
+	left: 0;
+	right: 0;
+	white-space: nowrap;
+
+	@media #{$medium-only} {
+		width: calc(100% - #{$drawer-medium-width} + #{rem-calc(1px)});
+		left: calc(#{$drawer-medium-width} - #{rem-calc(1px)});
+		top: $appbar-medium-height;
+	}
+
+	@media #{$medium-up} {
+		overflow: hidden;
+		width: calc(100% - #{$drawer-small-width} + #{rem-calc(1px)});
+		left: calc(#{$drawer-small-width} - #{rem-calc(1px)});
+		top: $appbar-large-height;
+	}
+
+	@media #{$large-up} {
+		&:hover {
+			overflow: auto;
+			overflow-y: hidden;
+		}
+	}
+
+	.sc-tab, .sc-tab-icon, .sc-tab-icon-text {
+		border-bottom: $tab-indicator-size solid $tab-color;
+		color: $tab-font-color;
+		display: inline-block;
+		font-size: rem-calc(14px);
+		font-weight: 500;
+		max-width: rem-calc(264px);
+		min-width: rem-calc(72px);
+		text-align: center;
+		text-overflow: ellipsis;
+		text-transform: uppercase;
+		word-wrap: break-word;
+		@include transition(border $transition-small-duration $basic-transition unquote(',') color $transition-small-duration $basic-transition);
+
+		@media #{$medium-only} {
+			@include transition(border $transition-medium-duration $basic-transition unquote(',') color $transition-medium-duration $basic-transition);
+		}
+
+		@media #{$medium-up} {
+			min-width: rem-calc(160px);
+			@include transition(border $transition-large-duration $basic-transition unquote(',') color $transition-large-duration $basic-transition);
+		}
+
+		&:hover, &.sc-active {
+			border-bottom: $tab-indicator-size solid $tab-indicator-on-color;
+			color: $tab-font-on-color;
+		}
+
+		.material-icons {
+			@include square($tab-icon-size);
+			font-size: $tab-icon-size;
+		}
+	}
+
+	@if( in-array( 'tab', $tab ) ) {
+		.sc-tab {
+			height: $tab-height;
+			line-height: $tab-height;
+			padding: 0 $tab-padding rem-calc(20px) $tab-padding;
+		}
+	}
+
+	@if( in-array( 'tab-icon', $tab ) ) {
+		.sc-tab-icon {
+			height: $tab-height;
+			line-height: $tab-height;
+			padding: 0 $tab-indicator-size rem-calc(12px) $tab-indicator-size;
+		}
+	}
+
+	@if( in-array( 'tab-icon-text', $tab ) ) {
+		.sc-tab-icon-text {
+			height: rem-calc(72px);
+			padding: rem-calc(10px) $tab-padding rem-calc(16px) $tab-padding;
+
+			span {
+				display: block;
+				margin: rem-calc(10px) 0 0 0;
+				width: 100%;
+			}
+		}
+	}
+}

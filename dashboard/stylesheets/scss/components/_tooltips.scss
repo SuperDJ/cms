@@ -1,0 +1,78 @@
+/**************************************
+ * Tooltips
+ *
+ * http://www.google.com/design/spec/components/tooltips.html
+ **************************************/
+
+$tooltip-small-top: rem-calc(24px); // Default rem-calc(24px)
+$tooltip-large-top: rem-calc(14px); // Default rem-calc(14px)
+$tooltip-small-height: rem-calc(32px); // Default rem-calc(32px)
+$tooltip-large-height: rem-calc(22px); // Default rem-calc(22px)
+$tooltip-small-padding: 0 rem-calc(16px); // Default 0 rem-calc(16px)
+$tooltip-large-padding: 0 rem-calc(8px); // Default 0 rem-calc(8px)
+
+.sc-tooltip {
+	display: inline;
+	position: relative;
+
+	&:after {
+		content: '';
+		background: $tooltip-background;
+		color: $tooltip-font-color;
+		font-size: rem-calc(14px);
+		font-weight: 500;
+		height: $tooltip-small-height;
+		left: 0;
+		line-height: $tooltip-small-height;
+		margin: 0;
+		padding: $tooltip-small-padding;
+		position: absolute;
+		top: 0;
+		white-space: nowrap;
+		width: auto;
+		z-index: 10;
+		@include opacity(0);
+		visibility: hidden;
+		@include transition(top $transition-small-duration $basic-transition unquote(',')
+							margin $transition-small-duration $basic-transition);
+
+		@media #{$medium-only} {
+			@include transition(top $transition-medium-duration $basic-transition unquote(',')
+								margin $transition-medium-duration $basic-transition);
+		}
+
+		@media #{$medium-up} {
+			font-size: rem-calc(10px);
+			height: $tooltip-large-height;
+			line-height: $tooltip-large-height;
+			padding: $tooltip-large-padding;
+			@include transition(top $transition-large-duration $basic-transition unquote(',')
+								margin $transition-large-duration $basic-transition);
+		}
+	}
+
+	&:hover:after {
+		@include opacity(1);
+		visibility: visible;
+		content: attr(title);
+		top: $tooltip-small-top;
+		margin: $tooltip-small-top 0 0 0;
+
+		@media #{$medium-up} {
+			top: $tooltip-large-top;
+			margin: $tooltip-large-top 0 0 0;
+		}
+	}
+
+	&.sc-raised-button, .sc-flat-button {
+		&:hover:after {
+			top: $raised-size;
+			margin: $tooltip-small-top 0 0 0;
+
+			@media #{$medium-up} {
+				top: $raised-size;
+				margin: $tooltip-large-top 0 0 0;
+			}
+		}
+	}
+}

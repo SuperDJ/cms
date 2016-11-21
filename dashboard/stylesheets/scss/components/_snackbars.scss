@@ -1,0 +1,39 @@
+/**************************************
+ * Snackbars & toasts
+ *
+ * http://www.google.com/design/spec/components/snackbars-toasts.html
+ **************************************/
+
+$snackbar-action-margin: rem-calc(24px);
+
+.sc-snackbar {
+	background: $snackbar-background;
+	bottom: 0;
+	color: $snackbar-font-color;
+	font-size: rem-calc(14px);
+	height: rem-calc(48px);
+	left: 0;
+	overflow: hidden;
+	padding: rem-calc(14px) rem-calc(24px);
+	position: fixed;
+	right: 0;
+
+	@media #{$medium-up} {
+		left: auto;
+		right: auto;
+		min-width: rem-calc(288px);
+		max-width: rem-calc(568px);
+		@include border-radius(rem-calc(2px));
+	}
+
+	&-action {
+		@extend .sc-right;
+		font-weight: 500;
+		margin: 0 0 0 $snackbar-action-margin;
+		text-transform: capitalize;
+
+		@media #{$large-up} {
+			margin: 0 0 0 calc(#{$snackbar-action-margin} * 2);
+		}
+	}
+}
