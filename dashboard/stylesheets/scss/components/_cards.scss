@@ -12,6 +12,7 @@
 	padding: 0;
 	position: relative;
 	@include transition(box-shadow $transition-small-duration $basic-transition);
+	background: $card-background;
 
 	&:hover {
 		@include material-shadow(8);

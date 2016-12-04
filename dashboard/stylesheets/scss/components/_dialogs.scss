@@ -6,7 +6,7 @@
 
 .sc-dialog {
 	@include material-shadow(24);
-	background: $white;
+	background: $dialog-background;
 	display: none;
 	//max-width: 50%;
 	position: fixed;

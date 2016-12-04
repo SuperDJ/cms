@@ -237,6 +237,10 @@ $drawer-profile-height: $drawer-padding + $drawer-profile-img + $drawer-profile-
 					position: inherit;
 					@include transform(translate(0, -50%));
 				}
+
+				.sc-drawer-profile-name {
+					color: if( $theme == light, '', $white);
+				}
 			}
 		}
 	}
@@ -424,7 +428,7 @@ $drawer-profile-height: $drawer-padding + $drawer-profile-img + $drawer-profile-
 		position: relative;
 
 		&:hover {
-			background: $grey-200;
+			background: if( $theme == light, $grey-200, rgba($black, .1));
 		}
 
 		&.sc-subheader {
@@ -445,7 +449,7 @@ $drawer-profile-height: $drawer-padding + $drawer-profile-img + $drawer-profile-
 	}
 
 	a {
-		color: rgba($black, .87);
+		color: if( $theme == light, rgba($black, .87), rgba($white, .7));
 		font-weight: 500;
 		width: 100%;
 		display: block;
@@ -453,12 +457,21 @@ $drawer-profile-height: $drawer-padding + $drawer-profile-img + $drawer-profile-
 		font-size: rem-calc(14px);
 		margin: 0 calc(#{$drawer-padding} * -2) 0 calc(#{$drawer-padding} * -1);
 		padding: 0 $drawer-padding;
+		@include transition(color $transition-small-duration $basic-transition);
+
+		@media #{$medium-only} {
+			@include transition(color $transition-medium-duration $basic-transition);
+		}
+
+		@media #{$medium-up} {
+			@include transition(color $transition-large-duration $basic-transition);
+		}
 
 		&:hover, &.sc-active {
-			color: $main-color;
+			color: if( $theme == light, $main-color, $white);
 
 			.material-icons {
-				color: $main-color;
+				color: if( $theme == light, $main-color, $white);
 			}
 		}
 	}
@@ -467,7 +480,7 @@ $drawer-profile-height: $drawer-padding + $drawer-profile-img + $drawer-profile-
 		@include square($drawer-icon-size);
 		font-size: $drawer-icon-size;
 		vertical-align: middle;
-		color: rgba($black, .54);
+		color: if( $theme == light, rgba($black, .54), rgba($white, .5));
 		margin: 0 calc(#{rem-calc(72px)} - #{$drawer-padding} - #{$drawer-icon-size}) 0 0;
 		@include transition(color $transition-small-duration $basic-transition);
 

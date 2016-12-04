@@ -11,18 +11,29 @@ class Database {
 
 	function __construct() {
 		// Credentials
-		$this->_db = json_decode( file_get_contents( ROOT.'credentials.json' ) );
+		if( file_exists( ROOT.'credentials.json' ) ) {
+			$this->_db = json_decode( file_get_contents( ROOT.'credentials.json' ) );
 
-		$this->mysqli = new mysqli($this->_db->database->host, $this->_db->database->username, $this->_db->database->password, $this->_db->database->database);
+			// Get connection
+			$this->connect();
+		} else {
+			echo 'Could not connect to db';
+		}
+	}
 
-		if( !$this->mysqli ) {
-			echo $this->mysqli->error;
+	private function connect() {
+		$mysqli = new mysqli( $this->_db->database->host, $this->_db->database->username, $this->_db->database->password, $this->_db->database->database );
+
+		if( !$mysqli ) {
+			echo $mysqli->error;
 		}
 
 		// Set database character set
-		if( !$this->mysqli->set_charset('utf8') ) {
-			echo $this->mysqli->error;
+		if( !$mysqli->set_charset( 'utf8' ) ) {
+			echo $mysqli->error;
 		}
+
+		$this->mysqli = $mysqli;
 	}
 
 	/**

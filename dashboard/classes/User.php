@@ -11,7 +11,7 @@ class User extends Database {
 			$this->_id = (int)base64_decode( $_SESSION['user'] );
 
 			// Check if user data already has been stored
-			if( !empty( $this->data ) ) {
+			if( empty( $this->data ) ) {
 				$this->data = $this->data($this->_id);
 			}
 		}
@@ -107,6 +107,36 @@ class User extends Database {
 		} else {
 			header( 'Location: '.$url );
 			exit();
+		}
+	}
+
+	public function data( $id ) {
+		if( empty( $id ) ) {
+			return false;
+		} else {
+			$stmt = $this->mysqli->prepare("SELECT `id`, `first_name`, `last_name`, `email`, `register_date`, `active_date` FROM `users` WHERE `id` = ?");
+			$stmt->bind_param('i', $id);
+			$stmt->execute();
+			$stmt->bind_result($userID, $first_name, $last_name, $email, $register_date, $active_date);
+
+			// Set all data in array
+			$data = array();
+			while( $stmt->fetch() ) {
+				$data['id'] = $userID;
+				$data['first_name'] = $first_name;
+				$data['last_name'] = $last_name;
+				$data['email'] = $email;
+				$data['register_date'] = $register_date;
+				$data['active_date'] = $active_date;
+			}
+
+ 			if( !empty( $data ) ) {
+				$stmt->close();
+				return $data;
+			} else {
+				$stmt->close();
+				return false;
+			}
 		}
 	}
 

@@ -1,17 +1,28 @@
 <?php
 class Plugins extends Database {
 	private $_dir, // Plugins location
-			$_plugins = array(); // All installed plugins
+			$_dirPlugins = array(), // All installed plugins from plugins folder
+			$_dbPlugins = array(); // All plugins from database
 
-	public 	$plugins = array(), // All plugins from database
-			$path;
+	public 	$path,  // Current path
+			$dirPlugins,
+			$dbPlugins,
+			$menu = array(); // Create menu
 
 	function __construct( $path ) {
 		parent::__construct();
 
 		$this->_dir = ROOT.'plugins';
-		$this->_plugins = $this->get($this->_dir); // Get all installed plugins
+		$this->_dirPlugins = $this->get($this->_dir); // Get all installed plugins
 		$this->path = $path; // Save path
+
+		// TODO Check if all plugins are still installed else delete
+		$this->insert( $this->_dirPlugins );
+		$this->_dbPlugins = $this->dbPlugins();
+		$this->menu = $this->createMenu($this->_dbPlugins);
+
+		$this->dirPlugins = $this->_dirPlugins;
+		$this->dbPlugins = $this->_dbPlugins;
 	}
 
 	/**
@@ -36,6 +47,61 @@ class Plugins extends Database {
 		}
 
 		return $result;
+	}
+
+	private function insert( array $plugins, $parent = '', $parentID = '' ) {
+		if( empty( $parentID ) ) {
+			$parentID = 0;
+		}
+
+		foreach( $plugins as $key => $value ) {
+			if( is_array( $value ) ) {
+				$url = $parent.$key.'/';
+
+				if( !$this->exists('url', 'plugins', 'url', $url) ) {
+					$plugin = ucfirst( $key );
+
+					$stmt = $this->mysqli->prepare( "INSERT INTO `plugins` (`plugin`, `parent`, `url`) VALUES (?, ?, ?)" );
+					$stmt->bind_param( 'sis', $plugin, $parentID, $url );
+					$stmt->execute();
+
+					$this->insert($value, $url, $stmt->insert_id);
+
+					$stmt->close();
+				} else {
+					$this->insert($value, $url, $this->detail('id', 'plugins', 'url', $url));
+				}
+			} else {
+				$url = $parent.substr( $value, 0, -4 );
+
+				if( !$this->exists('url', 'plugins', 'url', $url) ) {
+					$plugin = ucfirst( substr( $value, 0, -4 ) );
+
+					$stmt = $this->mysqli->prepare( "INSERT INTO `plugins` (`plugin`, `parent`, `url`) VALUES (?, ?, ?)" );
+					$stmt->bind_param( 'sis', $plugin, $parentID, $url );
+					$stmt->execute();
+					$stmt->close();
+				}
+			}
+		}
+	}
+
+	private function dbPlugins() {
+		$stmt = $this->mysqli->prepare( "SELECT `id`, `name`, `parent`, `icon`, `url`, `visible`, `sort` FROM `plugins`" );
+		$stmt->execute();
+		$result = $stmt->get_result();
+
+		$data = array();
+		while( $row = $result->fetch_assoc() ) {
+			$data[$row['id']] = $row;
+		}
+		$stmt->close();
+
+		if( !empty( $data ) ) {
+			return $data;
+		} else {
+			return false;
+		}
 	}
 
 	/**
@@ -102,5 +168,9 @@ class Plugins extends Database {
 		} else {
 			return ROOT.'includes/footer.php';
 		}
+	}
+
+	public function createMenu( $plugins ) {
+		return $plugins;
 	}
 }
