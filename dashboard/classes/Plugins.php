@@ -1,32 +1,32 @@
 <?php
 class Plugins extends Database {
 	private $_dir, // Plugins location
-			$_dirPlugins = array(), // All installed plugins from plugins folder
-			$_dbPlugins = array(); // All plugins from database
+			$_directory = array(), // All installed plugins from plugins folder
+			$_database = array(); // All plugins from database
 
 	public 	$path,  // Current path
-			$dirPlugins,
-			$dbPlugins,
-			$menu = array(); // Create menu
+			$directory,
+			$database,
+			$menu; // Store menu
 
-	function __construct( $path ) {
+	function __construct( $path, callable $translate ) {
 		parent::__construct();
 
 		$this->_dir = ROOT.'plugins';
-		$this->_dirPlugins = $this->get($this->_dir); // Get all installed plugins
+		$this->_directory = $this->get($this->_dir); // Get all installed plugins
 		$this->path = $path; // Save path
 
 		// TODO Check if all plugins are still installed else delete
-		$this->insert( $this->_dirPlugins );
-		$this->_dbPlugins = $this->dbPlugins();
-		$this->menu = $this->createMenu($this->_dbPlugins);
+		$this->insert( $this->_directory );
+		$this->_database = $this->database();
+		$this->menu = $this->createMenu($this->buildTree($this->_database), $translate);
 
-		$this->dirPlugins = $this->_dirPlugins;
-		$this->dbPlugins = $this->_dbPlugins;
+		$this->directory = $this->_directory;
+		$this->database = $this->_database;
 	}
 
 	/**
-	 * Get installed plugins
+	 * Get installed plugins from directory
 	 *
 	 * @param $dir
 	 *
@@ -49,11 +49,14 @@ class Plugins extends Database {
 		return $result;
 	}
 
+	/**
+	 * Insert plugins into database
+	 *
+	 * @param array  	$plugins 	All Plugins
+	 * @param string	$parent		Parent plugin name
+	 * @param string 	$parentID	Parent plugin id
+	 */
 	private function insert( array $plugins, $parent = '', $parentID = '' ) {
-		if( empty( $parentID ) ) {
-			$parentID = 0;
-		}
-
 		foreach( $plugins as $key => $value ) {
 			if( is_array( $value ) ) {
 				$url = $parent.$key.'/';
@@ -86,7 +89,7 @@ class Plugins extends Database {
 		}
 	}
 
-	private function dbPlugins() {
+	private function database() {
 		$stmt = $this->mysqli->prepare( "SELECT `id`, `name`, `parent`, `icon`, `url`, `visible`, `sort` FROM `plugins`" );
 		$stmt->execute();
 		$result = $stmt->get_result();
@@ -170,7 +173,40 @@ class Plugins extends Database {
 		}
 	}
 
-	public function createMenu( $plugins ) {
-		return $plugins;
+	private function buildTree( array $elements, $parentId = 0 ) {
+		$branch = array();
+
+		foreach( $elements as $element ) {
+			if( $element['parent'] == $parentId ) {
+				$children = $this->buildTree( $elements, $element['id'] );
+
+				if( $children ) {
+					$element['children'] = $children;
+				}
+
+				$branch[] = $element;
+			}
+		}
+
+		return $branch;
+	}
+
+	public function createMenu( array $plugins, callable $translate ) {
+		$html = "";
+		foreach( $plugins as $fields => $field ) {
+			if( !empty( $field['children'] ) ) {
+				$html .= "<li class=\"sc-drawer-dropdown\">{$translate( $field['name'] )}<ul>\r\n";
+				$html .= $this->createMenu($field['children']);
+				$html .= "</ul>\r\n";
+			} else {
+				$html .= "<li><a href=\" {$field['url']}\">{$translate( $field['name'] )}</a></li>\r\n";
+			}
+		}
+
+		if( !empty( $html ) ) {
+			return $html;
+		} else {
+			return false;
+		}
 	}
 }

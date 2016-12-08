@@ -54,9 +54,9 @@ if( !empty( $_GET['language'] ) ) {
 	}
 } else { // If the $_GET[] isn't set or is empty
 	// If a user is logged in set the desired language
-	if( $user->isLoggedIn() ) {
+	/*if( $user->isLoggedIn() ) {
 		$session->set('language', $user->data['language']);
-	}
+	}*/
 
 	// If session doesn't exists
 	if( !$session->exists('language') ) {

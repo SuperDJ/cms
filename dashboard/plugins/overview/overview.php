@@ -70,8 +70,7 @@ if( !$user->isLoggedIn() ) {
                         </li>
                         <li><a href="?path=overview/overview"><i class="material-icons">home</i> Home</a></li>
                         <?php
-                        echo 'menu: ';
-                        print_r($plugins->menu);
+                        echo $plugins->menu;
                         ?>
                     </ul>
                 </nav>
