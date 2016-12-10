@@ -5,7 +5,7 @@ if( !$user->isLoggedIn() ) {
 	$title = $language->translate( 'Overview' );
 ?>
     <!DOCTYPE html>
-    <html lang="EN">
+    <html lang="EN"><!-- TODO make language dynamic -->
         <head>
             <title><?php echo $title ?></title>
 
@@ -57,7 +57,7 @@ if( !$user->isLoggedIn() ) {
                     <ul>
                         <li class="sc-drawer-header">
                             <img src="/dashboard/stylesheets/images/profile.jpg" alt="Profile image" class="sc-drawer-profile-img">
-                            <div class="sc-drawer-profile-name"><?php echo substr($user->data['first_name'], 0, 1).'. '.$user->data['last_name']; ?></div>
+                            <div class="sc-drawer-profile-name"><?php echo substr( $user->data['first_name'], 0, 1 ).'. '.$user->data['last_name']; ?></div>
                             <div id="sc-drawer-profile-more" class="sc-drawer-profile-more">
                                 <i class="material-icons sc-trigger" data-sc-trigger="sc-drawer-profile-more">arrow_drop_down</i>
 
@@ -70,7 +70,7 @@ if( !$user->isLoggedIn() ) {
                         </li>
                         <li><a href="?path=overview/overview"><i class="material-icons">home</i> Home</a></li>
                         <?php
-                        echo $plugins->menu;
+                        echo $plugins->createMenu( $plugins->menu, [ $language, 'translate' ], $plugins->path );
                         ?>
                     </ul>
                 </nav>

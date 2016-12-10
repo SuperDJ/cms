@@ -1,8 +1,6 @@
 <?php
 if( $user->isLoggedIn() ) {
-	echo 2;
-	die();
-	//$user->to('?path=overview/overview');
+	$user->to('?path=overview/overview');
 } else {
 	// Define page title
 	$title = $language->translate('Login');

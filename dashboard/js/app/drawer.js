@@ -1,9 +1,24 @@
 $(document).ready(function() {
-	var $drawer = $('#sc-drawer');
+	$('#sc-drawer').find('.sc-active').closest('ul').closest('li').addClass('sc-expanded');
 
-	$drawer.find('li.sc-drawer-dropdown').each(function() {
+	$('.sc-drawer-dropdown').click(function() {
+		var $this = $(this);
+
+		if($this.hasClass( 'sc-expanded' ) ) {
+			$this.removeClass( 'sc-expanded' );
+		} else {
+			$this.addClass( 'sc-expanded' );
+		}
+	});
+
+	/*$drawer.find('li.sc-drawer-dropdown').each(function() {
 		var $this = $(this),
-			$arrow = $this.find('.material-icons');
+			$arrow = $this.find('.material-icons'),
+			$sub = $this.find('.sc-drawer-dropdown');
+
+		if( $sub !== undefined ) {
+			$sub.removeClass('sc-expanded');
+		}
 
 		if( $arrow !== undefined ) {
 			$arrow.addClass('sc-arrow');
@@ -16,9 +31,7 @@ $(document).ready(function() {
 				$this.addClass('sc-expanded');
 			}
 		});
-	});
-
-	$drawer.find('.sc-active').closest('ul').closest('li').addClass('sc-expanded');
+	});*/
 
 	/*$('#sc-nav-button').click(function() {
 		var $trigger = $(this).data('sc-trigger'),

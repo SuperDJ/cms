@@ -1,8 +1,6 @@
 <?php
 if( $user->isLoggedIn() ) {
-	echo 1;
-	die();
-	//$user->to('?path=overview/overview');
+	$user->to('?path=overview/overview');
 } else {
 	$title = $language->translate('Register');
 

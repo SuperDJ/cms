@@ -9,7 +9,7 @@ class Plugins extends Database {
 			$database,
 			$menu; // Store menu
 
-	function __construct( $path, callable $translate ) {
+	function __construct( $path ) {
 		parent::__construct();
 
 		$this->_dir = ROOT.'plugins';
@@ -19,7 +19,7 @@ class Plugins extends Database {
 		// TODO Check if all plugins are still installed else delete
 		$this->insert( $this->_directory );
 		$this->_database = $this->database();
-		$this->menu = $this->createMenu($this->buildTree($this->_database), $translate);
+		$this->menu = $this->buildTree($this->_database);
 
 		$this->directory = $this->_directory;
 		$this->database = $this->_database;
@@ -76,6 +76,10 @@ class Plugins extends Database {
 				}
 			} else {
 				$url = $parent.substr( $value, 0, -4 );
+
+				if( empty( $parentID ) ) {
+					$parentID = $this->detail('id', 'plugins', 'url', $url);
+				}
 
 				if( !$this->exists('url', 'plugins', 'url', $url) ) {
 					$plugin = ucfirst( substr( $value, 0, -4 ) );
@@ -191,15 +195,21 @@ class Plugins extends Database {
 		return $branch;
 	}
 
-	public function createMenu( array $plugins, callable $translate ) {
-		$html = "";
+	public function createMenu( array $plugins, callable $translate, $url ) {
+		$html = '';
+
 		foreach( $plugins as $fields => $field ) {
 			if( !empty( $field['children'] ) ) {
-				$html .= "<li class=\"sc-drawer-dropdown\">{$translate( $field['name'] )}<ul>\r\n";
-				$html .= $this->createMenu($field['children']);
-				$html .= "</ul>\r\n";
+				$html .= '<li class="sc-drawer-dropdown">'.$translate( $field['name'] ).'<ul>';
+				$html .= $this->createMenu( $field['children'], $translate, $url );
+				$html .= '</ul>';
 			} else {
-				$html .= "<li><a href=\" {$field['url']}\">{$translate( $field['name'] )}</a></li>\r\n";
+				$html .= '	<li>
+								<a href="?path='.$field['url'].'" '.( $url == $field['url'] ? 'class="sc-active"' : '' ).'>
+									'.( !empty( $field['icon'] ) ? '<i class="material-icons">'.$field['icon'].'</i>' : '' ).'
+									'.$translate( $field['name'] ).'
+								</a>
+							</li>';
 			}
 		}
 

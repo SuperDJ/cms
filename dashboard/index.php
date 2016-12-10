@@ -4,7 +4,7 @@ require_once $_SERVER['DOCUMENT_ROOT'].'/dashboard/core/engine.php';
 // Check if path has been set
 if( !empty( $_GET['path'] ) ) {
  	$path = $db->sanitize( $_GET['path'] );
-	$plugins = new Plugins($path, [$language, 'translate']);
+	$plugins = new Plugins( $path, [ $language, 'translate' ] );
 
 	// Check if path exists
 	if( $plugins->check($plugins->path) ) {
