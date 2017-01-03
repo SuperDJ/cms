@@ -27,11 +27,8 @@ function getClientIP() {
  * @return array Array with differences
  */
 function array_diff_multi( array $array1, array $array2 ) {
-	if( !is_array( $array1 ) && !is_array( $array2 ) ) {
-		return false;
-	}
-
 	$result = array();
+
 	foreach( $array1 as $key => $val ) {
 		if( isset( $array2[$key] ) ) {
 			if( is_array( $val ) && $array2[$key] ) {
@@ -73,16 +70,12 @@ function listArray( array $array ) {
 /**
  * From multidimensional array to single array
  *
- * @param array $array  The array to flatten
- * @param array  $return The single array
+ * @param array  $array  	The array to flatten
+ * @param array  $return 	The single array
  *
  * @return array The single array
  */
-function array_flatten( array $array, $return = array() ) {
-	if( !is_array( $array ) ) {
-		return false;
-	}
-
+function array_flatten( array $array, array $return = array() ) {
 	foreach( $array as $key => $value ) {
 		if( is_array( $value ) ) {
 			$return[] = $key;
@@ -243,4 +236,38 @@ function is_serialized( $data, $strict = true ) {
 			break;
 	}
 	return false;
+}
+
+/**
+ * Recursive array_diff_assoc
+ *
+ * @param $array1	array	Array to compare
+ * @param $array2	array	Array to compare
+ *
+ * @return bool
+ */
+function array_diff_assoc_recursive( array $array1, array $array2 ) {
+	foreach( $array1 as $key => $value ) {
+		if( is_array( $value ) ) {
+			if( !isset( $array2[$key] ) ) {
+				$difference[$key] = $value;
+			} else if( !is_array( $array2[$key] ) ) {
+				$difference[$key] = $value;
+			} else {
+				$new_diff = array_diff_assoc_recursive( $value, $array2[$key] );
+
+				if( $new_diff != false ) {
+					$difference[$key] = $new_diff;
+				}
+			}
+		} else if( !isset( $array2[$key] ) || $array2[$key] != $value ) {
+			$difference[$key] = $value;
+		}
+	}
+
+	if( !isset( $difference) ) {
+		return false;
+	} else {
+		return $difference;
+	}
 }

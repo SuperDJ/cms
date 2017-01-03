@@ -1,28 +1,36 @@
 <?php
+/*
+ * TODO minimize amount of functions
+ */
 class Plugins extends Database {
 	private $_dir, // Plugins location
 			$_directory = array(), // All installed plugins from plugins folder
 			$_database = array(); // All plugins from database
 
 	public 	$path,  // Current path
-			$directory,
-			$database,
 			$menu; // Store menu
 
 	function __construct( $path ) {
 		parent::__construct();
 
 		$this->_dir = ROOT.'plugins';
-		$this->_directory = $this->get($this->_dir); // Get all installed plugins
 		$this->path = $path; // Save path
 
 		// TODO Check if all plugins are still installed else delete
-		$this->insert( $this->_directory );
-		$this->_database = $this->database();
-		$this->menu = $this->buildTree($this->_database);
+		$this->_directory = $this->get($this->_dir); // Get all installed plugins from directory
+		$this->_database = $this->database(); // Get all installed plugins from database
 
-		$this->directory = $this->_directory;
-		$this->database = $this->_database;
+		if( $this->compare( $this->_directory, $this->_database ) ) {
+			// Insert
+			echo 'insert';
+		} else {
+			// Delete
+			echo 'delete';
+		}
+
+		$this->insert( $this->_directory );
+
+		$this->menu = $this->buildTree($this->_database);
 	}
 
 	/**
@@ -64,7 +72,7 @@ class Plugins extends Database {
 				if( !$this->exists('url', 'plugins', 'url', $url) ) {
 					$plugin = ucfirst( $key );
 
-					$stmt = $this->mysqli->prepare( "INSERT INTO `plugins` (`plugin`, `parent`, `url`) VALUES (?, ?, ?)" );
+					$stmt = $this->mysqli->prepare( "INSERT INTO `plugins` (`name`, `parent`, `url`) VALUES (?, ?, ?)" );
 					$stmt->bind_param( 'sis', $plugin, $parentID, $url );
 					$stmt->execute();
 
@@ -84,13 +92,39 @@ class Plugins extends Database {
 				if( !$this->exists('url', 'plugins', 'url', $url) ) {
 					$plugin = ucfirst( substr( $value, 0, -4 ) );
 
-					$stmt = $this->mysqli->prepare( "INSERT INTO `plugins` (`plugin`, `parent`, `url`) VALUES (?, ?, ?)" );
+					$stmt = $this->mysqli->prepare( "INSERT INTO `plugins` (`name`, `parent`, `url`) VALUES (?, ?, ?)" );
 					$stmt->bind_param( 'sis', $plugin, $parentID, $url );
 					$stmt->execute();
 					$stmt->close();
 				}
 			}
 		}
+	}
+
+	private function dirArray( array $plugins, $parent = '', $i = 0, $url = array() ) {
+		foreach( $plugins as $key => $item ) {
+			$i++;
+			if( is_array( $item ) ) {
+				$url[][] = $parent.$key.'/';
+				$url[] = $this->dirArray( $item, $parent.$key.'/', $i );
+			} else {
+				$url[][] = $parent.substr( $item, 0, -4 );
+			}
+		}
+
+		if( !empty( $url ) ) {
+			return $url;
+		} else {
+			return false;
+		}
+	}
+
+	public function compare( array $dirPlugins, array $dbPlugins ) {
+		$dirPlugins = array_flatten( $this->dirArray( $dirPlugins ) );
+		$dbPlugins = array_column( $dbPlugins, 'url' );
+
+		print_r($dirPlugins);
+		print_r($dbPlugins);
 	}
 
 	private function database() {
@@ -100,7 +134,7 @@ class Plugins extends Database {
 
 		$data = array();
 		while( $row = $result->fetch_assoc() ) {
-			$data[$row['id']] = $row;
+			$data[] = $row;
 		}
 		$stmt->close();
 
@@ -195,6 +229,15 @@ class Plugins extends Database {
 		return $branch;
 	}
 
+	/**
+	 * Generate menu items
+	 *
+	 * @param array    $plugins
+	 * @param callable $translate
+	 * @param          $url
+	 *
+	 * @return bool|string
+	 */
 	public function createMenu( array $plugins, callable $translate, $url ) {
 		$html = '';
 

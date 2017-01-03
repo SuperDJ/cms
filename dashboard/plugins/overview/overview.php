@@ -68,7 +68,6 @@ if( !$user->isLoggedIn() ) {
                                 </ul>
                             </div>
                         </li>
-                        <li><a href="?path=overview/overview"><i class="material-icons">home</i> Home</a></li>
                         <?php
                         echo $plugins->createMenu( $plugins->menu, [ $language, 'translate' ], $plugins->path );
                         ?>
