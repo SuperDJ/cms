@@ -17,18 +17,11 @@ table {
 	display: block;
 
 	thead th {
-		color: rgba($black, .54);
+		color: if( $theme == light, rgba($black, .54), rgba($white, .54));
 		font-size: rem-calc(12px);
 		font-weight: 500;
 		height: $table-header-size;
 		line-height: $table-header-size;
-		text-align: left;
-		padding-right: $table-column-padding;
-		@include box-sizing(border-box);
-
-		&:last-of-type {
-			padding-right: $table-first-column-padding;
-		}
 
 		&:hover {
 			background: none;
@@ -36,16 +29,24 @@ table {
 	}
 
 	tbody td {
-		@include box-sizing(border-box);
-		color: rgba($black, .87);
+		color: if( $theme == light, rgba($black, .87), rgba($white, .87));
 		font-size: rem-calc(13px);
 		font-weight: 400;
 		height: $table-content-size;
 		line-height: $table-content-size;
+	}
+
+	tbody td, thead th {
 		text-align: left;
+		@include box-sizing(border-box);
+		padding-right: $table-column-padding;
+
+		&:first-of-type {
+			padding-left: $table-first-column-padding;
+		}
 
 		&:last-of-type {
-			padding: 0 $table-first-column-padding 0 0;
+			padding-right: $table-first-column-padding;
 		}
 	}
 
@@ -68,7 +69,7 @@ table {
 			@include transition(background .2s ease-in-out);
 
 			&:hover {
-				background: $grey-200;
+				background: if( $theme == light, $grey-200, $grey-700);
 			}
 		}
 	}

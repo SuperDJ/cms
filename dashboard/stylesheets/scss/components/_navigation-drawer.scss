@@ -419,7 +419,7 @@ $drawer-profile-height: $drawer-padding + $drawer-profile-img + $drawer-profile-
 	}
 
 	li {
-		color: rgba($black, .87);
+		color: if( $theme == light, rgba($black, .87), rgba($white, .87));
 		font-weight: 500;
 		font-size: rem-calc(14px);
 		height: $drawer-item-height;
@@ -428,7 +428,7 @@ $drawer-profile-height: $drawer-padding + $drawer-profile-img + $drawer-profile-
 		position: relative;
 
 		&:hover {
-			background: if( $theme == light, $grey-200, rgba($black, .1));
+			background: if( $theme == light, $grey-200, lighten($black, 10));
 		}
 
 		&.sc-subheader {

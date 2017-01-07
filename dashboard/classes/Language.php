@@ -30,8 +30,10 @@ class Language extends Database {
 	}
 
 	public function addLanguage( array $data ) {
+		$user = base64_decode( $_SESSION['user'] );
+
 		$stmt = $this->mysqli->prepare("INSERT INTO `languages` (`language`, `iso_code`, `edited_by`) VALUES (?, ?, ?)");
-		$stmt->bind_param("ssi", $data['language'], $data['iso_code'], $data['user']);
+		$stmt->bind_param("ssi", $data['language'], $data['iso_code'], $user);
 		$stmt->execute();
 
 		if( $stmt->affected_rows >= 1 ) {
@@ -74,29 +76,28 @@ class Language extends Database {
 	}
 
 	/**
-	 * Get all languages and there data
+	 * Get all languages and their data
 	 *
 	 * @param $id
 	 *
 	 * @return array|bool
 	 */
 	public function data( $id = null ) {
-		if( is_null( $id ) ) {
+		/*if( is_null( $id ) ) {
 			$stmt = $this->mysqli->prepare("SELECT `id`, `language`, `iso_code`, `edited_by` FROM `languages`");
 		} else {
 			$stmt = $this->mysqli->prepare("SELECT `id`, `language`, `iso_code`, `edited_by` FROM `languages` WHERE `id` = ?");
 			$stmt->bind_param('i', $id);
 		}
-
 		$stmt->execute();
 
 		if( $stmt->num_rows >= 1 ) {
 			$data = array();
-
-			while( $row = $stmt->fetch_assoc ) {
+			while( $row = $stmt->fetch_assoc() ) {
 				$data[] = $row;
 			}
 
+			$stmt->close();
 			if( !empty( $data ) ) {
 				return $data;
 			}  else {
@@ -104,10 +105,6 @@ class Language extends Database {
 			}
 		} else {
 			return false;
-		}
-	}
-
-	private function dataTranslation() {
-		$stmt = $this->mysqli->prepare("SELECT ");
+		}*/
 	}
 }

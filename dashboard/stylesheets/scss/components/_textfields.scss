@@ -15,6 +15,7 @@ $textfield-border-size: rem-calc(2px);
 		border-bottom: $textfield-border-size solid $grey;
 		outline: none;
 		position: absolute;
+		background: none;
 		width: 100%;
 		@include transition(all $transition-small-duration $basic-transition);
 

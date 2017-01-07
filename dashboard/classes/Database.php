@@ -21,17 +21,20 @@ class Database {
 		}
 	}
 
+	/**
+	 * Create database connection
+	 */
 	private function connect() {
-		$mysqli = new mysqli( $this->_db->database->host, $this->_db->database->username, $this->_db->database->password, $this->_db->database->database );
-
+		//$mysqli = new mysqli( $this->_db->database->host, $this->_db->database->username, $this->_db->database->password, $this->_db->database->database );
+		$mysqli = new PDO('mysql:host='.$this->_db->database->host.';dbname='.$this->_db->database->database.';charset=utf8', $this->_db->database->username, $this->_db->database->password);
 		if( !$mysqli ) {
 			echo $mysqli->error;
 		}
 
 		// Set database character set
-		if( !$mysqli->set_charset( 'utf8' ) ) {
+		/*if( !$mysqli->set_charset( 'utf8' ) ) {
 			echo $mysqli->error;
-		}
+		}*/
 
 		$this->mysqli = $mysqli;
 	}
@@ -47,7 +50,7 @@ class Database {
 	 * @return string|bool Return string or bool depending on value in database
 	 */
 	public function detail( $detail, $table, $column, $value ) {
-		$stmt = $this->mysqli->prepare("SELECT `$detail` FROM `$table` WHERE `$column` = ?");
+		/*$stmt = $this->mysqli->prepare("SELECT `$detail` FROM `$table` WHERE `$column` = ?");
 
 		if( is_numeric( $value ) ) {
 		   $stmt->bind_param('i', $value);
@@ -60,7 +63,19 @@ class Database {
 		$stmt->fetch();
 
 		$stmt->close();
-		return $detail;
+		return $detail;*/
+
+		$stmt = $this->mysqli->prepare("SELECT `$detail` FROM `$table` WHERE `$column` = :value");
+		$stmt->bindParam(':value', $value, ( is_numeric( $value ) ? PDO::PARAM_INT : PDO::PARAM_STR ));
+		$stmt->execute();
+
+		if( $stmt->rowCount() >= 1 ) {
+			$stmt = null;
+			return $stmt->fetch(PDO::FETCH_ASSOC);
+		} else {
+			$stmt = null;
+			return false;
+		}
 	}
 
 	/**
@@ -74,7 +89,7 @@ class Database {
 	 * @return bool Return true or false depending if value already exists in database
 	 */
 	public function exists( $detail, $table, $column, $value ) {
-		$stmt = $this->mysqli->prepare("SELECT `$detail` FROM `$table` WHERE `$column` = ?");
+		/*$stmt = $this->mysqli->prepare("SELECT `$detail` FROM `$table` WHERE `$column` = ?");
 
 		if( is_numeric( $value ) ) {
 			$stmt->bind_param('i', $value);
@@ -90,6 +105,18 @@ class Database {
 			return true;
 		} else {
 			$stmt->close();
+			return false;
+		}*/
+
+		$stmt = $this->mysqli->prepare("SELECT `$detail` FROM `$table` WHERE `$column` = :value");
+		$stmt->bindParam(':value', $value, ( is_numeric( $value ) ? PDO::PARAM_INT : PDO::PARAM_STR ));
+		$stmt->execute();
+
+		if( $stmt->rowCount() >= 1 ) {
+			$stmt = null;
+		 	return true;
+		} else {
+			$stmt = null;
 			return false;
 		}
 	}
@@ -115,9 +142,11 @@ class Database {
 		}
 
 		if( $html === true ) {
-			return $this->mysqli->real_escape_string( trim( $value ) );
+			//return $this->mysqli->real_escape_string( trim( $value ) );
+			return trim( $value );
 		} else {
-			return $this->mysqli->real_escape_string( trim( htmlentities( strip_tags( stripslashes( $value ) ) ) ) );
+			//return $this->mysqli->real_escape_string( trim( htmlentities( strip_tags( stripslashes( $value ) ) ) ) );
+			return trim( htmlentities( strip_tags( stripslashes( $value ) ) ) );
 		}
 	}
 }

@@ -114,7 +114,7 @@ class User extends Database {
 		if( empty( $id ) ) {
 			return false;
 		} else {
-			$stmt = $this->mysqli->prepare("SELECT `id`, `first_name`, `last_name`, `email`, `register_date`, `active_date` FROM `users` WHERE `id` = ?");
+			/*$stmt = $this->mysqli->prepare("SELECT `id`, `first_name`, `last_name`, `email`, `register_date`, `active_date` FROM `users` WHERE `id` = ?");
 			$stmt->bind_param('i', $id);
 			$stmt->execute();
 			$stmt->bind_result($userID, $first_name, $last_name, $email, $register_date, $active_date);
@@ -135,6 +135,16 @@ class User extends Database {
 				return $data;
 			} else {
 				$stmt->close();
+				return false;
+			}*/
+
+			$stmt = $this->mysqli->prepare("SELECT `id`, `first_name`, `last_name`, `email`, `register_date`, `active_date` FROM `users` WHERE `id` = :id");
+			$stmt->bindParam(':id', $id, PDO::PARAM_INT);
+			$stmt->execute();
+
+			if( $stmt->rowCount() >= 1 ) {
+				return $stmt->fetch(PDO::FETCH_ASSOC);
+			} else {
 				return false;
 			}
 		}

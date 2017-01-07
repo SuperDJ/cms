@@ -13,8 +13,7 @@ $date = new DateTime( null, new DateTimeZone( 'Europe/Amsterdam' ) );
 // Set global variables
 $root = $_SERVER['DOCUMENT_ROOT'].'/dashboard/';
 set_include_path( $root );
-define( 'ROOT', $root );
-define( 'TEST', true );
+require_once 'core/defines.php';
 
 // Global functions
 require_once 'core/functions.php';

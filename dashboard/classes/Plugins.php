@@ -1,36 +1,33 @@
 <?php
-/*
- * TODO minimize amount of functions
- */
 class Plugins extends Database {
 	private $_dir, // Plugins location
 			$_directory = array(), // All installed plugins from plugins folder
-			$_database = array(); // All plugins from database
+			$_database = array(), // All plugins from database
+			$_compareDir = array(), // All urls from directory
+			$_compareDb = array(); // All urls from database
 
-	public 	$path,  // Current path
-			$menu; // Store menu
-
-	function __construct( $path ) {
+	function __construct() {
 		parent::__construct();
 
-		$this->_dir = ROOT.'plugins';
-		$this->path = $path; // Save path
+		$this->_dir = PLUGINS;
+		$this->_directory = $this->getFromDir($this->_dir); // Get all installed plugins from directory
+		$this->_database = $this->getFromDb(); // Get all installed plugins from database
 
-		// TODO Check if all plugins are still installed else delete
-		$this->_directory = $this->get($this->_dir); // Get all installed plugins from directory
-		$this->_database = $this->database(); // Get all installed plugins from database
-
-		if( $this->compare( $this->_directory, $this->_database ) ) {
-			// Insert
-			echo 'insert';
-		} else {
-			// Delete
-			echo 'delete';
+		// Compare arrays
+		if( !$this->compare( $this->_directory, $this->_database ) ) {
+			// If there are more plugins in database delete from database else insert plugins
+			if( count( $this->_compareDb ) > count( $this->_compareDir ) ) {
+				if( $this->delete( $this->_compareDir, $this->_compareDb ) ) {
+					header('Location: ?path=plugins/overview&message=Plugins deleted&messageType=success');
+				} else {
+					header('Location: ?path=plugins/overview&message=Plugins not deleted&messageType=error');
+				}
+			} else {
+				if( $this->insertInDb( $this->_directory ) ) {
+					header('Location: ?path=plugins/overview&message=Plugins added&messageType=success');
+				}
+			}
 		}
-
-		$this->insert( $this->_directory );
-
-		$this->menu = $this->buildTree($this->_database);
 	}
 
 	/**
@@ -40,14 +37,14 @@ class Plugins extends Database {
 	 *
 	 * @return array
 	 */
-	private function get( $dir ) {
+	private function getFromDir( $dir ) {
 		$cdir = scandir( $dir );
 		$result = array();
 
 		foreach( $cdir as $key => $value ) {
 			if( !in_array( $value, array('.', '..') ) ) {
 				if( is_dir( $dir . DIRECTORY_SEPARATOR . $value ) ) {
-					$result[$value] = $this->get($dir . DIRECTORY_SEPARATOR . $value);
+					$result[$value] = $this->getFromDir($dir . DIRECTORY_SEPARATOR . $value);
 				} else {
 					$result[] = $value;
 				}
@@ -64,7 +61,7 @@ class Plugins extends Database {
 	 * @param string	$parent		Parent plugin name
 	 * @param string 	$parentID	Parent plugin id
 	 */
-	private function insert( array $plugins, $parent = '', $parentID = '' ) {
+	private function insertInDb( array $plugins, $parent = '', $parentID = '' ) {
 		foreach( $plugins as $key => $value ) {
 			if( is_array( $value ) ) {
 				$url = $parent.$key.'/';
@@ -76,11 +73,11 @@ class Plugins extends Database {
 					$stmt->bind_param( 'sis', $plugin, $parentID, $url );
 					$stmt->execute();
 
-					$this->insert($value, $url, $stmt->insert_id);
+					$this->insertInDb($value, $url, $stmt->insert_id);
 
 					$stmt->close();
 				} else {
-					$this->insert($value, $url, $this->detail('id', 'plugins', 'url', $url));
+					$this->insertInDb($value, $url, $this->detail('id', 'plugins', 'url', $url));
 				}
 			} else {
 				$url = $parent.substr( $value, 0, -4 );
@@ -101,6 +98,45 @@ class Plugins extends Database {
 		}
 	}
 
+	public function delete( array $dir, array $db ) {
+		// Get difference
+		$diff = array();
+
+		foreach( $db as $key => $value ) {
+			if( !in_array($value, $dir ) ) {
+				 $diff[] = $value;
+			}
+		}
+
+		// Delete difference
+		$deleted = 0;
+		foreach( $diff as $key => $value ) {
+			$stmt = $this->mysqli->prepare("DELETE FROM `plugins` WHERE `url` = ?");
+			$stmt->bind_param('s', $value);
+			$stmt->execute();
+
+			if( $stmt->affected_rows >= 1 ) {
+				$deleted++;
+			}
+		}
+
+		if( $deleted === count( $diff ) ) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * Get url for array comparing
+	 *
+	 * @param array  $plugins
+	 * @param string $parent
+	 * @param int    $i
+	 * @param array  $url
+	 *
+	 * @return array|bool
+	 */
 	private function dirArray( array $plugins, $parent = '', $i = 0, $url = array() ) {
 		foreach( $plugins as $key => $item ) {
 			$i++;
@@ -119,145 +155,63 @@ class Plugins extends Database {
 		}
 	}
 
-	public function compare( array $dirPlugins, array $dbPlugins ) {
-		$dirPlugins = array_flatten( $this->dirArray( $dirPlugins ) );
-		$dbPlugins = array_column( $dbPlugins, 'url' );
-
-		print_r($dirPlugins);
-		print_r($dbPlugins);
-	}
-
-	private function database() {
-		$stmt = $this->mysqli->prepare( "SELECT `id`, `name`, `parent`, `icon`, `url`, `visible`, `sort` FROM `plugins`" );
-		$stmt->execute();
-		$result = $stmt->get_result();
-
-		$data = array();
-		while( $row = $result->fetch_assoc() ) {
-			$data[] = $row;
-		}
-		$stmt->close();
-
-		if( !empty( $data ) ) {
-			return $data;
-		} else {
-			return false;
-		}
-	}
-
 	/**
-	 * Get breadcrumb
+	 * Compare plugins from directory and database
 	 *
-	 */
-	public function breadcrumbs() {
-
-	}
-
-	/**
-	 * Get type of path eg. edit, delete, add, overview
-	 *
-	 * @return mixed
-	 */
-	public function pathType() {
-		return end( explode ( '/', $this->path ) );
-	}
-
-	/**
-	 * Check if path exists
-	 *
-	 * @param $path
+	 * @param array $dirPlugins
+	 * @param array $dbPlugins
 	 *
 	 * @return bool
 	 */
-	public function check( $path ) {
-		if( file_exists( $this->_dir.'/'.$path.'.php') ) {
-			return true;
-		} else {
+	private function compare( array $dirPlugins, array $dbPlugins ) {
+		$dirPlugins = array_flatten( $this->dirArray( $dirPlugins ) );
+		$dbPlugins = array_flatten( $dbPlugins );
+
+		// Remove numeric values from arrays
+		$dir = array();
+		foreach( $dirPlugins as $key => $value ) {
+			if( !is_numeric( $value ) ) {
+				$dir[] = $value;
+			}
+		}
+		$this->_compareDir = $dir;
+
+		$db = array();
+		foreach( $dbPlugins as $key => $value ) {
+			if( !is_numeric( $value ) ) {
+				$db[] = $value;
+			}
+		}
+		$this->_compareDb = $db;
+
+		$countDir = count($dir);
+		$countDb = count($db);
+
+		if( $countDir !== $countDb) {
 			return false;
-		}
-	}
-
-	/**
-	 * Get required header
-	 *
-	 * @param string $name
-	 *
-	 * @return string
-	 */
-	public function getHeader( $name = '' ) {
-		if( !empty( $name ) ) {
-			if( file_exists( ROOT.'includes/'.$name.'-header.php' ) ) {
-				return ROOT.'includes/'.$name.'-header.php';
-			}
 		} else {
-			return ROOT.'includes/header.php';
+			return true;
 		}
 	}
 
 	/**
-	 * Get required footer
-	 *
-	 * @param string $name
-	 *
-	 * @return string
+	 * Get urls from plugins form database
+	 * @return array|bool
 	 */
-	public function getFooter( $name = '' ) {
-		if( !empty( $name ) ) {
-			if( file_exists( ROOT.'includes/'.$name.'-footer.php' ) ) {
-				return ROOT.'includes/'.$name.'-footer.php';
-			}
-		} else {
-			return ROOT.'includes/footer.php';
-		}
-	}
+	private function getFromDb() {
+		$stmt = $this->mysqli->query( "SELECT `url` FROM `plugins`" );
 
-	private function buildTree( array $elements, $parentId = 0 ) {
-		$branch = array();
+		$data = array();
 
-		foreach( $elements as $element ) {
-			if( $element['parent'] == $parentId ) {
-				$children = $this->buildTree( $elements, $element['id'] );
-
-				if( $children ) {
-					$element['children'] = $children;
-				}
-
-				$branch[] = $element;
-			}
+		/*while( $row = $stmt->fetch_assoc() ) {
+			$data[] = $row;
+		}*/
+		while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+			$data[] = $row;
 		}
 
-		return $branch;
-	}
-
-	/**
-	 * Generate menu items
-	 *
-	 * @param array    $plugins
-	 * @param callable $translate
-	 * @param          $url
-	 *
-	 * @return bool|string
-	 */
-	public function createMenu( array $plugins, callable $translate, $url ) {
-		$html = '';
-
-		foreach( $plugins as $fields => $field ) {
-			if( !empty( $field['children'] ) ) {
-				$html .= '<li class="sc-drawer-dropdown">'.$translate( $field['name'] ).'<ul>';
-				$html .= $this->createMenu( $field['children'], $translate, $url );
-				$html .= '</ul>';
-			} else {
-				$html .= '	<li>
-								<a href="?path='.$field['url'].'" '.( $url == $field['url'] ? 'class="sc-active"' : '' ).'>
-									'.( !empty( $field['icon'] ) ? '<i class="material-icons">'.$field['icon'].'</i>' : '' ).'
-									'.$translate( $field['name'] ).'
-								</a>
-							</li>';
-			}
-		}
-
-		if( !empty( $html ) ) {
-			return $html;
+		if( !empty( $data ) ) {
+			return $data;
 		} else {
 			return false;
 		}

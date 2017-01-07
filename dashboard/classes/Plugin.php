@@ -1,24 +1,16 @@
 <?php
-class Plugin extends Database  {
-	public $name;
+class Plugin extends Database {
 
-	function __construct() {
-		parent::__construct(); // Database
-	}
+	public function add() {}
 
-	public function add( $query ) {
+	public function delete() {}
 
-	}
+	public function edit() {}
 
-	public function delete( $query ) {
-
-	}
-
-	public function edit( $query ) {
-
-	}
-
-	public function data( $query, array $order ) {
-
+	public function data( $query, array $columns ) {
+		$stmt = $this->mysqli->prepare($query);
+		foreach( $columns as $field => $value ) {
+			switch( )
+		}
 	}
 }

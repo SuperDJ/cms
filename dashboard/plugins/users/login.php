@@ -4,7 +4,7 @@ if( $user->isLoggedIn() ) {
 } else {
 	// Define page title
 	$title = $language->translate('Login');
-	require_once $plugins->getHeader('lr');
+	require_once $dash->getInclude('header', 'lr');
 
 	$form = new Form();
 	// Check form
@@ -28,6 +28,9 @@ if( $user->isLoggedIn() ) {
 				'maxLength' => 33,
 				'name'      => $language->translate('Password encrypted')
 			),
+            /*'remember' => array(
+                'name' => $language->translate('Keep me logged in')
+            ),*/
 			'captcha'            => array(
 				'captcha' => true,
 				'name'    => 'Captcha'
@@ -38,6 +41,10 @@ if( $user->isLoggedIn() ) {
 		if( empty( $form->errors ) ) {
 			if( $user->login( $validation ) ) {
 				if( $session->set('user', $db->detail('id', 'users', 'email', $validation['email'])) ) {
+				    // If the user wants to be remembered
+				    if( $validation['remember'] == 1 ) {
+				        $cookie->set('user', $session->get('user'), 60*60*24*30); // TODO Make cookie time a setting/ dynamic
+                    }
 					$user->to( '?path=overview/overview' );
 				} else {
 					echo '<div class="alert sc-card-supporting sc-card-supporting-additional">'.$language->translate('Something went wrong logging you in').'</div>';
@@ -64,15 +71,15 @@ if( $user->isLoggedIn() ) {
 				<label for="password"><?php echo $language->translate('Password'); ?></label>
 			</div>
 
-			<div class="sc-col sc-xs4 sc-s12">
+			<!--<div class="sc-col sc-xs4 sc-s12">
 				<div class="sc-switch">
 					<label>
-						<?php echo $language->translate('Keep me logged in'); ?>
-						<input type="checkbox">
+						<?php /*echo $language->translate('Keep me logged in'); */?>
+						<input type="checkbox" name="remember" value="1">
 						<span class="sc-lever"></span>
 					</label>
 				</div>
-			</div>
+			</div>-->
 
 			<div class="sc-col sc-xs4 sc-s12">
 				<input type="text" name="captcha" class="captcha">
@@ -96,5 +103,5 @@ if( $user->isLoggedIn() ) {
 	</form>
 
 	<?php
-	require_once $plugins->getFooter( 'lr' );
+	require_once $dash->getInclude('footer', 'lr');
 }

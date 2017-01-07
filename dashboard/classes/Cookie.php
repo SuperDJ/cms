@@ -1,7 +1,7 @@
 <?php
 class Cookie {
 	/**
-	 * [Set cookie]
+	 * Set cookie
 	 *
 	 * @param string                $name  The name of the cookie
 	 * @param string|bool|int|array $value The value of the cookie
