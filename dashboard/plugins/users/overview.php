@@ -6,7 +6,7 @@ if( !$user->isLoggedIn() ) {
 	require_once $dash->getInclude('header');
 
 	$users = new Plugin();
-	$data = $users->data();
+	$data = $users->select("SELECT `id`, `first_name`, `last_name`, `email`, `register_date`, `active_date`, `active` FROM `users`");
 
 	echo '    <table class="sc-table-hover">
 				<thead>

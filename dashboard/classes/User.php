@@ -28,15 +28,19 @@ class User extends Database {
 		$password = password_hash( $this->passwordGenerate( $data['password_encrypted'] ), PASSWORD_DEFAULT );
 		$register_date = date('Y-m-d H:i:s');
 
-		$stmt = $this->mysqli->prepare("INSERT INTO `users` (`first_name`, `last_name`, `email`, `password`, `register_date`) VALUES (?, ?, ?, ?, ?)");
-		$stmt->bind_param('sssss', $data['first_name'], $data['last_name'], $data['email'], $password, $register_date);
+		$stmt = $this->mysqli->prepare("INSERT INTO `users` (`first_name`, `last_name`, `email`, `password`, `register_date`) VALUES (:first_name, :last_name, :email, :password, :register_date)");
+		$stmt->bindParam(':first_name', $data['first_name'], PDO::PARAM_STR);
+		$stmt->bindParam(':last_name', $data['last_name'], PDO::PARAM_STR);
+		$stmt->bindParam(':email', $data['email'], PDO::PARAM_STR);
+		$stmt->bindParam(':password', $password, PDO::PARAM_STR);
+		$stmt->bindParam(':register_date', $register_date, PDO::PARAM_STR);
 		$stmt->execute();
 
-		if( $stmt->affected_rows >= 1 ) {
-			$stmt->close();
+		if( $stmt->countRows() >= 1 ) {
+			$stmt = null;
 			return true;
 		} else {
-			$stmt->close();
+			$stmt = null;
 			return false;
 		}
 	}
@@ -51,18 +55,20 @@ class User extends Database {
 	public function login( array $data ) {
 		$password = $this->passwordGenerate( $data['password_encrypted'] );
 		$hash = $this->detail('password', 'users', 'email', $data['email']);
+		print_r($hash);
 		$date = date('Y-m-d H:i:s');
 
 		if( password_verify( $password, $hash ) ) {
-			$stmt = $this->mysqli->prepare("UPDATE `users` SET `active_date` = ? WHERE `email` = ?");
-            $stmt->bind_param('ss', $date, $data['email']);
+			$stmt = $this->mysqli->prepare("UPDATE `users` SET `active_date` = :active_date WHERE `email` = :email");
+			$stmt->bindParam(':active_date', $date, PDO::PARAM_STR);
+			$stmt->bindParam(':email', $data['email'], PDO::PARAM_STR);
 			$stmt->execute();
 
-			if( $stmt->affected_rows >= 1 ) {
-				$stmt->close();
+			if( $stmt->rowCount() >= 1 ) {
+				$stmt = null;
 				return true;
 			} else {
-				$stmt->close();
+				$stmt = null;
 				return false;
 			}
 		} else {
@@ -114,30 +120,6 @@ class User extends Database {
 		if( empty( $id ) ) {
 			return false;
 		} else {
-			/*$stmt = $this->mysqli->prepare("SELECT `id`, `first_name`, `last_name`, `email`, `register_date`, `active_date` FROM `users` WHERE `id` = ?");
-			$stmt->bind_param('i', $id);
-			$stmt->execute();
-			$stmt->bind_result($userID, $first_name, $last_name, $email, $register_date, $active_date);
-
-			// Set all data in array
-			$data = array();
-			while( $stmt->fetch() ) {
-				$data['id'] = $userID;
-				$data['first_name'] = $first_name;
-				$data['last_name'] = $last_name;
-				$data['email'] = $email;
-				$data['register_date'] = $register_date;
-				$data['active_date'] = $active_date;
-			}
-
- 			if( !empty( $data ) ) {
-				$stmt->close();
-				return $data;
-			} else {
-				$stmt->close();
-				return false;
-			}*/
-
 			$stmt = $this->mysqli->prepare("SELECT `id`, `first_name`, `last_name`, `email`, `register_date`, `active_date` FROM `users` WHERE `id` = :id");
 			$stmt->bindParam(':id', $id, PDO::PARAM_INT);
 			$stmt->execute();
@@ -169,53 +151,56 @@ class User extends Database {
 				$password = password_hash( $this->passwordGenerate( $data['password_encrypted'] ), PASSWORD_DEFAULT );
 				$active = 1;
 
-				$stmt = $this->mysqli->prepare("UPDATE `users` SET `password` = ?, active = ? WHERE `email` = ?");
-				$stmt->bind_param('sis', $password, $active, $email);
+				$stmt = $this->mysqli->prepare("UPDATE `users` SET `password` = :password, active = :active WHERE `email` = :email");
+				$stmt->bindParam(':password', $password, PDO::PARAM_STR);
+				$stmt->bindParam(':active', $active, PDO::PARAM_INT);
+				$stmt->bindParam(':email', $data['email'], PDO::PARAM_STR);
 				$stmt->execute();
 
-				if( $stmt->affected_rows >= 1 ) {
-					$stmt->close();
+				if( $stmt->rowCount() >= 1 ) {
+					$stmt = null;
 					return true;
 				} else {
-					$stmt->close();
+					$stmt = null;
 					return false;
 				}
 			} else {
 				return false;
 			}
 		} else {
-			$stmt = $this->mysqli->prepare("SELECT `first_name`, `last_name`, `active_date` FROM `users` WHERE `email` = ?");
-			$stmt->bind_param('s', $data['email']);
+			$stmt = $this->mysqli->prepare("SELECT `first_name`, `last_name`, `active_date` FROM `users` WHERE `email` = :email");
+			$stmt->bindParam(':email', $data['email'], PDO::PARAM_STR);
 			$stmt->execute();
-			$stmt->bind_result( $first_name, $last_name, $active_date );
 			$stmt->fetch();
 
-			$code = base64_encode( $active_date.'|'.$data['email'] );
+			$result = $stmt->fetch(PDO::FETCH_ASSOC);
+			$code = base64_encode( $result['active_date'].'|'.$data['email'] );
 
 			// TODO get name from database
 			// TODO get url from database
 			// TODO get email form database
 			$subject = $translate( 'Password recovery' ).' DSuper';
-			$message = $translate( 'Hello' )." ".substr( $first_name, 0, 1 )." ".$last_name.",\r\n\r\n".
+			$message = $translate( 'Hello' )." ".substr( $result['first_name'], 0, 1 )." ".$result['last_name'].",\r\n\r\n".
 				$translate( 'Go to the following link to reset your password' ).": http://www.cms.dsuper.nl/dashboard/?path=users/recover&code={$code}\r\n\r\n".
 				$translate( 'Greetings' ).",\r\nDSuper";
 			$header = "From: <info@dsuper.nl> DSuper\r\n";
 
 			// Close first query
-			$stmt->close();
+			$stmt = null;
 
 			// Set active to 0 if necessary
 			if( $this->detail('active', 'users', 'email', $data['email']) !== 0 ) {
 				$active = null;
-				$stmt = $this->mysqli->prepare( "UPDATE `users` SET `active` = ? WHERE `email` = ?" );
-				$stmt->bind_param( 'is', $active, $data['email'] );
+				$stmt = $this->mysqli->prepare( "UPDATE `users` SET `active` = :active WHERE `email` = :email" );
+				$stmt->bindParam(':active', $active, PDO::PARAM_NULL);
+				$stmt->bindParam(':email', $data['email'], PDO::PARAM_STR);
 				$stmt->execute();
 
-				if( $stmt->affected_rows === 0 ) {
-					$stmt->close();
+				if( $stmt->rowCount() === 0 ) {
+					$stmt = null;
 					return false;
 				}
-				$stmt->close();
+				$stmt = null;
 			}
 
 			if( mail( $data['email'], $subject, $message, $header ) ) {

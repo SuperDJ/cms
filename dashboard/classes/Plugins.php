@@ -17,7 +17,7 @@ class Plugins extends Database {
 		if( !$this->compare( $this->_directory, $this->_database ) ) {
 			// If there are more plugins in database delete from database else insert plugins
 			if( count( $this->_compareDb ) > count( $this->_compareDir ) ) {
-				if( $this->delete( $this->_compareDir, $this->_compareDb ) ) {
+				if( $this->deleteFromDb( $this->_compareDir, $this->_compareDb ) ) {
 					header('Location: ?path=plugins/overview&message=Plugins deleted&messageType=success');
 				} else {
 					header('Location: ?path=plugins/overview&message=Plugins not deleted&messageType=error');
@@ -70,12 +70,11 @@ class Plugins extends Database {
 					$plugin = ucfirst( $key );
 
 					$stmt = $this->mysqli->prepare( "INSERT INTO `plugins` (`name`, `parent`, `url`) VALUES (?, ?, ?)" );
-					$stmt->bind_param( 'sis', $plugin, $parentID, $url );
-					$stmt->execute();
+					$stmt->execute( array( $plugin, $parentID, $url ) );
 
 					$this->insertInDb($value, $url, $stmt->insert_id);
 
-					$stmt->close();
+					$stmt = null;
 				} else {
 					$this->insertInDb($value, $url, $this->detail('id', 'plugins', 'url', $url));
 				}
@@ -90,15 +89,14 @@ class Plugins extends Database {
 					$plugin = ucfirst( substr( $value, 0, -4 ) );
 
 					$stmt = $this->mysqli->prepare( "INSERT INTO `plugins` (`name`, `parent`, `url`) VALUES (?, ?, ?)" );
-					$stmt->bind_param( 'sis', $plugin, $parentID, $url );
-					$stmt->execute();
-					$stmt->close();
+					$stmt->execute( array( $plugin, $parentID, $url ) );
+					$stmt = null;
 				}
 			}
 		}
 	}
 
-	public function delete( array $dir, array $db ) {
+	private function deleteFromDb( array $dir, array $db ) {
 		// Get difference
 		$diff = array();
 
@@ -108,18 +106,19 @@ class Plugins extends Database {
 			}
 		}
 
+		//TODO remove preparing from foreach
 		// Delete difference
 		$deleted = 0;
 		foreach( $diff as $key => $value ) {
 			$stmt = $this->mysqli->prepare("DELETE FROM `plugins` WHERE `url` = ?");
-			$stmt->bind_param('s', $value);
-			$stmt->execute();
+			$stmt->execute( array( $value ) );
 
-			if( $stmt->affected_rows >= 1 ) {
+			if( $stmt->rowCount() >= 1 ) {
 				$deleted++;
 			}
 		}
 
+		$stmt = null;
 		if( $deleted === count( $diff ) ) {
 			return true;
 		} else {
@@ -199,16 +198,14 @@ class Plugins extends Database {
 	 * @return array|bool
 	 */
 	private function getFromDb() {
-		$stmt = $this->mysqli->query( "SELECT `url` FROM `plugins`" );
+		$stmt = $this->mysqli->prepare( "SELECT `url` FROM `plugins`" );
+		$stmt->execute();
 
 		$data = array();
-
-		/*while( $row = $stmt->fetch_assoc() ) {
-			$data[] = $row;
-		}*/
-		while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+		while( $row = $stmt->fetch(PDO::FETCH_ASSOC) ) {
 			$data[] = $row;
 		}
+		$stmt = null;
 
 		if( !empty( $data ) ) {
 			return $data;
