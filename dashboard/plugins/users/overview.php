@@ -4,9 +4,7 @@ if( !$user->isLoggedIn() ) {
 } else {
 	$title = $language->translate('Overview');
 	require_once $dash->getInclude('header');
-
-	$users = new Plugin();
-	$data = $users->select("SELECT `id`, `first_name`, `last_name`, `email`, `register_date`, `active_date`, `active` FROM `users`");
+	$data = $db->select("SELECT `id`, `first_name`, `last_name`, `email`, `register_date`, `active_date`, `active` FROM `users`");
 
 	echo '    <table class="sc-table-hover">
 				<thead>

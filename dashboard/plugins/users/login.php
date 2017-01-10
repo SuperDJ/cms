@@ -97,7 +97,7 @@ if( $user->isLoggedIn() ) {
 			</div>
 
 			<div class="sc-col sc-xs4 sc-s12">
-				<a href="?path=users/recover-request"><?php echo $language->translate('Forgot password?'); ?></a>
+				<a href="?path=users/recover-request"><?php echo $language->translate('Forgot password'); ?>?</a>
 			</div>
 		</div>
 	</form>
