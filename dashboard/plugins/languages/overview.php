@@ -5,7 +5,18 @@ if( !$user->isLoggedIn() ) {
 	$title = $language->translate( 'Overview' );
 	require_once $dash->getInclude( 'header' );
 
-	$data = $db->select("SELECT `id`, `language`, `iso_code` FROM `languages`");
+	$data = $db->select("
+SELECT `l`.`id`, `l`.`language`, `l`.`iso_code`, concat( round( 100 * count(*) / `t2`.`cnt`, 0 ), '%') AS `translated`
+FROM `languages` `l`
+  LEFT JOIN `translations` `t`
+    ON `l`.`id` = `t`.`languages_id`
+  CROSS JOIN (
+               SELECT count(`id`) `cnt`
+               FROM `translations`
+               WHERE `languages_id` = 1
+             ) `t2`
+GROUP BY `l`.`id`;
+"); // TODO Get `languages_id` from database
 
 	echo '<p class="sc-xs4 sc-s12"><a href="?path=languages/add" class="sc-raised-button">'.$language->translate('Add language').'</a></p>';
 
@@ -14,7 +25,8 @@ if( !$user->isLoggedIn() ) {
 					<thead>
 						<tr>
 							<th>'.$language->translate( 'Language' ).'</th>
-							<th>'.$language->translate( 'ISO code' ).'</th>	
+							<th>'.$language->translate( 'ISO code' ).'</th>
+							<th>'.$language->translate('Translated').'</th>	
 							<th>'.$language->translate( 'Options' ).'</th>
 						</tr>
 					</thead>
@@ -23,13 +35,14 @@ if( !$user->isLoggedIn() ) {
 			echo '		<tr>
 							<td>'.$language->translate( $field['language'] ).'</td>
 							<td>'.$field['iso_code'].'</td>
+							<td>'.$field['translated'].'</td>
 							<td>
-							<ul>
-								<li><a href="?path=languages/translate&id='.$field['id'].'">'.$language->translate('Translate').'</a></li>
-								<li><a href="?path=languages/edit&id='.$field['id'].'" class="edit">'.$language->translate('Edit').'</a></li>
-								<li><a href="?path=languages/delete&id='.$field['id'].'" class="delete">'.$language->translate('Delete').'</a></li>
-							</ul>
-						</td>
+								<ul>
+									<li><a href="?path=languages/translate&id='.$field['id'].'">'.$language->translate('Translate').'</a></li>
+									<li><a href="?path=languages/edit&id='.$field['id'].'" class="edit">'.$language->translate('Edit').'</a></li>
+									<li><a href="?path=languages/delete&id='.$field['id'].'" class="delete">'.$language->translate('Delete').'</a></li>
+								</ul>
+							</td>
 						</tr>';
 		}
 		echo '		</tbody>

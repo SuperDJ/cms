@@ -126,7 +126,9 @@ class Database {
 
 	public function delete() {}
 
-	public function edit() {}
+	public function update( $query, array $columns ) {
+		return $this->insert($query, $columns);
+	}
 
 	public function select( $query, array $columns = array() ) {
 		$stmt = $this->mysqli->prepare($query);
@@ -138,7 +140,11 @@ class Database {
 		}
 
 		if( $stmt->rowCount() >= 1 ) {
-			$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+			if( $stmt->rowCount() == 1 ) {
+				$result = $stmt->fetch(PDO::FETCH_ASSOC);
+			} else {
+				$result = $stmt->fetchAll( PDO::FETCH_ASSOC );
+			}
 			$stmt = null;
 			return $result;
 		} else {
