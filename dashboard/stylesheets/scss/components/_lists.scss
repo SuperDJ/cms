@@ -10,7 +10,7 @@ ol, ul {
 	padding: 0;
 
 	li {
-		color: lighten($black, (100% - 87%));
+		color: if( $theme == light, rgba($black, .87), rgba($white, .87));
 		font-size: rem-calc(14px);
 		font-weight: 400;
 		height: auto;
@@ -18,7 +18,7 @@ ol, ul {
 		padding: 0 rem-calc(16px);
 
 		a {
-			color: lighten($black, (100% - 87%));
+			color: if( $theme == light, rgba($black, .87), rgba($white, .87));
 			font-size: rem-calc(14px);
 			font-weight: 400;
 			height: rem-calc(48px);

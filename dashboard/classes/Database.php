@@ -111,6 +111,14 @@ class Database {
 		}
 	}
 
+	/**
+	 * Insert items in database
+	 *
+	 * @param       $query
+	 * @param array $columns
+	 *
+	 * @return bool
+	 */
 	public function insert( $query, array $columns ) {
 		$stmt = $this->mysqli->prepare($query);
 		$stmt->execute( array_values( $columns ) );
@@ -124,13 +132,39 @@ class Database {
 		}
 	}
 
-	public function delete() {}
+	/**
+	 * Delete items from database
+	 *
+	 * @param       $query
+	 * @param array $columns
+	 *
+	 * @return bool
+	 */
+	public function delete( $query, array $columns ) {
+		return $this->insert($query, $columns);
+	}
 
+	/**
+	 * Update items in database
+	 *
+	 * @param       $query
+	 * @param array $columns
+	 *
+	 * @return bool
+	 */
 	public function update( $query, array $columns ) {
 		return $this->insert($query, $columns);
 	}
 
-	public function select( $query, array $columns = array() ) {
+	/**
+	 * Select items from database
+	 * @param       $query
+	 * @param array $columns
+	 * @param array $options
+	 *
+	 * @return array|bool
+	 */
+	public function select( $query, array $columns = array(), array $options = array() ) {
 		$stmt = $this->mysqli->prepare($query);
 
 		if( !empty( $columns ) ) {
@@ -141,7 +175,11 @@ class Database {
 
 		if( $stmt->rowCount() >= 1 ) {
 			if( $stmt->rowCount() == 1 ) {
-				$result = $stmt->fetch(PDO::FETCH_ASSOC);
+				if( in_array('multipleRows', $options ) ) {
+					$result[] = $stmt->fetch( PDO::FETCH_ASSOC );
+				} else {
+					$result = $stmt->fetch( PDO::FETCH_ASSOC );
+				}
 			} else {
 				$result = $stmt->fetchAll( PDO::FETCH_ASSOC );
 			}

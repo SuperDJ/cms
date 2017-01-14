@@ -7,6 +7,10 @@ if( !empty( $_GET['path'] ) ) {
 	$plugins = new Plugins();
 	$dash = new Dashboard( $path, [ $language, 'translate' ] );
 
+	if( !empty( $_GET['id'] ) ) {
+		$id = (int)$db->sanitize($_GET['id']);
+	}
+
 	// Check if path exists
 	if( $dash->checkPath($path) ) {
 		// If user has been remembered login

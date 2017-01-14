@@ -45,7 +45,7 @@ $(document).ready(function() {
 		}
 	});
 
-	$('textarea').each(function () {
+	/*$('textarea').each(function () {
 		var $parent = '';
 
 		if( this.closest('.sc-floating-input') != null ) {
@@ -66,5 +66,5 @@ $(document).ready(function() {
 		$parent.style.height = 'auto';
 		this.style.height = 'auto';
 		this.style.height = (this.scrollHeight) + 'px';
-	});
+	});*/
 });

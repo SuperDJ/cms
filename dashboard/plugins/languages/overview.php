@@ -6,7 +6,7 @@ if( !$user->isLoggedIn() ) {
 	require_once $dash->getInclude( 'header' );
 
 	$data = $db->select("
-SELECT `l`.`id`, `l`.`language`, `l`.`iso_code`, concat( round( 100 * count(*) / `t2`.`cnt`, 0 ), '%') AS `translated`
+SELECT `l`.`id`, `l`.`language`, `l`.`iso_code`, concat( round( 100 * count(`l`.`id`) / `t2`.`cnt`, 0 ), '%') AS `translated`
 FROM `languages` `l`
   LEFT JOIN `translations` `t`
     ON `l`.`id` = `t`.`languages_id`
@@ -16,9 +16,9 @@ FROM `languages` `l`
                WHERE `languages_id` = 1
              ) `t2`
 GROUP BY `l`.`id`;
-"); // TODO Get `languages_id` from database
+", array(), array('multipleRows')); // TODO Get `languages_id` from database
 
-	echo '<p class="sc-xs4 sc-s12"><a href="?path=languages/add" class="sc-raised-button">'.$language->translate('Add language').'</a></p>';
+	echo '<p class="sc-col sc-xs4 sc-s12"><a href="?path=languages/add" class="sc-raised-button">'.$language->translate('Add language').'</a></p>';
 
 	if( !empty( $data ) ) {
 		echo '	<table class="sc-table-hover">

@@ -72,7 +72,7 @@ class Plugins extends Database {
 					$stmt = $this->mysqli->prepare( "INSERT INTO `plugins` (`name`, `parent`, `url`) VALUES (?, ?, ?)" );
 					$stmt->execute( array( $plugin, $parentID, $url ) );
 
-					$this->insertInDb($value, $url, $stmt->insert_id);
+					$this->insertInDb($value, $url, $stmt->lastInsertId());
 
 					$stmt = null;
 				} else {
