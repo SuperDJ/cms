@@ -6,7 +6,7 @@ if( !$user->isLoggedIn() ) {
 	require_once $dash->getInclude( 'header' );
 
 	$data = $db->select("
-SELECT `l`.`id`, `l`.`language`, `l`.`iso_code`, concat( round( 100 * count(`l`.`id`) / `t2`.`cnt`, 0 ), '%') AS `translated`
+SELECT `l`.`id`, `l`.`language`, `l`.`iso_code`, concat( round( 100 * count(`t`.`languages_id`) / `t2`.`cnt`, 0 ), '%') AS `translated`
 FROM `languages` `l`
   LEFT JOIN `translations` `t`
     ON `l`.`id` = `t`.`languages_id`

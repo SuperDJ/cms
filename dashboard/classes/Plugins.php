@@ -67,7 +67,7 @@ class Plugins extends Database {
 				$url = $parent.$key.'/';
 
 				if( !$this->exists('url', 'plugins', 'url', $url) ) {
-					$plugin = ucfirst( $key );
+					$plugin = ucfirst( str_replace( '-', ' ', $key ) );
 
 					$stmt = $this->mysqli->prepare( "INSERT INTO `plugins` (`name`, `parent`, `url`) VALUES (?, ?, ?)" );
 					$stmt->execute( array( $plugin, $parentID, $url ) );
@@ -86,7 +86,7 @@ class Plugins extends Database {
 				}
 
 				if( !$this->exists('url', 'plugins', 'url', $url) ) {
-					$plugin = ucfirst( substr( $value, 0, -4 ) );
+					$plugin = ucfirst( str_replace( '-', ' ', substr( $value, 0, -4 ) ) );
 
 					$stmt = $this->mysqli->prepare( "INSERT INTO `plugins` (`name`, `parent`, `url`) VALUES (?, ?, ?)" );
 					$stmt->execute( array( $plugin, $parentID, $url ) );

@@ -53,6 +53,7 @@ if( !$user->isLoggedIn() ) {
 	if( $_POST ) {
 		$validation = $form->check($_POST, array(
 		    'group' => array(
+		        'capitalize' => true,
 		        'required' => true,
                 'minLength' => 3,
                 'unique' => 'groups',

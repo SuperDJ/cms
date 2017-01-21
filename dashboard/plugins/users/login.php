@@ -42,10 +42,10 @@ if( $user->isLoggedIn() ) {
 			if( $user->login( $validation ) ) {
 				if( $session->set('user', $db->detail('id', 'users', 'email', $validation['email'])) ) {
 				    // If the user wants to be remembered
-				    if( $validation['remember'] == 1 ) {
+				    /*if( $validation['remember'] == 1 ) {
 				        $cookie->set('user', $session->get('user'), 60*60*24*30); // TODO Make cookie time a setting/ dynamic
                     }
-					$user->to( '?path=overview/overview' );
+					$user->to( '?path=overview/overview' );*/
 				} else {
 					echo '<div class="alert sc-card-supporting sc-card-supporting-additional">'.$language->translate('Something went wrong logging you in').'</div>';
 				}

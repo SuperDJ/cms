@@ -90,7 +90,7 @@ class Form extends Database {
 							// Check if the current value is not equal to the the value
 							if( $current_value != $value ) {
 								// Check if the value is unique in the database
-								if ( $this->exists($item, $rule_value, $item, $value) ) {
+								if( $this->exists($item, $rule_value, $item, $value) ) {
 									$this->addError($rules['name'].' '.$value.' '.$translate('already exists'));
 								}
 							}
@@ -155,8 +155,12 @@ class Form extends Database {
 					// Field must be empty (to prevent bots from entering text)
 					case 'captcha':
 						if( !empty( $value ) ) {
-							$this->addError($translate('Are you a bot'));
+							$this->addError($translate('Are you a bot').'?');
 						}
+					// Capitalize first letter
+					case 'capitalize':
+						$value = ucfirst( $value );
+						break;
 				}
 
 				$this->return[$item] = $value;

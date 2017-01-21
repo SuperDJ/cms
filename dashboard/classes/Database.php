@@ -121,7 +121,13 @@ class Database {
 	 */
 	public function insert( $query, array $columns ) {
 		$stmt = $this->mysqli->prepare($query);
+		if( !$stmt ) {
+			print_r($stmt->errorInfo());
+		}
 		$stmt->execute( array_values( $columns ) );
+		if(!$stmt) {
+			print_r($stmt->errorInfo());
+		}
 
 		if( $stmt->rowCount() >= 1 ) {
 			$stmt = null;
