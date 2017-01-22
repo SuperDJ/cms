@@ -65,7 +65,7 @@ $stepper: ('horizontal', 'vertical');
 $tab: ('tab', 'tab-icon', 'tab-icon-text');
 @import 'components/tabs'; // Used to style tabs (can be turned off)
 
-$textfield: ('floating', /*'floating-dense',*/ 'single', /*'single-dense'*/);
+$textfield: ('floating', /*'floating-dense',*/ 'file', 'single', /*'single-dense'*/);
 @import 'components/textfields'; // Used to style input (can be turned off)
 
 @import 'components/tooltips'; // Used to style tooltips (can be turned off)

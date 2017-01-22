@@ -45,26 +45,35 @@ $(document).ready(function() {
 		}
 	});
 
-	/*$('textarea').each(function () {
-		var $parent = '';
+	'use strict';
 
-		if( this.closest('.sc-floating-input') != null ) {
-			$parent = this.closest('.sc-floating-input');
-		} else if( this.closest('.sc-floating-dense-input') != null ) {
-			$parent = this.closest('.sc-floating-dense-input');
-		}
-		this.setAttribute( 'style', 'height:' + (this.scrollHeight) + 'px;overflow-y:hidden;' );
-	}).on('input', function () {
-		var $parent = '';
+	;( function( $, window, document, undefined )
+	{
+		$( '.sc-file-input' ).each( function()
+		{
+			var $input	 = $( this ),
+				$label	 = $input.next( 'label' ),
+				labelVal = $label.html();
 
-		if( this.closest('.sc-floating-input') != null ) {
-			$parent = this.closest('.sc-floating-input');
-		} else if( this.closest('.sc-floating-dense-input') != null ) {
-			$parent = this.closest('.sc-floating-dense-input');
-		}
+			$input.on( 'change', function( e )
+			{
+				var fileName = '';
 
-		$parent.style.height = 'auto';
-		this.style.height = 'auto';
-		this.style.height = (this.scrollHeight) + 'px';
-	});*/
+				if( this.files && this.files.length > 1 )
+					fileName = ( this.getAttribute( 'data-multiple-caption' ) || '' ).replace( '{count}', this.files.length );
+				else if( e.target.value )
+					fileName = e.target.value.split( '\\' ).pop();
+
+				if( fileName )
+					$label.find( 'span' ).html( fileName );
+				else
+					$label.html( labelVal );
+			});
+
+			// Firefox bug fix
+			$input
+				.on( 'focus', function(){ $input.addClass( 'has-focus' ); })
+				.on( 'blur', function(){ $input.removeClass( 'has-focus' ); });
+		});
+	})( jQuery, window, document );
 });

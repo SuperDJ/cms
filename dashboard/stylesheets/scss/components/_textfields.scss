@@ -12,10 +12,11 @@ $textfield-border-size: rem-calc(2px);
 
 	input[type="text"], input[type="password"], input[type="email"], input[type="number"], input[type="search"], input[type="tel"], input[type="url"], textarea {
 		border: none;
-		border-bottom: $textfield-border-size solid $grey;
+		border-bottom: $textfield-border-size solid if($theme == light, rgba($black, .83), rgba($white, .50));
 		outline: none;
 		position: absolute;
 		background: none;
+		color: if($theme == light, rgba($black, .38), rgba($white, .50));
 		width: 100%;
 		@include transition(all $transition-small-duration $basic-transition);
 
@@ -29,6 +30,7 @@ $textfield-border-size: rem-calc(2px);
 
 		&:active, &:focus {
 			border-bottom: $textfield-border-size solid $textfield-on-color;
+			color: if($theme == light, rgba($black, .87), rgba($white, 1));
 
 			+ label {
 				color: $textfield-on-color;
@@ -38,9 +40,10 @@ $textfield-border-size: rem-calc(2px);
 		&:disabled, &:disabled:active, &:disabled:focus {
 			background: none;
 			border-bottom: $textfield-border-size dotted $textfield-disabled-color;
+			color: if($theme == light, rgba($black, .38), rgba($white, .50));
 
 			+ label {
-				color: $grey;
+				color: if($theme == light, rgba($black, .38), rgba($white, .50));
 			}
 		}
 
@@ -289,6 +292,62 @@ $textfield-single-dense-icon-size: rem-calc(20px); // Default rem-calc(20px)
 		label {
 			bottom: $textfield-single-dense-padding;
 			font-size: $textfield-single-dense-font-size;
+		}
+	}
+}
+
+@if( in-array( 'file', $textfield ) ) {
+	input[type="file"].sc-file-input {
+		@include opacity(0);
+		overflow: hidden;
+		position: absolute;
+		z-index: -1;
+
+		+ label {
+			@include font($font-size-button, 0, $font-weight-button, $line-height-button, $font-color-button, $letter-spacing-button, uppercase);
+			@include button(rem-calc(2px));
+			@include material-shadow(2);
+			background: $raised-background;
+			color: $raised-font-color;
+			height: $raised-size;
+			line-height: $raised-size;
+			min-width: rem-calc(88px);
+			padding: 0 rem-calc(16px);
+			@include transition(
+					box-shadow $transition-small-duration $basic-transition unquote(',') background $transition-small-duration $basic-transition
+			);
+
+			@media #{$medium-only} {
+				@include transition(
+						box-shadow $transition-medium-duration $basic-transition unquote(',') background $transition-medium-duration $basic-transition
+				);
+			}
+
+			@media #{$medium-up} {
+				@include material-shadow(0);
+				@include transition(
+						box-shadow $transition-large-duration $basic-transition unquote(',') background $transition-large-duration $basic-transition
+				);
+			}
+
+			&:active {
+				@include material-shadow(8);
+
+				@if $theme == dark {
+					background: color($raised-background, 700);
+				}
+			}
+
+			&:hover {
+				color: $raised-font-color; // To fix bug of links getting link color on hover
+			}
+
+			.material-icons {
+				color: $raised-icon-color;
+				@include square($raised-size);
+				line-height: $raised-size;
+				vertical-align: middle;
+			}
 		}
 	}
 }

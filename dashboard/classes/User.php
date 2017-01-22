@@ -55,7 +55,6 @@ class User extends Database {
 	public function login( array $data ) {
 		$password = $this->passwordGenerate( $data['password_encrypted'] );
 		$hash = $this->detail('password', 'users', 'email', $data['email']);
-		print_r($hash);
 		$date = date('Y-m-d H:i:s');
 
 		if( password_verify( $password, $hash ) ) {
