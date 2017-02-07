@@ -45,7 +45,8 @@
  */
 
 $allowed-colors: (
-	'red', 'indigo', 'blue', 'teal', 'deep-orange', 'shades');
+	'red', 'pink', 'purple', 'deep-purple', 'indigo', 'blue', 'light-blue', 'cyan', 'teal', 'green', 'light-green',
+	'lime', 'yellow', 'amber', 'orange', 'deep-orange', 'brown', 'grey', 'blue-grey', 'shades');
 
 $main-color: $indigo;
 $secondary-color: $blue;
@@ -73,8 +74,8 @@ $text-direction: ltr; // Default either ltr or rtl
  * Typography settings
  **************************************/
 // Font paths
-$roboto-font-path: '/dashboard/stylesheets/scss/components/fonts/Roboto/';
-$noto-font-path: '/stylesheets/scss/components/fonts/Noto/';
+$roboto-font-path: '/dashboard/stylesheets/scss/style/fonts/Roboto/';
+$noto-font-path: '/dashboard/stylesheets/scss/style/fonts/Noto/';
 
 // Font size
 $font-size: 14; //px Default 14 or 15
@@ -98,8 +99,8 @@ $font-color-button: $font-color-headline; // Default $font-color-headline
  * AppBar
  **************************************/
 // Basic (Don't change these, they influence the drawer (sidenav) and tabs as well)
-$appbar-small-height: rem-calc(48px); // Default rem-calc(48px)
-$appbar-medium-height: rem-calc(56px); // Default rem-calc(56px)
+$appbar-mobile-landscape-height: rem-calc(48px); // Default rem-calc(48px)
+$appbar-mobile-portrait-height: rem-calc(56px); // Default rem-calc(56px)
 $appbar-large-height: rem-calc(64px); // Default rem-calc(64px)
 
 // Colors
@@ -249,7 +250,7 @@ $stepper-step-on-font-color: rgba($black, .87); // Default rgba($black, .87)
 /**************************************
  * Tabs
  **************************************/
-$tab-color: $main-color; // Default $main-color
+$tab-background: $main-color; // Default $main-color
 $tab-font-color: rgba($white, .7); // Default rgba($white, .7)
 $tab-font-on-color: $white; // Default $white
 $tab-indicator-on-color: $white; // Default $white
@@ -257,10 +258,12 @@ $tab-indicator-on-color: $white; // Default $white
 /**************************************
  * Text fields
  **************************************/
+$textfield-border-size: rem-calc(2px);
 $textfield-off-color: $grey; // $grey
 $textfield-on-color: $main-color; // Default $main-color
 $textfield-disabled-color: $textfield-off-color; // Default $textfield-off-color
 $textfield-required-color: $red; // Default $red
+$textfield-error-color: $textfield-required-color; // Default $textfield-required-color
 
 /**************************************
  * Tooltips
@@ -272,7 +275,7 @@ $tooltip-font-color: $white; // Default $white
  * Grid settings
  **************************************/
 // Break points
-$xsmall-screen: 480px; // Small mobile
+$xsmall-screen: 600px; // Small mobile
 $small-screen: 960px; // Small tablet, medium mobile
 $medium-screen: 1280px; // Large tablet
 $large-screen: 1600px; // Small desktop
@@ -284,8 +287,8 @@ $small-columns: 8; // Default 8
 $columns: 12; // Default 12
 
 // Gutter
-$gutter: 16px; // Default 16px
-$large-gutter: 24px; // Default 24px
+$gutter: rem-calc(16px); // Default 16px
+$large-gutter: rem-calc(24px); // Default 24px
 
 /**************************************
  * Icons

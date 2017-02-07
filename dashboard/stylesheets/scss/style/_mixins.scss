@@ -14,12 +14,16 @@
 	border-radius: $settings;
 }
 
-@mixin box-sizing( $settings ) {
-	-webkit-box-sizing: $settings;
-	-moz-box-sizing: $settings;
-	-ms-box-sizing: $settings;
-	-o-box-sizing: $settings;
-	box-sizing: $settings;
+@mixin box-sizing( $settings: border-box ) {
+	@if( in-array( $settings, (content-box, border-box, inherit, initial, unset) ) ) {
+		-webkit-box-sizing: $settings;
+		-moz-box-sizing: $settings;
+		-ms-box-sizing: $settings;
+		-o-box-sizing: $settings;
+		box-sizing: $settings;
+	} @else {
+		@warn 'Property for "box-sizing" not supported: '#{$setting};
+	}
 }
 
 @mixin material-shadow( $dp ) {
@@ -32,6 +36,19 @@
 	$directAlpha: ( 24 - decimal-round( $dp / 10 ) ) / 100;
 
 	@include box-shadow( 0 $ambientY $ambientBlur 0 rgba(0, 0, 0, $ambientAlpha) unquote(',') 0 $directY $directBlur 0 rgba(0, 0, 0, $directAlpha) );
+
+	@media #{$medium-up} {
+		$dp: $dp - 2;
+		$ambientY: rem-calc( $dp + 0px );
+		$ambientBlur: rem-calc( if( $dp == 1, 3, $dp * 2 ) + 0px );
+		$ambientAlpha: ( $dp + 10 + ( $dp / 9.38 ) ) / 100;
+
+		$directY: rem-calc( if( $dp < 10, if( $dp % 2 == 0, $dp - ( ( $dp / 2 ) - 1 ), ( $dp - ( ( $dp - 1 ) / 2 ) ) ), $dp - 4 ) + 0px );
+		$directBlur: rem-calc( if( $dp == 1, 3, $dp * 2 ) + 0px );
+		$directAlpha: ( 24 - decimal-round( $dp / 10 ) ) / 100;
+
+		@include box-shadow( 0 $ambientY $ambientBlur 0 rgba(0, 0, 0, $ambientAlpha) unquote(',') 0 $directY $directBlur 0 rgba(0, 0, 0, $directAlpha) );
+	}
 }
 
 @mixin transition( $settings ) {
@@ -135,7 +152,7 @@
 	transition-delay: $setting;
 }
 
-@mixin button( $border-radius ) {
+@mixin button( $border-radius: rem-calc(2px) ) {
 	cursor: pointer;
 	@include border-radius( $border-radius );
 	text-decoration: none;
@@ -161,6 +178,13 @@
 			font-size: rem-calc($small-font-size+0px);
 		}
 	}
+}
+
+@mixin radial-gradient( $setting ) {
+	background: -webkit-radial-gradient($setting);
+	background: -o-radial-gradient($setting);
+	background: -moz-radial-gradient($setting);
+	background: radial-gradient($setting);
 }
 
 @mixin scrollbar() {
@@ -239,4 +263,108 @@
 	::selection {
 		@content;
 	}
+}
+
+@mixin align-content( $setting: stretch ) {
+	@if( in-array( $setting, (flex-start, flex-end, center, space-between, space-around, stretch, inherit, initial, unset) ) ) {
+		-webkit-align-content: $setting;
+		align-content: $setting;
+	} @else {
+		@warn 'Property for "align-content" not supported: '#{$setting};
+	}
+}
+
+@mixin align-items( $setting: stretch ) {
+	@if( in-array( $setting, (flex-start, flex-end, center, baseline, stretch, inherit, initial, unset) ) ) {
+		-webkit-align-items: $setting;
+		align-items: $setting;
+	} @else {
+		@warn 'Property for "align-items" not supported: '#{$setting};
+	}
+}
+
+@mixin align-self( $setting: auto ) {
+	@if( in-array( $setting, (auto, flex-start, flex-end, center, baseline, stretch, inherit, initial, unset) ) ) {
+		-webkit-align-self: $setting;
+		align-self: $setting;
+	} @else {
+		@warn 'Property for "align-self" not supported: '#{$setting};
+	}
+}
+
+@mixin flex( $setting: 0 1 auto ) {
+	-webkit-flex: $setting;
+	flex: $setting;
+}
+
+@mixin flex-basis( $setting: auto ) {
+	-webkit-flex-basis: $setting;
+	flex-basis: $setting;
+}
+
+@mixin flex-direction( $setting: row ) {
+	@if( in-array( $setting, (row, row-reversed, column, column-reversed, inherit, initial, unset) ) ) {
+		-webkit-flex-direction: $setting;
+		-ms-flex-direction: $setting;
+		flex-direction: $setting;
+	} @else {
+		@warn 'Property for "flex-direction" not supported: '#{$setting};
+	}
+}
+
+@mixin flex-flow( $setting: row nowrap ) {
+	-webkit-flex-flow: $setting;
+	flex-flow: $setting;
+}
+
+@mixin flex-grow( $setting: 0 ) {
+	-webkit-flex-grow: $setting;
+	flex-grow: $setting;
+}
+
+@mixin flex-shrink( $setting: 1 ) {
+	-webkit-flex-shrink: $setting;
+	flex-shrink: $setting;
+}
+
+@mixin flex-wrap( $setting: nowrap ) {
+	@if( in-array( $setting, (nowrap, wrap, wrap-reverse, inherit, initial, unset) ) ) {
+		-webkit-flex-wrap: $setting;
+		-mox-flex-wrap: $setting;
+		flex-wrap: $setting;
+	} @else {
+		@warn 'Property for "flex-wrap" not supported: '#{$setting};
+	}
+}
+
+@mixin justify-content( $setting: flex-start ) {
+	@if( in-array( $setting, (flex-start, flex-end, center, space-between, space-around, space-evenly, inherit, initial, unset) ) ) {
+		-webkit-justify-content: $setting;
+		justify-content: $setting;
+	} @else {
+		@warn 'Property for "justify-content" not supported: '#{$setting};
+	}
+}
+
+@mixin order( $setting: 0 ) {
+	-webkit-order: $setting;
+	-ms-flex-order: $setting;
+	order: $setting;
+}
+
+@mixin flex-container( $direction: row, $wrap: no-wrap, $justify: flex-start, $items: stretch, $content: stretch ) {
+	display: -webkit-flex;
+	display: -moz-flex;
+	display: -ms-flex;
+	display: flex;
+	@include flex-flow( $direction $wrap );
+	@include justify-content( $justify );
+	@include align-items( $items );
+	@include align-content( $content );
+}
+
+@mixin flex-item( $grow: 0, $shrink: 1, $basis: auto, $order: 0, $self: auto ) {
+	@include order( $order );
+	@include flex( $grow $shrink $basis );
+	@include align-self( $self );
 }

@@ -5,9 +5,7 @@
  **************************************/
 
 .sc-grid {
-	margin: 0 rem-calc(4px) rem-calc(4px) 0;
 	position: relative;
-	float: left;
 
 	img {
 		position: relative;
@@ -43,6 +41,7 @@
 		height: rem-calc(68px);
 
 		.sc-first {
+			max-width: 75%;
 			&-small {
 				font-size: rem-calc(12px);
 			}
@@ -53,21 +52,26 @@
 		}
 
 		.sc-second {
+			max-width: 75%;
 			font-size: rem-calc(14px);
 		}
 	}
 
-	.material-icons.sc-action {
-		padding: rem-calc(16px);
-		font-size: rem-calc(16px);
-		cursor: pointer;
+	.sc-action {
+		max-width: 25%;
 
-		&.sc-left {
-			left: rem-calc(16px);
-		}
+		.material-icons {
+			padding: rem-calc(16px);
+			font-size: rem-calc(16px);
+			cursor: pointer;
 
-		&.sc-right {
-			right: rem-calc(16px);
+			&.sc-left {
+				float: left;
+			}
+
+			&.sc-right {
+				float: right;
+			}
 		}
 	}
 }

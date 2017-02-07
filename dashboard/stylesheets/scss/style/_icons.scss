@@ -10,6 +10,11 @@
 	height: $icon-size;
 	vertical-align: $icon-align;
 	width: $icon-size;
+	color: if( $theme == light, rgba($black, .26), rgba($white, .3));
+
+	&.sc-active, &:hover {
+		color: if( $theme == light, rgba($black, .54), rgba($white, 1));
+	}
 
 	/* Support for all WebKit browsers. */
 	-webkit-font-smoothing: antialiased;
@@ -24,18 +29,22 @@
 
 	&.sc-18 {
 		font-size: rem-calc(18px);
+		@include square(rem-calc(18px));
 	}
 
 	&.sc-24 {
 		font-size: rem-calc(24px);
+		@include square(rem-calc(24px));
 	}
 
 	&.sc-36 {
 		font-size: rem-calc(36px);
+		@include square(rem-calc(36px));
 	}
 
 	&.sc-48 {
 		font-size: rem-calc(48px);
+		@include square(rem-calc(48px));
 	}
 }
 

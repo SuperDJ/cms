@@ -160,4 +160,15 @@ class Dashboard extends Database {
 			return false;
 		}
 	}
+
+	public function plugin() {
+		$plugin = explode( '/', $this->path );
+		$count = count($plugin);
+
+		if( $count > 2 ) {
+			return $plugin[ $count - 1 ];
+		} else {
+			return $plugin[0];
+		}
+	}
 }

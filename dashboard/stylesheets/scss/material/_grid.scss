@@ -1,29 +1,3 @@
-/**************************************
- * Grid
- *
- * http://www.google.com/design/spec/layout/responsive-ui.html
- **************************************/
-$xsmall-only: "only screen and (max-width: #{$xsmall-screen})";
-$small-only: "only screen and (min-width: #{$xsmall-screen} + 1px) and (max-width: #{$small-screen})";
-$medium-only: "only screen and (min-width: #{$small-screen} + 1px) and (max-width: #{$medium-screen})";
-$large-only: "only screen and (min-width: #{$medium-screen} + 1px) and (max-width: #{$large-screen})";
-$xlarge-only: "only screen and (min-width: #{$large-screen} + 1px) and (max-width: #{$xlarge-screen})";
-
-$xsmall-up: "only screen and (min-width: #{$xsmall-screen} + 1px)";
-$small-up: "only screen and (min-width: #{$small-screen} + 1px)";
-$medium-up: "only screen and (min-width: #{$medium-screen} + 1px)";
-$large-up: "only screen and (min-width: #{$large-screen} + 1px)";
-$xlarge-up: "only screen and (min-width: #{$xlarge-screen} + 1px)";
-
-$xsmall-down: "only screen and (max-width: #{$xsmall-screen})";
-$small-down: "only screen and (max-width: #{$small-screen})";
-$medium-down: "only screen and (max-width: #{$medium-screen})";
-$large-down: "only screen and (max-width: #{$large-screen})";
-$xlarge-down: "only screen and (max-width: #{$xlarge-screen})";
-
-$portrait: "only screen and (orientation: portrait)";
-$landscape: "only screen and (orientation: landscape)";
-
 .sc-container {
 	margin: 0 auto;
 	width: 90%;
@@ -74,10 +48,6 @@ $landscape: "only screen and (orientation: landscape)";
 		@include box-sizing(border-box);
 		padding: 0 $gutter / 2;
 
-		@media #{$xsmall-up} {
-			padding: 0 $gutter / 2;
-		}
-
 		&[class*="push-"],
 		&[class*="pull-"] {
 			position: relative;
@@ -92,18 +62,15 @@ $landscape: "only screen and (orientation: landscape)";
 				left: auto;
 				right: auto;
 			}
-			$i: $i + 1;
-		}
 
-		$i: 1;
-		@while $i <= $xsmall-columns {
-			$percent: unquote( ( 100 / ( $xsmall-columns / $i ) ) + "%" );
 			&.sc-offset-xs#{$i} {
 				margin-left: $percent;
 			}
+
 			&.sc-pull-xs#{$i} {
 				right: $percent;
 			}
+
 			&.sc-push-xs#{$i} {
 				left: $percent;
 			}
@@ -123,18 +90,15 @@ $landscape: "only screen and (orientation: landscape)";
 						left: auto;
 						right: auto;
 					}
-					$i: $i + 1;
-				}
 
-				$i: 1;
-				@while $i <= $small-columns {
-					$percent: unquote(( 100 / ( $small-columns / $i ) ) + "%");
 					&.sc-offset-s#{$i} {
 						margin-left: $percent;
 					}
+
 					&.sc-pull-s#{$i} {
 						right: $percent;
 					}
+
 					&.sc-push-s#{$i} {
 						left: $percent;
 					}
@@ -143,7 +107,7 @@ $landscape: "only screen and (orientation: landscape)";
 			}
 
 			// Columns 12
-			@media only screen and (min-width: 720px) {
+			@media only screen and (min-width: 721px) {
 				$i: 1;
 				@while $i <= $columns {
 					$percent: unquote(( 100 / ( $columns / $i ) ) + "%");
@@ -153,18 +117,15 @@ $landscape: "only screen and (orientation: landscape)";
 						left: auto;
 						right: auto;
 					}
-					$i: $i + 1;
-				}
 
-				$i: 1;
-				@while $i <= $columns {
-					$percent: unquote(( 100 / ( $columns / $i ) ) + "%");
 					&.sc-offset-s#{$i} {
 						margin-left: $percent;
 					}
+
 					&.sc-pull-s#{$i} {
 						right: $percent;
 					}
+
 					&.sc-push-s#{$i} {
 						left: $percent;
 					}
@@ -183,22 +144,19 @@ $landscape: "only screen and (orientation: landscape)";
 					left: auto;
 					right: auto;
 				}
-				$i: $i + 1
-			}
 
-			$i: 1;
-			@while $i <= $columns {
-				$percent: unquote( ( 100 / ( $columns / $i ) ) + "%" );
 				&.sc-offset-m#{$i} {
 					margin-left: $percent;
 				}
+
 				&.sc-pull-m#{$i} {
 					right: $percent;
 				}
+
 				&.sc-push-m#{$i} {
 					left: $percent;
 				}
-				$i: $i + 1;
+				$i: $i + 1
 			}
 		}
 
@@ -212,18 +170,15 @@ $landscape: "only screen and (orientation: landscape)";
 					left: auto;
 					right: auto;
 				}
-				$i: $i + 1;
-			}
 
-			$i: 1;
-			@while $i <= $columns {
-				$percent: unquote( ( 100 / ( $columns / $i ) ) + "%" );
 				&.sc-offset-l#{$i} {
 					margin-left: $percent;
 				}
+
 				&.sc-pull-l#{$i} {
 					right: $percent;
 				}
+
 				&.sc-push-l#{$i} {
 					left: $percent;
 				}
@@ -241,18 +196,15 @@ $landscape: "only screen and (orientation: landscape)";
 					left: auto;
 					right: auto;
 				}
-				$i: $i + 1;
-			}
 
-			$i: 1;
-			@while $i <= $columns {
-				$percent: unquote( ( 100 / ( $columns / $i ) ) + "%" );
 				&.sc-offset-xl#{$i} {
 					margin-left: $percent;
 				}
+
 				&.sc-pull-xl#{$i} {
 					right: $percent;
 				}
+
 				&.sc-push-xl#{$i} {
 					left: $percent;
 				}

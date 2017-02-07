@@ -11,39 +11,33 @@ $tab-padding: rem-calc(12px);
 
 .sc-tabs {
 	@include material-shadow(4);
-	background: $tab-color;
+	background: $tab-background;
 	overflow: auto;
 	overflow-y: hidden;
 	position: fixed;
-	top: $appbar-small-height;
+	top: $appbar-mobile-portrait-height;
 	width: 100%;
 	z-index: 2;
 	left: 0;
 	right: 0;
-	white-space: nowrap;
+	@include flex-container(null, null, space-between);
 
-	@media #{$medium-only} {
-		width: calc(100% - #{$drawer-medium-width} + #{rem-calc(1px)});
-		left: calc(#{$drawer-medium-width} - #{rem-calc(1px)});
-		top: $appbar-medium-height;
+	@media only screen and (orientation: landscape) and (max-width: #{$small-screen}) {
+		top: $appbar-mobile-landscape-height;
 	}
 
-	@media #{$medium-up} {
-		overflow: hidden;
+	@media only screen and (orientation: portrait) and (max-width: #{$xsmall-screen}) {
+		top: $appbar-mobile-portrait-height;
+	}
+
+	@media #{$small-up} {
 		width: calc(100% - #{$drawer-small-width} + #{rem-calc(1px)});
-		left: calc(#{$drawer-small-width} - #{rem-calc(1px)});
+		left: calc( #{$drawer-small-width} - #{rem-calc(1px)});
 		top: $appbar-large-height;
 	}
 
-	@media #{$large-up} {
-		&:hover {
-			overflow: auto;
-			overflow-y: hidden;
-		}
-	}
-
 	.sc-tab, .sc-tab-icon, .sc-tab-icon-text {
-		border-bottom: $tab-indicator-size solid $tab-color;
+		border-bottom: $tab-indicator-size solid $tab-background;
 		color: $tab-font-color;
 		display: inline-block;
 		font-size: rem-calc(14px);
@@ -53,15 +47,17 @@ $tab-padding: rem-calc(12px);
 		text-align: center;
 		text-overflow: ellipsis;
 		text-transform: uppercase;
-		word-wrap: break-word;
 		@include transition(border $transition-small-duration $basic-transition unquote(',') color $transition-small-duration $basic-transition);
+
+		@media #{$small-up} {
+			min-width: rem-calc(160px);
+		}
 
 		@media #{$medium-only} {
 			@include transition(border $transition-medium-duration $basic-transition unquote(',') color $transition-medium-duration $basic-transition);
 		}
 
 		@media #{$medium-up} {
-			min-width: rem-calc(160px);
 			@include transition(border $transition-large-duration $basic-transition unquote(',') color $transition-large-duration $basic-transition);
 		}
 

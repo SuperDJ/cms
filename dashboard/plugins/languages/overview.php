@@ -37,11 +37,15 @@ GROUP BY `l`.`id`;
 							<td>'.$field['iso_code'].'</td>
 							<td>'.$field['translated'].'</td>
 							<td>
-								<ul>
-									<li><a href="?path=languages/translate&id='.$field['id'].'">'.$language->translate('Translate').'</a></li>
-									<li><a href="?path=languages/edit&id='.$field['id'].'" class="edit">'.$language->translate('Edit').'</a></li>
-									<li><a href="?path=languages/delete&id='.$field['id'].'" class="delete">'.$language->translate('Delete').'</a></li>
-								</ul>
+								<a href="?path=languages/translate&id='.base64_encode($field['id']).'" class="sc-flat-button">
+									<i class="material-icons">translate</i>
+								</a>
+								<a href="?path=languages/edit&id='.base64_encode($field['id']).'" class="edit sc-flat-button">
+									<i class="material-icons">edit</i>
+								</a>
+								<a href="?path=languages/delete&id='.base64_encode($field['id']).'" class="delete sc-flat-button">
+									<i class="material-icons">delete</i>
+								</a>
 							</td>
 						</tr>';
 		}

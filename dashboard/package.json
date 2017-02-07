@@ -1,24 +1,25 @@
 {
-	"author": "Derkjan Super",
-	"description": "SMaterial a CSS framework based on Google's Material Design",
-	"homepage": "http://www.smaterial.dsuper.nl",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/SuperDJ/smaterial"
-	},
-	"license": "license.txt",
-	"devDependencies": {
-		"gulp": "^3.9.1",
-		"gulp-autoprefixer": "^3.1.0",
-		"gulp-concat": "^2.6.0",
-		"gulp-jshint": "^2.0.1",
-		"gulp-plumber": "^1.1.0",
-		"gulp-sass": "^2.3.1",
-		"gulp-sourcemaps": "^1.6.0",
-		"gulp-uglify": "^1.5.3",
-		"gulp-util": "^3.0.7",
-		"gulp-watch": "^4.3.5",
-		"gulp-zip": "^3.2.0",
-		"jshint": "^2.9.2"
-	}
+  "author": "Derkjan Super",
+  "description": "SMaterial a CSS framework based on Google's Material Design",
+  "homepage": "http://www.smaterial.dsuper.nl",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SuperDJ/smaterial"
+  },
+  "license": "license.txt",
+  "devDependencies": {
+  	"minimatch": "^3.0.3",
+	"gulp": "^3.9.1",
+	"gulp-autoprefixer": "^3.1.1",
+	"gulp-concat": "^2.6.1",
+	"gulp-jshint": "^2.0.4",
+	"gulp-plumber": "^1.1.0",
+	"gulp-sass": "^3.1.0",
+	"gulp-sourcemaps": "^2.4.0",
+	"gulp-uglify": "^2.0.1",
+	"gulp-util": "^3.0.8",
+	"gulp-watch": "^4.3.11",
+	"gulp-zip": "^4.0.0",
+	"jshint": "^2.9.4"
+  }
 }

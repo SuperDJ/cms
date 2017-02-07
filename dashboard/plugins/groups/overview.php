@@ -38,10 +38,12 @@ GROUP BY `g`.`id`
 						<td>'.$field['description'].'</td>
 						<td>'.$field['rights'].'</td>
 						<td>
-							<ul>
-								<li><a href="?path=groups/edit&id='.$field['id'].'" class="edit">'.$language->translate('Edit').'</a></li>
-								<li><a href="?path=groups/delete&id='.$field['id'].'" class="delete">'.$language->translate('Delete').'</a></li>
-							</ul>
+							<a href="?path=groups/edit&id='.base64_encode($field['id']).'" class="edit sc-flat-button">
+								<i class="material-icons">edit</i>
+							</a>	
+							<a href="?path=groups/delete&id='.base64_encode($field['id']).'" class="delete sc-flat-button">
+								<i class="material-icons">delete</i>
+							</a>
 						</td>
 					</tr>';
 		}

@@ -4,19 +4,17 @@
  * http://www.google.com/design/spec/components/text-fields.html
  **************************************/
 
-$textfield-border-size: rem-calc(2px);
-
 // Some default styling
-.sc-floating-input, .sc-floating-dense-input, .sc-single-input, .sc-single-dense-input {
+.sc-floating-input, .sc-floating-dense-input, .sc-single-input, .sc-single-dense-input, .sc-multi-input {
 	position: relative;
 
 	input[type="text"], input[type="password"], input[type="email"], input[type="number"], input[type="search"], input[type="tel"], input[type="url"], textarea {
 		border: none;
-		border-bottom: $textfield-border-size solid if($theme == light, rgba($black, .83), rgba($white, .50));
+		border-bottom: $textfield-border-size solid if($theme == light, rgba($black, .38), rgba($white, .5));
 		outline: none;
 		position: absolute;
 		background: none;
-		color: if($theme == light, rgba($black, .38), rgba($white, .50));
+		color: if($theme == light, rgba($black, .87), rgba($white, 1));
 		width: 100%;
 		@include transition(all $transition-small-duration $basic-transition);
 
@@ -26,6 +24,10 @@ $textfield-border-size: rem-calc(2px);
 
 		@media #{$medium-up} {
 			@include transition(all $transition-large-duration $basic-transition);
+		}
+
+		&:hover {
+			color: if($theme == light, rgba($black, .54), rgba($white, .7));
 		}
 
 		&:active, &:focus {
@@ -40,10 +42,10 @@ $textfield-border-size: rem-calc(2px);
 		&:disabled, &:disabled:active, &:disabled:focus {
 			background: none;
 			border-bottom: $textfield-border-size dotted $textfield-disabled-color;
-			color: if($theme == light, rgba($black, .38), rgba($white, .50));
+			color: if($theme == light, rgba($black, .38), rgba($white, .5));
 
 			+ label {
-				color: if($theme == light, rgba($black, .38), rgba($white, .50));
+				color: if($theme == light, rgba($black, .38), rgba($white, .5));
 			}
 		}
 
@@ -66,6 +68,14 @@ $textfield-border-size: rem-calc(2px);
 		&:active:required + label:after, &:focus:required + label:after {
 			color: $textfield-required-color;
 		}
+
+		/*&:invalid {
+			border-bottom: $textfield-border-size solid $textfield-error-color;
+
+			+ label {
+				color: $textfield-error-color;
+			}
+		}*/
 	}
 
 	label {
@@ -87,12 +97,6 @@ $textfield-border-size: rem-calc(2px);
 			color: $textfield-off-color;
 		}
 	}
-
-	textarea {
-		font-family: inherit;
-		font-size: inherit;
-		overflow: hidden;
-	}
 }
 
 $textfield-floating-height: rem-calc(72px); // Default rem-calc(72px)
@@ -107,7 +111,7 @@ $textfield-floating-label-font-size: rem-calc(12px); // Default rem-calc(12px);
 		height: $textfield-floating-height;
 		padding: $textfield-floating-padding 0 $textfield-floating-divider 0;
 
-		input[type="text"], input[type="password"], input[type="email"], input[type="number"], input[type="search"], input[type="tel"], input[type="url"], textarea {
+		input[type="text"], input[type="password"], input[type="email"], input[type="number"], input[type="search"], input[type="tel"], input[type="url"] {
 			bottom: $textfield-floating-divider;
 			font-size: $textfield-floating-font-size;
 			padding: $textfield-floating-divider 0;
@@ -145,7 +149,7 @@ $textfield-floating-dense-label-font-size: rem-calc(12px); // Default rem-calc(1
 		height: $textfield-floating-dense-height;
 		padding: $textfield-floating-dense-padding 0 $textfield-floating-dense-divider 0;
 
-		input[type="text"], input[type="password"], input[type="email"], input[type="number"], input[type="search"], input[type="tel"], input[type="url"], textarea {
+		input[type="text"], input[type="password"], input[type="email"], input[type="number"], input[type="search"], input[type="tel"], input[type="url"] {
 			bottom: $textfield-floating-dense-divider;
 			font-size: $textfield-floating-dense-font-size;
 			padding: $textfield-floating-dense-divider 0;
@@ -228,6 +232,10 @@ $textfield-single-icon-size: rem-calc(24px); // Default rem-calc(24)
 					color: $textfield-on-color;
 				}
 			}
+
+			/*&:invalid ~ .material-icons {
+				color: $textfield-error-color;
+			}*/
 		}
 
 		label {
@@ -296,57 +304,36 @@ $textfield-single-dense-icon-size: rem-calc(20px); // Default rem-calc(20px)
 	}
 }
 
-@if( in-array( 'file', $textfield ) ) {
-	input[type="file"].sc-file-input {
-		@include opacity(0);
-		overflow: hidden;
-		position: absolute;
-		z-index: -1;
+// Multi-line textfield
+@if( in-array( 'multi', $textfield ) ) {
+	.sc-multi-input {
+		padding: $textfield-floating-padding 0 $textfield-floating-divider 0;
+		height: $textfield-floating-height;
 
-		+ label {
-			@include font($font-size-button, 0, $font-weight-button, $line-height-button, $font-color-button, $letter-spacing-button, uppercase);
-			@include button(rem-calc(2px));
-			@include material-shadow(2);
-			background: $raised-background;
-			color: $raised-font-color;
-			height: $raised-size;
-			line-height: $raised-size;
-			min-width: rem-calc(88px);
-			padding: 0 rem-calc(16px);
-			@include transition(
-					box-shadow $transition-small-duration $basic-transition unquote(',') background $transition-small-duration $basic-transition
-			);
+		textarea {
+			font-family: inherit;
+			bottom: $textfield-floating-divider;
+			font-size: $textfield-floating-font-size;
+			padding: $textfield-floating-divider 0;
+			resize: none;
+			height: calc(#{$textfield-floating-height} - (#{$textfield-floating-padding} + #{$textfield-floating-divider}));
 
-			@media #{$medium-only} {
-				@include transition(
-						box-shadow $transition-medium-duration $basic-transition unquote(',') background $transition-medium-duration $basic-transition
-				);
-			}
-
-			@media #{$medium-up} {
-				@include material-shadow(0);
-				@include transition(
-						box-shadow $transition-large-duration $basic-transition unquote(',') background $transition-large-duration $basic-transition
-				);
-			}
-
-			&:active {
-				@include material-shadow(8);
-
-				@if $theme == dark {
-					background: color($raised-background, 700);
+			&:active, &:focus {
+				+ label {
+					font-size: $textfield-floating-label-font-size;
+					top: 0;
 				}
 			}
+		}
 
-			&:hover {
-				color: $raised-font-color; // To fix bug of links getting link color on hover
-			}
+		label {
+			font-size: $textfield-floating-font-size;
+			font-weight: 400;
+			top: $textfield-floating-padding;
 
-			.material-icons {
-				color: $raised-icon-color;
-				@include square($raised-size);
-				line-height: $raised-size;
-				vertical-align: middle;
+			&.sc-active {
+				font-size: $textfield-floating-label-font-size;
+				top: 0;
 			}
 		}
 	}

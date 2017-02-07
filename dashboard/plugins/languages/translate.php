@@ -27,7 +27,6 @@ if( !$user->isLoggedIn() ) {
 
 			if( empty( $form->errors ) ) {
 				$translations = count($validation);
-				echo $translations.'<br>';
 				$translated = 0;
 				foreach( $validation as $field => $value ) {
 					// $field = `translations`.`id`
@@ -50,7 +49,6 @@ if( !$user->isLoggedIn() ) {
 						}
 					}
 				}
-				echo $translated;
 
 				if( $translations === $translated ) {
 					$user->to('?path=languages/overview&message='.$language->translate('Language translated').'&messageType=success');

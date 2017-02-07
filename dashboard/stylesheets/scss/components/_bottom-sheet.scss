@@ -104,7 +104,7 @@ $bottom-sheet-music-height: rem-calc(50px); // Default rem-calc(40px)
 				}
 
 				.sc-grid-item {
-					@extend .sc-col, .sc-s6, .sc-m4;
+					//@extend .sc-col, .sc-s6, .sc-m4;
 					padding: 0;
 
 					.sc-grid-icon {

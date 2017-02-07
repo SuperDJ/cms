@@ -6,15 +6,20 @@
  **************************************/
 
 // Style
-@import 'components/mixins'; // All mixins
-@import 'components/functions'; // All functions
-@import 'components/colors'; // Color swatches currently moved into settings
-@import 'components/settings'; // All settings
-@import 'components/grid'; // Grid functionality
-@import 'components/normalize'; // Remove browser default styles add Material default styles
-@import 'components/shadows'; // Shadow depths
-@import 'components/typography'; // Typography
-@import 'components/icons'; // Icons with their shadow (can be turned off)
+@import 'style/mixins'; // All mixins
+@import 'style/functions'; // All functions
+@import 'style/colors'; // Color swatches currently moved into settings
+@import 'material/settings'; // All settings
+@import 'material/media-queries'; // All possible media queries
+//@import 'material/grid'; // Grid functionality
+@import 'material/flex-grid'; // Grid functionality
+@import 'material/normalize'; // Remove browser default styles add Material default styles
+
+$shadow-depths: ('0', '1', '2', '3', '4', '6', '8', '9', '10', '12', '16', '24');
+@import 'material/shadows'; // Shadow depths (Can be turned off)
+
+@import 'style/typography'; // Typography
+@import 'style/icons'; // Icons with their shadow (can be turned off)
 
 // Components
 @import 'components/appbar'; // Top menu bar (can be turned off)
@@ -39,11 +44,13 @@ $dialog: (/*'full-screen'*/);
 /*
 @import 'components/expansion-panels'; // Used to style expansion panels (can be turned off)
 @import 'components/grid-lists'; // Used to style grid lists (can be turned off)
+@import 'components/menu'; // Used to style menus (can be turned off)
 */
 $navigation-drawer: (/*'full-height', 'clipped', 'floating',*/ 'persistent', /*'temporary'*/);
-@import 'components/navigation-drawer'; // Used to style navigation drawer (can be turned off)
+@import 'patterns/navigation-drawer'; // Used to style navigation drawer (can be turned off)
+
 @import 'components/lists'; // Used to style lists (can be turned off)
-@import 'components/notifications'; // Notifications style (can be turned off)
+@import 'patterns/notifications'; // Notifications style (can be turned off)
 //@import 'components/pickers'; // Used to style date and time picker (can be turned off)
 
 $progress: ('determinate', 'indeterminate', /*'buffer', 'circular'*/); // It's better to turn off "buffer" since it isn't working properly
@@ -53,7 +60,7 @@ $selection: ('checkbox', 'radio', 'switch');
 @import 'components/selection'; // Used to style selection controls (checkbox, radio button, switch) (can be turned off)
 
 $slider: ('discrete');
-@import 'components/sliders'; // Used to style sliders (can be turned off)
+@import 'components/sliders'; // Used to style sliders (can be turned off)   
 
 /*
 @import 'components/snackbars'; // Used to style snackbars and toasts (can be turned off)
@@ -65,8 +72,8 @@ $stepper: ('horizontal', 'vertical');
 $tab: ('tab', 'tab-icon', 'tab-icon-text');
 @import 'components/tabs'; // Used to style tabs (can be turned off)
 
-$textfield: ('floating', /*'floating-dense',*/ 'file', 'single', /*'single-dense'*/);
+$textfield: ('floating', /*'floating-dense',*/ 'single', /*'single-dense',*/ 'multi');
 @import 'components/textfields'; // Used to style input (can be turned off)
 
 @import 'components/tooltips'; // Used to style tooltips (can be turned off)
-@import 'components/colors-create'; // Used to create colors(can be turned off)
+@import 'style/colors-create'; // Used to create colors(can be turned off)

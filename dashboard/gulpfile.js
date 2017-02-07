@@ -42,7 +42,6 @@ gulp.task( 'sass', function () {
 			errLogToConsole: true,
 			outputStyle: 'compressed'
 		} ).on( 'error', sass.logError ) )
-		//.pipe(purge())
 		.pipe( autoprefixer() )
 		.pipe( sourcemaps.write( './' ) )
 		.pipe( gulp.dest( 'stylesheets' ) );
@@ -70,7 +69,7 @@ gulp.task( 'watch', function () {
 	gulp.watch( 'js/app/*.js', ['app'] );
 	gulp.watch( 'js/vendor/*.js', ['vendor'] );
 	gulp.watch( 'stylesheets/scss/*.scss', ['sass'] );
-	gulp.watch( 'stylesheets/scss/components/*.scss', ['sass'] );
+	gulp.watch( 'stylesheets/scss/**/*.scss', ['sass'] );
 } );
 
 gulp.task( 'default', ['watch'] );

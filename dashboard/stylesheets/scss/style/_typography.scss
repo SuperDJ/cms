@@ -7,7 +7,7 @@
  **************************************/
 
 // Load requested fonts
-@import './fonts/fonts';
+@import 'fonts/fonts';
 
 // Typographic Scale
 $font-size-display-4: 112; // Default 112
@@ -92,7 +92,7 @@ $letter-spacing-button: 0.1; // Default 0.1
 .sc-headline, h5 {
 	@include font($font-size-headline, 0, $font-weight-headline, $line-height-headline, $font-color-headline, $letter-spacing-headline);
 }
-.sc-title, h6 {
+.sc-title, h6, .sc-appbar-title h1,.sc-appbar-title h2, .sc-appbar-title h3, .sc-appbar-title h4, .sc-appbar-title h5, .sc-appbar-title h6 {
 	@include font($font-size-title, 0, $font-weight-title, $line-height-title, $font-color-title, $letter-spacing-title);
 }
 .sc-subhead-2 {

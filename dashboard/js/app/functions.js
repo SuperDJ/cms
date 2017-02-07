@@ -55,10 +55,10 @@ $.fn.visible = function() {
 /**
  * Check if something is empty
  * @param  string $value Input
- * @return bool        True or false depending if empty or not
+ * @return boolean        True or false depending if empty or not
  */
 function empty( $value ) {
-	if( $value.trim( $value.value ).length === 0) {
+	if( $.trim($value).length === 0) {
 		return true;
 	} else {
 		return false;

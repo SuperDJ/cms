@@ -1,0 +1,80 @@
+/**************************************
+ * Elevation and shadows
+ *
+ * http://www.google.com/design/spec/what-is-material/elevation-shadows.html
+ **************************************/
+
+@if( in-array( '0', $shadow-depths ) ) {
+	.sc-z0 {
+		box-shadow: none !important;
+		-moz-box-shadow: none !important;
+		-webkit-box-shadow: none !important;
+		-ms-box-shadow: none !important;
+		-o-box-shadow: none !important;
+	}
+}
+@if( in-array( '1', $shadow-depths ) ) {
+	.sc-z1 {
+		@include material-shadow(1);
+	}
+}
+
+@if( in-array( '2', $shadow-depths ) ) {
+	.sc-z2 {
+		@include material-shadow(2);
+	}
+}
+
+@if( in-array( '3', $shadow-depths ) ) {
+	.sc-z3 {
+		@include material-shadow(3);
+	}
+}
+
+@if( in-array( '4', $shadow-depths ) ) {
+	.sc-z4 {
+		@include material-shadow(4);
+	}
+}
+
+@if( in-array( '6', $shadow-depths ) ) {
+	.sc-z6 {
+		@include material-shadow(6);
+	}
+}
+
+@if( in-array( '8', $shadow-depths ) ) {
+	.sc-z8 {
+		@include material-shadow(8);
+	}
+}
+
+@if( in-array( '9', $shadow-depths ) ) {
+	.sc-z9 {
+		@include material-shadow(9);
+	}
+}
+
+@if( in-array( '10', $shadow-depths ) ) {
+	.sc-z10 {
+		@include material-shadow(10);
+	}
+}
+
+@if( in-array( '12', $shadow-depths ) ) {
+	.sc-z12 {
+		@include material-shadow(12);
+	}
+}
+
+@if( in-array( '16', $shadow-depths ) ) {
+	.sc-z16 {
+		@include material-shadow(16);
+	}
+}
+
+@if( in-array( '24', $shadow-depths ) ) {
+	.sc-z24 {
+		@include material-shadow(24);
+	}
+}

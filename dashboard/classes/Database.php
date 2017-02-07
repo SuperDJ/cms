@@ -174,7 +174,7 @@ class Database {
 		$stmt = $this->mysqli->prepare($query);
 
 		if( !empty( $columns ) ) {
-			$stmt->execute( $columns );
+			$stmt->execute( $columlns );
 		} else {
 			$stmt->execute();
 		}

@@ -5,26 +5,40 @@
 	visibility: hidden;
 }
 
-.success, .edit:hover {
-	color: $teal;
+.success, .alert, .info, .error {
+	color: $white;
+	@include border-radius(rem-calc(2px));
+}
 
-	li {
-		color: $teal;
-	}
+.success {
+	background: $teal;
 }
 
 .alert {
-	color: $deep-orange;
+	background: $deep-orange;
 }
 
 .info {
-	color: $blue;
+	background: $blue;
 }
 
-.error, .delete:hover {
-	color: $red;
+.error {
+	background: $red;
+}
 
-	li {
-		color: $red;
+.edit.sc-flat-button .material-icons, .delete.sc-flat-button .material-icons {
+	color: if( $theme == light, rgba($black, .26), rgba($white, .3));
+
+	&:hover {
+		color: if( $theme == light, rgba($black, .54), rgba($white, 1));
 	}
 }
+
+.edit.sc-flat-button:active {
+	background: $teal;
+}
+
+.delete.sc-flat-button:active {
+	background: $red;
+}
+

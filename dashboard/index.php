@@ -8,11 +8,11 @@ if( !empty( $_GET['path'] ) ) {
 	$dash = new Dashboard( $path, [ $language, 'translate' ] );
 
 	if( !empty( $_GET['id'] ) ) {
-		$id = (int)$db->sanitize($_GET['id']);
+		$id = (int)$db->sanitize( base64_decode( $_GET['id'] ) );
 	}
 
 	// Check if path exists
-	if( $dash->checkPath($path) ) {
+	if( $dash->checkPath( $path ) ) {
 		// If user has been remembered login
 		/*if( $cooke->exists('user') ) {
 			if( $user->cookieLogin() ) {

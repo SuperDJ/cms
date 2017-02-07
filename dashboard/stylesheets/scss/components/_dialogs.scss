@@ -11,7 +11,7 @@
 	//max-width: 50%;
 	position: fixed;
 	width: auto;
-	z-index: 4;
+	z-index: 5;
 
 	@media #{$medium-up} {
 		max-width: 90%;
@@ -41,15 +41,6 @@
 			margin: 0 0 0 rem-calc(8px);
 			padding: 0 rem-calc(8px);
 			min-width: rem-calc(64px);
-		}
-	}
-
-	@if( in-array( 'full-screen', $dialog ) ) {
-		&-fullscreen {
-			bottom: rem-calc(20px);
-			left: rem-calc(20px);
-			right: rem-calc(20px);
-			top: rem-calc(20px);
 		}
 	}
 }

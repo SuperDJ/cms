@@ -22,21 +22,15 @@ button, input[type="button"], input[type="reset"], input[type="submit"], a {
 			line-height: $raised-size;
 			min-width: rem-calc(88px);
 			padding: 0 rem-calc(16px);
-			@include transition(
-					box-shadow $transition-small-duration $basic-transition unquote(',') background $transition-small-duration $basic-transition
-			);
+			@include transition(box-shadow $transition-small-duration $basic-transition unquote(',') background $transition-small-duration $basic-transition);
 
 			@media #{$medium-only} {
-				@include transition(
-						box-shadow $transition-medium-duration $basic-transition unquote(',') background $transition-medium-duration $basic-transition
-				);
+				@include transition(box-shadow $transition-medium-duration $basic-transition unquote(',') background $transition-medium-duration $basic-transition);
 			}
 
 			@media #{$medium-up} {
 				@include material-shadow(0);
-				@include transition(
-						box-shadow $transition-large-duration $basic-transition unquote(',') background $transition-large-duration $basic-transition
-				);
+				@include transition(box-shadow $transition-large-duration $basic-transition unquote(',') background $transition-large-duration $basic-transition);
 			}
 
 			&:active {
@@ -123,6 +117,7 @@ button, input[type="button"], input[type="reset"], input[type="submit"], a {
 }
 
 $floating-size: rem-calc(56px); // Default rem-calc(56px)
+$floating-sub-size: ($floating-size / 10) * 7;
 $floating-icon-size: rem-calc(24px); // Default rem-calc(24px)
 $floating-mini-size: rem-calc(40px); // Default rem-calc(40px)
 
@@ -152,11 +147,40 @@ $floating-mini-size: rem-calc(40px); // Default rem-calc(40px)
 			line-height: $floating-mini-size;
 		}
 
-		ul li {
-			@include border-radius(50%);
+		ul {
+			left: calc( (#{$floating-size} / 2) - ( #{$floating-sub-size} / 2 ) );
+			position: absolute;
 			visibility: hidden;
 			@include opacity(0);
-			@include square(calc((#{$floating-size} / 10) * 7));
+			@include transition(all $transition-small-duration $basic-transition);
+
+			&.sc-expanded {
+				visibility: visible;
+				@include opacity(1);
+
+				li {
+					margin-top: calc( #{$floating-sub-size} / 2);
+				}
+			}
+
+			li {
+				margin-top: $floating-sub-size * -1;
+				@include border-radius(50%);
+				@include square($floating-sub-size);
+			}
+
+			a {
+				display: block;
+				position: absolute;
+				line-height: $floating-sub-size;
+				@include square($floating-sub-size);
+				margin-left: calc( #{$floating-sub-size} / 2.4 * -1 ); // TODO make 2.4 dynamic
+			}
+
+			img {
+				@include square($floating-sub-size);
+				@include border-radius(50%);
+			}
 		}
 	}
 }

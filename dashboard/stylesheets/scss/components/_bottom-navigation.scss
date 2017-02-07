@@ -15,56 +15,48 @@ $bottom-nav-icon-size: rem-calc(24px); // Default rem-calc(24px)
 	@include material-shadow(8);
 	width: 100%;
 	margin: 0 0 -102% 0;
+	@include flex-container(null, null, space-between);
 	@include transition(margin $transition-small-duration $basic-transition);
 
+	@media #{$small-up} {
+		left: $drawer-small-width;
+		width: calc(100% - #{$drawer-small-width});
+	}
+
 	@media #{$medium-only} {
-		left: $drawer-medium-width;
 		@include transition(margin $transition-medium-duration $basic-transition);
 	}
 
 	@media #{$medium-up} {
-		left: $drawer-small-width;
 		@include transition(margin $transition-large-duration $basic-transition);
-	}
-
-	ul {
-		list-style-type: none;
-		margin: 0;
-		padding: 0;
-
-		li {
-			float:left;
-			line-height: normal;
-			padding: 0;
-			text-align: center;
-		}
 	}
 
 	&.sc-expanded {
 		margin: 0;
 	}
-}
 
-.sc-bottom-nav ul li a, .sc-bottom-shifting ul li a {
-	color: $bottom-nav-off-color;
-	display: block;
-	line-height: normal;
+	a {
+		color: $bottom-nav-off-color;
+		display: block;
+		line-height: normal;
+		text-align: center;
 
-	&:hover {
-		color: $bottom-nav-on-color;
-	}
-
-	&.sc-active {
-		color: $bottom-nav-on-color;
-
-		.material-icons {
+		&:hover {
 			color: $bottom-nav-on-color;
+		}
+
+		&.sc-active {
+			color: $bottom-nav-on-color;
+
+			.material-icons {
+				color: $bottom-nav-on-color;
+			}
 		}
 	}
 }
 
 @if( in-array( 'bottom-nav', $bottom-nav ) ) {
-	.sc-bottom-nav ul li a {
+	.sc-bottom-nav a {
 		font-size: rem-calc(12px);
 		height: $bottom-nav-height;
 		max-width: rem-calc(168px);
@@ -88,7 +80,7 @@ $bottom-nav-icon-size: rem-calc(24px); // Default rem-calc(24px)
 }
 
 @if( in-array( 'bottom-shifting', $bottom-nav ) ) {
-	.sc-bottom-shifting ul li a {
+	.sc-bottom-shifting a {
 		height: $bottom-nav-height;
 		max-width: rem-calc(96px);
 		min-width: rem-calc(56px);
