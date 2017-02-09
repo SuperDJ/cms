@@ -40,34 +40,31 @@
 			<div class="sc-appbar-menu">
 				<a href="#" class="sc-nav-more sc-trigger" data-sc-trigger="sc-nav-more"><i class="material-icons">more_vert</i></a>
 
-				<ul class="sc-appbar-menu-more" id="sc-nav-more">
-					<li>Example</li>
-				</ul>
+				<nav class="sc-menu" id="sc-nav-more">
+					<a href="#">Example</a>
+				</nav>
 			</div>
 		</header>
 
-		<aside id="sc-drawer" class="sc-drawer sc-drawer-persistent">
-			<nav class="sc-drawer-container">
-				<ul>
-					<li class="sc-drawer-header">
-						<img src="/dashboard/stylesheets/images/profile.jpg" alt="Profile image" class="sc-drawer-profile-img">
-						<div class="sc-drawer-profile-name"><?php echo substr( $user->data['first_name'], 0, 1 ).'. '.$user->data['last_name']; ?></div>
-						<div id="sc-drawer-profile-more" class="sc-drawer-profile-more">
-							<i class="material-icons sc-trigger" data-sc-trigger="sc-drawer-profile-more">arrow_drop_down</i>
 
-							<ul>
-								<li><a href="#">Facebook</a></li>
-								<li><a href="#">Google Plus</a></li>
-								<li><a href="#">Add account</a></li>
-							</ul>
-						</div>
-					</li>
-					<?php
-					echo $dash->menu;
-					?>
-				</ul>
-			</nav>
-		</aside>
+        <nav id="sc-drawer" class="sc-drawer sc-drawer-persistent">
+            <header class="sc-drawer-header">
+                <img src="/dashboard/stylesheets/images/profile.jpg" alt="Profile image" class="sc-drawer-profile-img">
+                <div class="sc-drawer-profile-name"><?php echo substr( $user->data['first_name'], 0, 1 ).'. '.$user->data['last_name']; ?></div>
+                <div id="sc-drawer-profile-more" class="sc-drawer-profile-more">
+                    <i class="material-icons sc-trigger" data-sc-trigger="profile-more">arrow_drop_down</i>
+
+                    <nav class="sc-menu" id="profile-more">
+                        <a href="#">Facebook</a>
+                        <a href="#">Google Plus</a>
+                        <a href="#">Add account</a>
+                    </nav>
+                </div>
+            </header>
+            <?php
+            echo $dash->menu;
+            ?>
+        </nav>
 
 		<main>
 <?php

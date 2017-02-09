@@ -161,11 +161,23 @@ class Form extends Database {
 					case 'capitalize':
 						$value = ucfirst( $value );
 						break;
+					case 'checkbox':
+						if( ! empty( $value ) && $value == 'on') {
+							$value = 1;
+						} else {
+							$value = null;
+						}
+						break;
 				}
 
 				$this->return[$item] = $value;
 			}
 		}
+
+		if( !is_null( $id ) ) {
+			$this->return['id'] = (int)$id;
+		}
+
 		if( empty( $this->errors ) ) {
 			unset( $_SESSION['form'] ); // Delete session
 			return $this->return;
@@ -189,7 +201,7 @@ class Form extends Database {
 	public function outputErrors() {
 		$html = '';
 		if( !empty( $this->errors ) ) {
-			$html .= '<div class="error">
+			$html .= '<div class="error sc-card sc-card-supporting">
 						<ul>';
 			foreach( $this->errors as $error ) {
 				$html .= '<li>' . $error . '</li>';

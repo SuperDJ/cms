@@ -44,8 +44,9 @@ $dialog: (/*'full-screen'*/);
 /*
 @import 'components/expansion-panels'; // Used to style expansion panels (can be turned off)
 @import 'components/grid-lists'; // Used to style grid lists (can be turned off)
-@import 'components/menu'; // Used to style menus (can be turned off)
 */
+@import 'components/menu'; // Used to style menus (can be turned off)
+
 $navigation-drawer: (/*'full-height', 'clipped', 'floating',*/ 'persistent', /*'temporary'*/);
 @import 'patterns/navigation-drawer'; // Used to style navigation drawer (can be turned off)
 
@@ -60,7 +61,7 @@ $selection: ('checkbox', 'radio', 'switch');
 @import 'components/selection'; // Used to style selection controls (checkbox, radio button, switch) (can be turned off)
 
 $slider: ('discrete');
-@import 'components/sliders'; // Used to style sliders (can be turned off)   
+@import 'components/sliders'; // Used to style sliders (can be turned off)
 
 /*
 @import 'components/snackbars'; // Used to style snackbars and toasts (can be turned off)

@@ -72,7 +72,6 @@ if( !$user->isLoggedIn() ) {
 
 		if( empty( $form->errors ) ) {
 			// Add group to database or give error message
-            $validation['id'] = $id; // Add id to validation array
 			if( $db->update("UPDATE `groups` SET `group` = ?, `description` = ? WHERE `id` = ?", $validation) ||
                 $validation['group'] == $db->detail('group', 'groups', 'id', $id) && $validation['description'] == $db->detail('description', 'groups', 'id', $id) ) {
 				// Add rights to database;
@@ -126,10 +125,10 @@ if( !$user->isLoggedIn() ) {
 				if( $i === $p ) {
 					$user->to('?path=groups/overview&message='.$language->translate('Group has been edited').'&messageType=success');
 				} else {
-					echo '<div class="error">'.$language->translate('Something went wrong edited the group rights').'</div>';
+					echo '<div class="error sc-card sc-card-supporting">'.$language->translate('Something went wrong edited the group rights').'</div>';
 				}
 			} else {
-				echo '<div class="error">'.$language->translate('Something went wrong editing the group').'</div>';
+				echo '<div class="error sc-card sc-card-supporting">'.$language->translate('Something went wrong editing the group').'</div>';
 			}
 		} else {
 			echo $form->outputErrors();
@@ -142,7 +141,7 @@ if( !$user->isLoggedIn() ) {
 			<label for="group"><?php echo $language->translate('Group'); ?></label>
 		</div>
 
-		<div class="sc-floating-input">
+		<div class="sc-multi-input">
 			<textarea name="description" id="description"><?php echo ( !empty( $form->input('description') ) ? $form->input('description') : $data['description'] ); ?></textarea>
 			<label for="description"><?php echo $language->translate('Description'); ?></label>
 		</div>

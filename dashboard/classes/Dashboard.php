@@ -136,21 +136,20 @@ class Dashboard extends Database {
 
 		foreach( $plugins as $fields => $field ) {
 			if( !empty( $field['children'] ) ) {
-				$html .= '	<li class="sc-drawer-dropdown">
+				$html .= '	<a class="sc-drawer-dropdown">
 						    	'.( !empty( $field['icon'] ) ? '<i class="material-icons">'.$field['icon'].'</i>' : '' ).'
 								'.$translate( $field['name'] ).'
 								<i class="material-icons sc-arrow">expand_more</i>
+							</a>	
 								
-								<ul>';
+								<div class="sc-dropdown">';
 				$html .= $this->createMenu( $field['children'], $translate, $url );
-				$html .= '		</ul>';
+				$html .= '		</div>';
 			} else {
-				$html .= '	<li>
-								<a href="?path='.$field['url'].'" '.( $url == $field['url'] ? 'class="sc-active"' : '' ).'>
-									'.( !empty( $field['icon'] ) ? '<i class="material-icons">'.$field['icon'].'</i>' : '' ).'
-									'.$translate( $field['name'] ).'
-								</a>
-							</li>';
+				$html .= '	<a href="?path='.$field['url'].'" '.( $url == $field['url'] ? 'class="sc-active"' : '' ).'>
+								'.( !empty( $field['icon'] ) ? '<i class="material-icons">'.$field['icon'].'</i>' : '' ).'
+								'.$translate( $field['name'] ).'
+							</a>';
 			}
 		}
 

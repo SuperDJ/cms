@@ -61,12 +61,19 @@ if( !$user->isLoggedIn() ) {
             ),
             'description' => array(
                 'name' => $language->translate('Description')
+            ),
+            'default' => array(
+                'name' => $language->translate('Default group'),
+                'unique' => 'groups',
+                'maxLength' => 3
             )
         ), [$language, 'translate']);
 
+		die();
+
 		if( empty( $form->errors ) ) {
 		    // Add group to database or give error message
-		    if( $db->insert("INSERT INTO `groups` (`group`, `description`) VALUES (?, ?)", $validation) ) {
+		    if( $db->insert("INSERT INTO `groups` (`group`, `description`, `default`) VALUES (?, ?, ?)", $validation) ) {
                 // Add rights to database
                 // Get insert id from database
                 $id = $db->detail('id', 'groups', 'group', $validation['group']);
@@ -97,10 +104,10 @@ if( !$user->isLoggedIn() ) {
                 if( $i === $p ) {
                     $user->to('?path=groups/overview&message='.$language->translate('Group has been added').'&messageType=success');
                 } else {
-					echo '<div class="error">'.$language->translate('Something went wrong adding the group rights').'</div>';
+					echo '<div class="error sc-card sc-card-supporting">'.$language->translate('Something went wrong adding the group rights').'</div>';
                 }
             } else {
-		        echo '<div class="error">'.$language->translate('Something went wrong adding the group').'</div>';
+		        echo '<div class="error sc-card sc-card-supporting">'.$language->translate('Something went wrong adding the group').'</div>';
             }
         } else {
 		    echo $form->outputErrors();
@@ -113,10 +120,23 @@ if( !$user->isLoggedIn() ) {
 			<label for="group"><?php echo $language->translate('Group'); ?></label>
 		</div>
 
-		<div class="sc-floating-input">
+		<div class="sc-multi-input">
 			<textarea name="description" id="description"><?php echo $form->input('description'); ?></textarea>
 			<label for="description"><?php echo $language->translate('Description'); ?></label>
 		</div>
+
+        <div class="sc-xs">
+            <label for="default"><?php echo $language->translate('Default group'); ?></label>
+            <div class="sc-switch">
+                <label>
+                    <?php echo $language->translate('Yes'); ?>
+                    <input type="checkbox" name="default-group" id="default">
+                    <span class="sc-lever"></span>
+					<?php echo $language->translate('No'); ?>
+                </label>
+            </div>
+
+        </div>
 
 		<div class="sc-col sc-xs4 sc-s12">
 			<ul>

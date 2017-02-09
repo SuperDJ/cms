@@ -1,39 +1,43 @@
 $(document).ready(function() {
-	var $drawer = $('#sc-drawer');
+	if( $('.sc-drawer').length >= 1 ) {
+		var $drawer = $( '#sc-drawer' ),
+			$dropdownButton = $drawer.find('.sc-drawer-dropdown'),
+			$dropdown = $drawer.find('.sc-dropdown');
 
-	$drawer.find('li.sc-drawer-dropdown').each(function() {
-		var $this = $(this);
-
-		$this.click(function() {
-			if( $this.hasClass('sc-expanded') ) {
-				$this.removeClass('sc-expanded');
-			} else {
-				$this.addClass('sc-expanded');
+		if( $dropdownButton.length >= 1 && $dropdown.length >= 1 ) {
+			if( $dropdownButton.length !== $dropdown.length ) {
+				alert('There aren\'t as many dropdowns as dropdown buttons');
 			}
-		});
-	});
 
-	$drawer.find('.sc-active').closest('ul').closest('li').addClass('sc-expanded');
+			$drawer.find( '.sc-drawer-dropdown' ).each( function () {
+				var $this = $( this ),
+					$arrow = $this.find( '.material-icons'),
+					$dropdown = $this.next('.sc-dropdown'),
+					$height = $dropdown.css('height');
 
-	/*$('#sc-nav-button').click(function() {
-		var $trigger = $(this).data('sc-trigger'),
-			$drawer = $('#' + $trigger);
+				if( $arrow !== undefined ) {
+					if( $arrow.text() == 'expand_more' ) {
+						$arrow.addClass( 'sc-arrow' );
+					}
+				}
 
-		if( $drawer.hasClass('sc-expanded') ) {
-			$drawer.removeClass('sc-expanded');
-		} else {
-			$drawer.addClass('sc-expanded');
+				$this.click( function () {
+					if( $this.hasClass( 'sc-expanded' ) && $dropdown.hasClass('sc-expanded')) {
+						$this.removeClass( 'sc-expanded' );
+						$dropdown.removeClass('sc-expanded').css('max-height', '0px');
+					} else {
+						$this.addClass( 'sc-expanded' );
+						$dropdown.addClass('sc-expanded').css('max-height', $height);
+					}
+				} );
+
+				if( !empty( $height ) ) {
+					$dropdown.css('max-height', '0px');
+				}
+			} );
+
+			// Automatically open dropdown
+			$drawer.find( '.sc-active' ).parent('.sc-dropdown').prev('.sc-drawer-dropdown').trigger('click');
 		}
-	});*/
-
-	/*// Close drawer on outside click
-	$(document).mouseup(function (e) {
-		var $drawerContainer = $('.sc-drawer-container');
-		if( $drawerContainer.visible() ) {
-			// if the target of the click isn't the $drawer nor a descendant of the $drawer
-			if( !$drawer.is(e.target) && $drawer.has(e.target).length === 0 ) {
-				$drawer.removeClass('sc-expanded');
-			}
-		}
-	});*/
+	}
 });

@@ -51,10 +51,11 @@ function getTime() {
 }
 
 function leapYear(year) {
-	if (year % 4 == 0) // basic rule
+	if ( year % 4 == 0 ) { // basic rule
 		return true // is leap year
-	/!* else *!/ // else not needed when statement is "return"
-	return false // is not leap year
+	} else {  // else not needed when statement is "return"
+		return false // is not leap year
+	}
 }
 
 function getDays(month, year) {

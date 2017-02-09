@@ -45,6 +45,7 @@ $appbar-icon-large-size: calc(#{$appbar-large-height} - (#{rem-calc(20px)} * 2))
 
 	.material-icons {
 		padding: $gutter 0;
+		color: $appbar-text;
 		font-size: $appbar-icon-default-size;
 		@include square($appbar-icon-default-size);
 

@@ -121,13 +121,7 @@ class Database {
 	 */
 	public function insert( $query, array $columns ) {
 		$stmt = $this->mysqli->prepare($query);
-		if( !$stmt ) {
-			print_r($stmt->errorInfo());
-		}
 		$stmt->execute( array_values( $columns ) );
-		if(!$stmt) {
-			print_r($stmt->errorInfo());
-		}
 
 		if( $stmt->rowCount() >= 1 ) {
 			$stmt = null;
@@ -174,26 +168,96 @@ class Database {
 		$stmt = $this->mysqli->prepare($query);
 
 		if( !empty( $columns ) ) {
-			$stmt->execute( $columlns );
+			$stmt->execute( $columns );
 		} else {
 			$stmt->execute();
 		}
 
 		if( $stmt->rowCount() >= 1 ) {
-			if( $stmt->rowCount() == 1 ) {
-				if( in_array('multipleRows', $options ) ) {
-					$result[] = $stmt->fetch( PDO::FETCH_ASSOC );
-				} else {
-					$result = $stmt->fetch( PDO::FETCH_ASSOC );
-				}
+			if( $stmt->rowCount() == 1 && in_array('multipleRows', $options ) ) {
+				$result[] = $stmt->fetch( PDO::FETCH_ASSOC );
 			} else {
-				$result = $stmt->fetchAll( PDO::FETCH_ASSOC );
+				$result = $stmt->fetch( PDO::FETCH_ASSOC );
 			}
 			$stmt = null;
 			return $result;
 		} else {
 			$stmt = null;
 			return false;
+		}
+	}
+
+	//TODO add possibility to execute (batches/ multidimensional array/ multiple rows at once)
+	public function query( $query, array $columns = array(), array $options = array() ) {
+		$stmt = $this->mysqli->prepare( $query );
+
+		// Create execute
+		if( !empty( $columns ) ) {
+			// Check if named params are used
+			if( in_array( 'named', $options ) ) {
+				$count = count( $columns );
+				$i = 0;
+				foreach( $columns as $column => $value ) {
+					$this->bind($stmt, $column, $value);
+					$i++;
+				}
+
+				if( $count !== $i ) {
+					echo 'Something went wrong binding params';
+					return false;
+				}
+			} else {
+				// If not false query is "SELECT" else query can be "INSERT", "UPDATE" or "DELETE"
+				if( strpos( $query, 'SELECT' ) !== false ) {
+					$stmt->execute( $columns );
+				} else {
+					$stmt->execute( array_column( $columns ) );
+				}
+			}
+		} else {
+			$stmt->execute();
+		}
+
+		// If not false query is "SELECT" else query can be "INSERT", "UPDATE" or "DELETE"
+		if( strpos( $query, 'SELECT' ) !== false ) {
+			if( $stmt->rowCount() >= 1 ) {
+				if( $stmt->rowCount() == 1 && in_array('multipleRows', $options ) ) {
+					$result[] = $stmt->fetch( PDO::FETCH_ASSOC );
+				} else {
+					$result = $stmt->fetch( PDO::FETCH_ASSOC );
+				}
+				$stmt = null;
+				return $result;
+			} else {
+				$stmt = null;
+				return false;
+			}
+		} else {
+			if( $stmt->rowCount() >= 1 ) {
+			 	$stmt = null;
+			 	return true;
+			} else {
+				$stmt = null;
+				return false;
+			}
+		}
+	}
+
+	private function bind( $stmt, $name, $value ) {
+		$name = ':'.$name; // Add ":" to name
+
+		switch( gettype( $value ) ) {
+			case 'boolean':
+				return $stmt->bindParam($name, $value, PDO::PARAM_BOOL);
+				break;
+			case 'integer':
+				return $stmt->bindParam($name, $value, PDO::PARAM_INT);
+				break;
+			case 'double':
+			case 'string':
+				return $stmt->bindParam($name, $value, PDO::PARAM_STR);
+			case 'null':
+				return $stmt->bindParam($name, $value, PDO::PARAM_NULL);
 		}
 	}
 }

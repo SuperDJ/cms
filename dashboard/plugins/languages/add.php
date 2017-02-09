@@ -26,7 +26,7 @@ if( !$user->isLoggedIn() ) {
 			if( $db->insert("INSERT INTO `languages` (`language`, `iso_code`) VALUES (?, ?)", $validation ) ) {
 				$user->to('?path=languages/overview&message='.$language->translate('Language added').'&messageType=success');
 			} else {
-				echo '<div class="alert sc-card-supporting sc-card-supporting-additional">'.$language->translate('Something went wrong adding the language').': '.$validation['language'].'</div>';
+				echo '<div class="alert sc-card sc-card-supporting">'.$language->translate('Something went wrong adding the language').': '.$validation['language'].'</div>';
 			}
 		} else {
 			echo $form->outputErrors();

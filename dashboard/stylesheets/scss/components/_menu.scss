@@ -1,0 +1,92 @@
+/**************************************
+ * Menus
+ *
+ * https://material.io/guidelines/components/menus.html
+ */
+
+.sc-menu {
+	background: $background;
+	visibility: hidden;
+	@include opacity(0);
+	position: absolute;
+	@include material-shadow(8);
+	@include flex-container(column, null);
+	@include border-radius(rem-calc(2px));
+	padding: rem-calc(8px) 0;
+	z-index: 4;
+	@include transition(max-width $transition-small-duration $basic-transition unquote(',') max-height $transition-small-duration $basic-transition);
+
+	@media #{$medium-only} {
+		@include transition(max-width $transition-medium-duration $basic-transition unquote(',') max-height $transition-medium-duration $basic-transition);
+	}
+
+	@media #{$medium-up} {
+		@include transition(max-width $transition-large-duration $basic-transition unquote(',') max-height $transition-large-duration $basic-transition);
+	}
+
+	a {
+		display: block;
+		height: rem-calc(48px);
+		@include font($font-size-menu, 0, $font-weight-menu, $line-height-menu, $font-color-menu, $letter-spacing-menu);
+		color: initial;
+		padding: calc(#{rem-calc(48px)} - (#{rem-calc(20px)} + #{#{$font-size-menu}px})) $gutter rem-calc(20px) $gutter;
+		@include transition(background $transition-small-duration $basic-transition);
+
+		@media #{$medium-only} {
+			@include transition(background $transition-medium-duration $basic-transition);
+		}
+
+		@media #{$medium-up} {
+			@include transition(background $transition-large-duration $basic-transition);
+		}
+
+		&:hover {
+			background: $grey-200;
+			color: initial;
+		}
+	}
+
+	&.sc-expanded {
+		visibility: visible;
+		@include opacity(1);
+	}
+
+	&-cascading {
+		padding: rem-calc(16px) 0;
+
+		a {
+			@include font(15, 0, $font-weight-menu, $line-height-menu, $font-color-menu, $letter-spacing-menu);
+			height: rem-calc(32px);
+			line-height: rem-calc(32px);
+			padding: 0 $large-gutter rem-calc(20px) $large-gutter;
+		}
+	}
+
+	&-sub {
+		@include material-shadow(9);
+	}
+}
+
+select.sc-select {
+	border: none;
+	background: none;
+	color: if($theme == light, rgba($black, .87), rgba($white, 1));
+	max-width: 100%;
+	outline: none;
+	font-family: inherit;
+	font-size: rem-calc(13px);
+	height: rem-calc(48px);
+	border-bottom: $textfield-border-size solid if($theme == light, rgba($black, .38), rgba($white, .5));
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+
+	option {
+		border: none;
+		@include material-shadow(8);
+		font-family: inherit;
+		font-size: rem-calc(13px);
+		height: rem-calc(48px);
+		outline: none;
+	}
+}

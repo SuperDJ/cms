@@ -4,7 +4,7 @@
  * https://material.google.com/patterns/navigation-drawer.html
  **************************************/
 
-$drawer-padding: rem-calc(16px);
+$drawer-padding: $gutter;
 $drawer-item-height: rem-calc(48px);
 $drawer-icon-size: rem-calc(24px);
 $drawer-profile-img: rem-calc(40px);
@@ -20,44 +20,12 @@ $drawer-profile-height: $drawer-padding + $drawer-profile-img + $drawer-profile-
 	top: 0;
 	width: $drawer-small-width;
 	height: 100%;
-	overflow: hidden;
+	background: $drawer-background;
+	bottom: 0;
+	overflow-x: hidden;
+	overflow-y: auto;
+	overflow: auto;
 	max-width: calc(100% - #{rem-calc(56px)});
-
-	&:before {
-		content: '';
-		display: block;
-		position: fixed;
-		margin-left: -102%;
-		width: 100%;
-		height: 100%;
-		background: rgba($black, .4);
-		@include transition(opacity $transition-small-duration $element-enter-transition);
-
-		&.sc-expanded {
-			margin-left: calc(0 + #{$drawer-small-width});
-		}
-
-		@media #{$small-up} {
-			display: none;
-		}
-	}
-
-	&-container {
-		position: relative;
-		height: 100%;
-		bottom: 0;
-		overflow: auto;
-		background: $drawer-background;
-		width: 100%;
-
-		@media #{$medium-only} {
-			@include transition(transform $transition-medium-duration $element-enter-transition);
-		}
-
-		@media #{$medium-up} {
-			@include transition(transform $transition-large-duration $element-enter-transition);
-		}
-	}
 
 	&-permanent-full-height, &-permanent-clipped, &-permanent-floating, &-persistent, &-temporary {
 		margin: 0 0 0 -102%;
@@ -80,64 +48,11 @@ $drawer-profile-height: $drawer-padding + $drawer-profile-img + $drawer-profile-
 		}
 	}
 
-	.sc-drawer-header {
+	header, .sc-drawer-header {
 		position: relative;
 
 		&:hover {
 			background: none;
-		}
-	}
-
-	@if( in-array( 'persistent', $navigation-drawer ) or in_array( 'temporary', $navigation-drawer ) ) {
-		.sc-drawer-header .sc-drawer-profile-more {
-			ul {
-				display: none;
-				top: calc(#{$drawer-item-height} * -1);
-				left: calc((#{$drawer-icon-size} / 2) * -1);
-				padding: rem-calc(8px) 0;
-				@include material-shadow(2);
-				background: $white;
-				@include border-radius(rem-calc(2px));
-				position: relative;
-				z-index: 4;
-				visibility: hidden;
-				@include opacity(0);
-				max-height: 0;
-				width: 100%;
-				margin: rem-calc(16px);
-				@include transition(visibility $transition-small-duration $basic-transition unquote(',') opacity $transition-small-duration $basic-transition unquote(',') max-height $transition-small-duration $basic-transition);
-
-				@media #{$small-up} {
-					margin: rem-calc(24px);
-				}
-
-				@media #{$medium-only} {
-					@include transition(visibility $transition-medium-duration $basic-transition unquote(',') opacity $transition-medium-duration $basic-transition unquote(',') max-height $transition-medium-duration $basic-transition);
-				}
-
-				@media #{$medium-up} {
-					@include transition(visibility $transition-large-duration $basic-transition unquote(',') opacity $transition-large-duration $basic-transition unquote(',') max-height $transition-large-duration $basic-transition);
-				}
-
-				li {
-					height: $drawer-item-height;
-					font-size: rem-calc(16px);
-					padding: 0 rem-calc(16px) rem-calc(20px) rem-calc(16px);
-
-					&:hover {
-						background: none;
-					}
-				}
-			}
-
-			&.sc-expanded {
-				ul {
-					display: block;
-					visibility: visible;
-					@include opacity(1);
-					max-height: 100%;
-				}
-			}
 		}
 	}
 
@@ -222,7 +137,7 @@ $drawer-profile-height: $drawer-padding + $drawer-profile-img + $drawer-profile-
 			border-right: rem-calc(1px) solid if($theme == light, rgba($black, .12), rgba($white, .12));
 			z-index: 3;
 
-			.sc-drawer-header {
+			header, .sc-drawer-header {
 				height: $appbar-mobile-portrait-height;
 				line-height: $appbar-mobile-portrait-height;
 				margin: 0 0 $drawer-profile-bottom-padding 0;
@@ -247,9 +162,9 @@ $drawer-profile-height: $drawer-padding + $drawer-profile-img + $drawer-profile-
 					float: left;
 				}
 
-				.sc-drawer-profile-img {
+				img, .sc-drawer-profile-img {
 					@include square($drawer-icon-size);
-					margin: 0 calc(#{rem-calc(72px)} - #{$drawer-icon-size} - #{$drawer-padding}) 0 0;
+					margin: 0 calc(#{rem-calc(72px)} - #{$drawer-icon-size} - #{$drawer-padding}) 0 $gutter;
 					@include border-radius(50%);
 					border: rem-calc(1px) solid if($theme == light, rgba($black, .12), rgba($white, .12));
 					top: 50%;
@@ -345,7 +260,7 @@ $drawer-profile-height: $drawer-padding + $drawer-profile-img + $drawer-profile-
 			z-index: 3;
 			@include material-shadow(16);
 
-			.sc-drawer-header {
+			header, .sc-drawer-header {
 				padding: 0 0 $drawer-profile-bottom-padding 0;
 				margin: 0 0 $drawer-profile-bottom-padding 0;
 				height: $drawer-profile-height;
@@ -422,59 +337,16 @@ $drawer-profile-height: $drawer-padding + $drawer-profile-img + $drawer-profile-
 		}
 	}
 
-	&.sc-expanded {
-		@media #{$small-down} {
-			&:before {
-				display: block;
-				@include opacity(1);
-			}
-		}
-	}
-
-	ul {
-		list-style-type: none;
-		margin: 0;
-		padding: 0;
-	}
-
-	li {
-		color: if( $theme == light, rgba($black, .87), rgba($white, .87));
-		font-weight: 500;
-		font-size: rem-calc(15px);
-		height: $drawer-item-height;
-		display: block;
-		padding: 0 $drawer-padding;
-		position: relative;
-
-		&:hover {
-			background: if( $theme == light, $grey-200, lighten($black, 10));
-		}
-
-		&.sc-subheader {
-			color: rgba($black, .54);
-		}
-
-		&.sc-no-background {
-			background: transparent;
-
-			&:hover {
-				background: transparent;
-			}
-		}
-	}
-
-	ul li ul a {
-		font-weight: 400;
-	}
-
 	a {
+		cursor: pointer;
 		color: if( $theme == light, rgba($black, .87), rgba($white, .7));
 		font-weight: 500;
 		width: 100%;
 		display: block;
 		height: $drawer-item-height;
 		font-size: rem-calc(15px);
-		margin: 0 calc(#{$drawer-padding} * -2) 0 calc(#{$drawer-padding} * -1);
+		line-height: $drawer-item-height;
+		position: relative;
 		padding: 0 $drawer-padding;
 		@include transition(color $transition-small-duration $basic-transition);
 
@@ -487,11 +359,51 @@ $drawer-profile-height: $drawer-padding + $drawer-profile-img + $drawer-profile-
 		}
 
 		&:hover, &.sc-active {
-			color: if( $theme == light, $main-color, $white);
+			color: if( $theme == light, $main-color, null);
 
 			.material-icons {
-				color: if( $theme == light, $main-color, $white);
+				color: if( $theme == light, $main-color, null);
 			}
+
+			.sc-arrow {
+				color: revert;
+			}
+		}
+
+		&.sc-no-background {
+			background: transparent;
+
+			&:hover {
+				background: transparent;
+			}
+		}
+	}
+
+	.sc-subheader {
+		color: rgba($black, .54);
+	}
+
+	.sc-dropdown {
+		visibility: hidden;
+		@include opacity(0);
+		@include transition(all $transition-small-duration $basic-transition);
+
+		@media #{$medium-only} {
+			@include transition(all $transition-medium-duration $basic-transition);
+		}
+
+		@media #{$medium-up} {
+			@include transition(all $transition-large-duration $basic-transition);
+		}
+
+		a {
+			font-weight: 400;
+			padding: 0 0 0 ($gutter * 2);
+		}
+
+		&.sc-expanded {
+			visibility: visible;
+			@include opacity(1);
 		}
 	}
 
@@ -499,7 +411,7 @@ $drawer-profile-height: $drawer-padding + $drawer-profile-img + $drawer-profile-
 		@include square($drawer-icon-size);
 		font-size: $drawer-icon-size;
 		vertical-align: middle;
-		color: if( $theme == light, rgba($black, .54), rgba($white, .5));
+		//color: if( $theme == light, rgba($black, .54), rgba($white, .5) );
 		margin: 0 calc(#{rem-calc(72px)} - #{$drawer-padding} - #{$drawer-icon-size}) 0 0;
 		@include transition(color $transition-small-duration $basic-transition);
 
@@ -512,41 +424,9 @@ $drawer-profile-height: $drawer-padding + $drawer-profile-img + $drawer-profile-
 		}
 	}
 
-	.sc-drawer-dropdown {
-		cursor: pointer;
-		height: auto;
-
-		ul {
-			display: none;
-			visibility: hidden;
-			opacity: 0;
-			max-height: 0;
-			@include transition(visibility $transition-small-duration $basic-transition unquote(',') opacity $transition-small-duration $basic-transition unquote(',') max-height $transition-small-duration $basic-transition);
-
-			@media #{$medium-only} {
-				@include transition(visibility $transition-medium-duration $basic-transition unquote(',') opacity $transition-medium-duration $basic-transition unquote(',') max-height $transition-medium-duration $basic-transition);
-			}
-
-			@media #{$medium-up} {
-				@include transition(visibility $transition-large-duration $basic-transition unquote(',') opacity $transition-large-duration $basic-transition unquote(',') max-height $transition-large-duration $basic-transition);
-			}
-		}
-	}
-
 	.sc-drawer-dropdown.sc-expanded {
 		.sc-arrow {
 			@include transform(rotate(180deg));
-		}
-
-		ul {
-			display: block;
-			visibility: visible;
-			@include opacity(1);
-			max-height: 100%;
-		}
-
-		ul ul {
-			margin: 0 0 0 rem-calc(10px);
 		}
 	}
 

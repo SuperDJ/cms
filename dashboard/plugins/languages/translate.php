@@ -53,7 +53,7 @@ if( !$user->isLoggedIn() ) {
 				if( $translations === $translated ) {
 					$user->to('?path=languages/overview&message='.$language->translate('Language translated').'&messageType=success');
 				} else {
-					echo '<div class="error">'.$language->translate('Something went wrong adding translations').'</div>';
+					echo '<div class="error sc-card sc-card-supporting">'.$language->translate('Something went wrong adding translations').'</div>';
 				}
 			}
 		}
