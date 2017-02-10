@@ -6,10 +6,10 @@ if( !$user->isLoggedIn() ) {
 	require_once $dash->getInclude( 'header' );
 	$form = new Form();
 
-	$data = $db->select("SELECT `group`, `description` FROM `groups` WHERE `id` = ?", array($id));
-	$rights = $db->select("SELECT `id`, `plugins_id` FROM `rights` WHERE `groups_id` = ?", array($id), array('multipleRows'));
+	$data = $db->query("SELECT `group`, `description` FROM `groups` WHERE `id` = ?", array($id));
+	$rights = $db->query("SELECT `id`, `plugins_id` FROM `rights` WHERE `groups_id` = ?", array($id), array('multipleRows'));
 
-	$plugins = $db->select("SELECT `id`, `name`, `parent` FROM `plugins`");
+	$plugins = $db->query("SELECT `id`, `name`, `parent` FROM `plugins`");
 
 	function buildTree( array $elements, $parentId = 0 ) {
 		$branch = array();
@@ -72,7 +72,7 @@ if( !$user->isLoggedIn() ) {
 
 		if( empty( $form->errors ) ) {
 			// Add group to database or give error message
-			if( $db->update("UPDATE `groups` SET `group` = ?, `description` = ? WHERE `id` = ?", $validation) ||
+			if( $db->query("UPDATE `groups` SET `group` = ?, `description` = ? WHERE `id` = ?", $validation) ||
                 $validation['group'] == $db->detail('group', 'groups', 'id', $id) && $validation['description'] == $db->detail('description', 'groups', 'id', $id) ) {
 				// Add rights to database;
 
@@ -104,14 +104,14 @@ if( !$user->isLoggedIn() ) {
                     if( empty( $form->errors ) ) {
                         // Insert or delete depending on addition or removal of rights
                         if( in_array( $plugin, $delete ) ) {
-                            if( $db->delete("DELETE FROM `rights` WHERE `groups_id` = ? AND `plugins_id` = ?", array( $id, $plugin ) ) ) {
+                            if( $db->query("DELETE FROM `rights` WHERE `groups_id` = ? AND `plugins_id` = ?", array( $id, $plugin ) ) ) {
                                 $p++;
                             }
                         } else {
                             // Check if plugin is already added to group
                             if( in_array( $plugin, array_column( $rights, 'plugins_id' ) ) ) {
                                 $p++;
-                            } else if( $db->insert( "INSERT INTO `rights` (`groups_id`, `plugins_id`) VALUES (?, ?)", array( $id, $plugin ) ) ) {
+                            } else if( $db->query( "INSERT INTO `rights` (`groups_id`, `plugins_id`) VALUES (?, ?)", array( $id, $plugin ) ) ) {
 								$p++;
 							}
 
@@ -137,12 +137,12 @@ if( !$user->isLoggedIn() ) {
 	?>
 	<form action="" method="post">
 		<div class="sc-floating-input">
-			<input type="text" name="group" id="group" required value="<?php echo ( !empty( $form->input('group') ) ? $form->input('group') : $data['group'] ); ?>">
+			<input type="text" name="group" id="group" required value="<?php echo ( !empty( $form->input('group') ) ? $form->input('group') : $data[0]['group'] ); ?>">
 			<label for="group"><?php echo $language->translate('Group'); ?></label>
 		</div>
 
 		<div class="sc-multi-input">
-			<textarea name="description" id="description"><?php echo ( !empty( $form->input('description') ) ? $form->input('description') : $data['description'] ); ?></textarea>
+			<textarea name="description" id="description"><?php echo ( !empty( $form->input('description') ) ? $form->input('description') : $data[0]['description'] ); ?></textarea>
 			<label for="description"><?php echo $language->translate('Description'); ?></label>
 		</div>
 

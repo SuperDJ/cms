@@ -27,7 +27,7 @@ class Database {
 	private function connect() {
 		$mysqli = new PDO('mysql:host='.$this->_db->database->host.';dbname='.$this->_db->database->database.';charset=utf8', $this->_db->database->username, $this->_db->database->password);
 		if( !$mysqli ) {
-			echo $mysqli->error;
+			print_r($mysqli->errorInfo());
 		}
 
 		$this->mysqli = $mysqli;
@@ -193,8 +193,10 @@ class Database {
 
 		// Create execute
 		if( !empty( $columns ) ) {
+			//echo 1;
 			// Check if named params are used
 			if( in_array( 'named', $options ) ) {
+				//echo 2;
 				$count = count( $columns );
 				$i = 0;
 				foreach( $columns as $column => $value ) {
@@ -207,36 +209,47 @@ class Database {
 					return false;
 				}
 			} else {
+				//echo 3;
 				// If not false query is "SELECT" else query can be "INSERT", "UPDATE" or "DELETE"
 				if( strpos( $query, 'SELECT' ) !== false ) {
+					//echo 4;
 					$stmt->execute( $columns );
 				} else {
+					//echo 5;
 					$stmt->execute( array_column( $columns ) );
 				}
 			}
 		} else {
+			//echo 6;
 			$stmt->execute();
 		}
 
 		// If not false query is "SELECT" else query can be "INSERT", "UPDATE" or "DELETE"
 		if( strpos( $query, 'SELECT' ) !== false ) {
+			//echo 7;
 			if( $stmt->rowCount() >= 1 ) {
+				//echo 8;
 				if( $stmt->rowCount() == 1 && in_array('multipleRows', $options ) ) {
+					//echo 9;
 					$result[] = $stmt->fetch( PDO::FETCH_ASSOC );
 				} else {
-					$result = $stmt->fetch( PDO::FETCH_ASSOC );
+					//echo 10;
+					$result = $stmt->fetchAll( PDO::FETCH_ASSOC );
 				}
 				$stmt = null;
 				return $result;
 			} else {
+				//echo 11;
 				$stmt = null;
 				return false;
 			}
 		} else {
 			if( $stmt->rowCount() >= 1 ) {
+				//echo 12;
 			 	$stmt = null;
 			 	return true;
 			} else {
+				//echo 13;
 				$stmt = null;
 				return false;
 			}

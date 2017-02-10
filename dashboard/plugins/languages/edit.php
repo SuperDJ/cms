@@ -24,7 +24,7 @@ if( !$user->isLoggedIn() ) {
 		), [$language, 'translate'], $id);
 
 		if( empty( $validation->errors ) ) {
-			if( $db->UPDATE("UPDATE `languages` SET `language` = ?, `iso_code` = ? WHERE `id` = ?", $validation ) ) {
+			if( $db->query("UPDATE `languages` SET `language` = ?, `iso_code` = ? WHERE `id` = ?", $validation ) ) {
 				$user->to('?path=languages/overview&message='.$language->translate('Language edited').'&messageType=success');
 			} else {
 				echo '<div class="alert sc-card sc-card-supporting">'.$language->translate('Something went wrong editing the language').': '.$language->translate($data['language']).'</div>';

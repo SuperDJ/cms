@@ -4,9 +4,9 @@ if( !$user->isLoggedIn() ) {
 } else {
 	$title = $language->translate('Overview');
 	require_once $dash->getInclude('header');
-	$data = $db->select("SELECT `u`.`id`, `first_name`, `last_name`, `group`, `register_date`, `active_date`, `active` FROM `users` `u`
-						JOIN `groups` `g`
-						ON `g`.`id` = `u`.groups_id", array(), array('multipleRows'));
+	$data = $db->query("SELECT `u`.`id`, `first_name`, `last_name`, `email`, `register_date`, `active_date`, `group`, `active` FROM `users` `u`
+						  JOIN `groups` `g`
+							ON `g`.`id` = `u`.groups_id", array(), array('multipleRows'));
 
 	if( empty( $data ) ) {
 		echo '<p class="sc-col sc-x4 sc-s12">'.$language->translate('No results found').'</p>';
@@ -16,6 +16,7 @@ if( !$user->isLoggedIn() ) {
 						<tr>
 							<th>'.$language->translate( 'First name' ).'</th>
 							<th>'.$language->translate( 'Last name' ).'</th>
+							<th>'.$language->translate('Email').'</th>
 							<th>'.$language->translate( 'Group' ).'</th>
 							<th>'.$language->translate( 'Register date' ).'</th>
 							<th>'.$language->translate( 'Last active' ).'</th>
@@ -28,6 +29,7 @@ if( !$user->isLoggedIn() ) {
 			echo '		<tr>
 							<td>'.$field['first_name'].'</td>
 							<td>'.$field['last_name'].'</td>
+							<td>'.$field['email'].'</td>
 							<td>'.$language->translate($field['group']).'</td>
 							<td>'.$field['register_date'].'</td>
 							<td>'.$field['active_date'].'</td>

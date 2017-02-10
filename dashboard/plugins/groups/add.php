@@ -6,7 +6,7 @@ if( !$user->isLoggedIn() ) {
 	require_once $dash->getInclude( 'header' );
 	$form = new Form();
 
-	$plugins = $db->select("SELECT `id`, `name`, `parent` FROM `plugins`");
+	$plugins = $db->query("SELECT `id`, `name`, `parent` FROM `plugins`");
 
 	function buildTree( array $elements, $parentId = 0 ) {
 		$branch = array();
@@ -61,11 +61,6 @@ if( !$user->isLoggedIn() ) {
             ),
             'description' => array(
                 'name' => $language->translate('Description')
-            ),
-            'default' => array(
-                'name' => $language->translate('Default group'),
-                'unique' => 'groups',
-                'maxLength' => 3
             )
         ), [$language, 'translate']);
 
@@ -73,7 +68,7 @@ if( !$user->isLoggedIn() ) {
 
 		if( empty( $form->errors ) ) {
 		    // Add group to database or give error message
-		    if( $db->insert("INSERT INTO `groups` (`group`, `description`, `default`) VALUES (?, ?, ?)", $validation) ) {
+		    if( $db->query("INSERT INTO `groups` (`group`, `description`) VALUES (?, ?)", $validation) ) {
                 // Add rights to database
                 // Get insert id from database
                 $id = $db->detail('id', 'groups', 'group', $validation['group']);
@@ -92,7 +87,7 @@ if( !$user->isLoggedIn() ) {
 						), [ $language, 'translate' ] );
 
 						if( empty( $form->errors ) ) {
-							if( $db->insert( "INSERT INTO `rights` (`groups_id`, `plugins_id`) VALUES (?, ?)", array( $id, $plugin ) ) ) {
+							if( $db->query( "INSERT INTO `rights` (`groups_id`, `plugins_id`) VALUES (?, ?)", array( $id, $plugin ) ) ) {
 							    $p++;
 							}
 						} else {
@@ -124,19 +119,6 @@ if( !$user->isLoggedIn() ) {
 			<textarea name="description" id="description"><?php echo $form->input('description'); ?></textarea>
 			<label for="description"><?php echo $language->translate('Description'); ?></label>
 		</div>
-
-        <div class="sc-xs">
-            <label for="default"><?php echo $language->translate('Default group'); ?></label>
-            <div class="sc-switch">
-                <label>
-                    <?php echo $language->translate('Yes'); ?>
-                    <input type="checkbox" name="default-group" id="default">
-                    <span class="sc-lever"></span>
-					<?php echo $language->translate('No'); ?>
-                </label>
-            </div>
-
-        </div>
 
 		<div class="sc-col sc-xs4 sc-s12">
 			<ul>

@@ -5,8 +5,8 @@ if( !$user->isLoggedIn() ) {
 	$title = $language->translate( 'Overview' );
 	require_once $dash->getInclude( 'header' );
 
-	$data = $db->select("
-SELECT `g`.`id`, `g`.`group`, `g`.`description`, concat( round( ( COUNT(`r`.`id`) / `plugins` ) * 100 ), '%' ) as `rights`
+	$data = $db->query("
+SELECT `g`.`id`, `group`, `default`, `description`, concat( round( ( COUNT(`r`.`id`) / `plugins` ) * 100 ), '%' ) as `rights`
 FROM `groups` `g`
 JOIN (
     SELECT COUNT(`id`) `plugins`
@@ -27,6 +27,7 @@ GROUP BY `g`.`id`
 						<th>'.$language->translate('Group').'</th>
 						<th>'.$language->translate('Description').'</th>
 						<th>'.$language->translate('Rights').'</th>
+						<th>'.$language->translate('Default group').'</th>
 						<th>'.$language->translate('Options').'</th>
 					</tr>
 					</thead>

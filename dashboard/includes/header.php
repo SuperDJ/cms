@@ -6,7 +6,7 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-		<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+		<link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
 		<link rel="stylesheet" href="/dashboard/stylesheets/admin.css">
 
 		<meta name="theme-color" content="#00BCD4">
@@ -55,9 +55,11 @@
                     <i class="material-icons sc-trigger" data-sc-trigger="profile-more">arrow_drop_down</i>
 
                     <nav class="sc-menu" id="profile-more">
-                        <a href="#">Facebook</a>
-                        <a href="#">Google Plus</a>
-                        <a href="#">Add account</a>
+                        <a href="#"><i class="material-icons">add</i>Add account</a>
+                        <a href="?path=users/logout">
+                            <i class="material-icons">exit_to_app</i>
+                            <?php echo $language->translate('Logout'); ?>
+                        </a>
                     </nav>
                 </div>
             </header>

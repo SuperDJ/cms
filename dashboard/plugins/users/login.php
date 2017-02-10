@@ -37,15 +37,20 @@ if( $user->isLoggedIn() ) {
 			)
 		), [ $language, 'translate' ] );
 
+		echo '<div class="sc-card-supporting sc-card-supporting-additional">';
 		// If there are no errors register user else show errors
 		if( empty( $form->errors ) ) {
 			if( $user->login( $validation ) ) {
-				if( $session->set('user', $db->detail('id', 'users', 'email', $validation['email'])) ) {
+			    $details = array(
+			        'id' => $db->detail('id', 'users', 'email', $validation['email']),
+                    'group' => $db->detail('groups_id', 'users', 'email', $validation['email'])
+                );
+				if( $session->set('user', $details) ) {
 				    // If the user wants to be remembered
 				    /*if( $validation['remember'] == 1 ) {
 				        $cookie->set('user', $session->get('user'), 60*60*24*30); // TODO Make cookie time a setting/ dynamic
-                    }
-					$user->to( '?path=overview/overview' );*/
+                    }            */
+					$user->to( '?path=overview/overview' );
 				} else {
 					echo '<div class="alert sc-card-supporting sc-card-supporting-additional">'.$language->translate('Something went wrong logging you in').'</div>';
 				}
@@ -59,48 +64,47 @@ if( $user->isLoggedIn() ) {
 	}
 	?>
 
-	<form action="" method="post">
-		<div class="sc-card-supporting sc-card-supporting-additional">
-			<div class="sc-floating-input">
-				<input type="email" name="email" id="email" value="<?php echo $form->input('email'); ?>" required>
-				<label for="email"><?php echo $language->translate('Email'); ?></label>
-			</div>
+        <form action="" method="post">
+            <div class="sc-floating-input">
+                <input type="email" name="email" id="email" value="<?php echo $form->input('email'); ?>" required>
+                <label for="email"><?php echo $language->translate('Email'); ?></label>
+            </div>
 
-			<div class="sc-floating-input">
-				<input type="password" name="password" id="password" required>
-				<label for="password"><?php echo $language->translate('Password'); ?></label>
-			</div>
+            <div class="sc-floating-input">
+                <input type="password" name="password" id="password" required>
+                <label for="password"><?php echo $language->translate('Password'); ?></label>
+            </div>
 
-			<!--<div class="sc-col sc-xs4 sc-s12">
-				<div class="sc-switch">
-					<label>
-						<?php /*echo $language->translate('Keep me logged in'); */?>
-						<input type="checkbox" name="remember" value="1">
-						<span class="sc-lever"></span>
-					</label>
-				</div>
-			</div>-->
+            <!--<div class="sc-col sc-xs4 sc-s12">
+                <div class="sc-switch">
+                    <label>
+                        <?php /*echo $language->translate('Keep me logged in'); */?>
+                        <input type="checkbox" name="remember" value="1">
+                        <span class="sc-lever"></span>
+                    </label>
+                </div>
+            </div>-->
 
-			<div class="sc-col sc-xs4 sc-s12">
-				<input type="text" name="captcha" class="captcha">
-				<input type="password" name="password_encrypted" id="password_encrypted" class="captcha">
-			</div>
-		</div>
+            <div class="sc-col sc-xs4 sc-s12">
+                <input type="text" name="captcha" class="captcha">
+                <input type="password" name="password_encrypted" id="password_encrypted" class="captcha">
+            </div>
+        </div>
 
-		<div class="sc-card-actions">
-			<div class="sc-col sc-xs4 sc-s12">
-				<button type="submit" class="sc-raised-button"><?php echo $language->translate('Login' ); ?></button>
+        <div class="sc-card-actions">
+            <div class="sc-col sc-xs4 sc-s12">
+                <button type="submit" class="sc-raised-button"><?php echo $language->translate('Login' ); ?></button>
 
-				<!--<a href="?path=users/facebook-login" class="button facebook"><i	class="fa fa-facebook"></i> <?php echo $language->translate( 'Facebook login' ); ?></a>
-				<a href="?path=users/google-login" class="button google"><i	class="fa fa-google"></i> <?php echo $language->translate( 'Google login' ); ?></a>-->
-				<a href="?path=users/register" class="sc-flat-button"><?php echo $language->translate( 'Register' ); ?></a>
-			</div>
+                <!--<a href="?path=users/facebook-login" class="button facebook"><i	class="fa fa-facebook"></i> <?php echo $language->translate( 'Facebook login' ); ?></a>
+                <a href="?path=users/google-login" class="button google"><i	class="fa fa-google"></i> <?php echo $language->translate( 'Google login' ); ?></a>-->
+                <a href="?path=users/register" class="sc-flat-button"><?php echo $language->translate( 'Register' ); ?></a>
+            </div>
 
-			<div class="sc-col sc-xs4 sc-s12">
-				<a href="?path=users/recover-request"><?php echo $language->translate('Forgot password'); ?>?</a>
-			</div>
-		</div>
-	</form>
+            <div class="sc-col sc-xs4 sc-s12">
+                <a href="?path=users/recover-request"><?php echo $language->translate('Forgot password'); ?>?</a>
+            </div>
+        </form>
+    </div>
 
 	<?php
 	require_once $dash->getInclude('footer', 'lr');

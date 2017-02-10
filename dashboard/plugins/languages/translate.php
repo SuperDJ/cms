@@ -9,7 +9,7 @@ if( !$user->isLoggedIn() ) {
 		require_once $dash->getInclude( 'header' );
 		$form = new Form();
 
-		$translate = $db->select( "SELECT `id`, `translation` FROM `translations`WHERE `languages_id` = ?", array( 1 ) ); // TODO Get default `languages_id` from database
+		$translate = $db->query( "SELECT `id`, `translation` FROM `translations`WHERE `languages_id` = ?", array( 1 ) ); // TODO Get default `languages_id` from database
 
 		if( $_POST ) {
 			$i = 0;
@@ -32,19 +32,19 @@ if( !$user->isLoggedIn() ) {
 					// $field = `translations`.`id`
 					// $value = `translations`.`translation`
 					//Check to see if it's only needed to update
-					$isTranslated = $db->select("SELECT `translation` FROM `translations` WHERE `translations_id` = ? AND `languages_id` = ?", array( $field, $id ))['translation'];
+					$isTranslated = $db->query("SELECT `translation` FROM `translations` WHERE `translations_id` = ? AND `languages_id` = ?", array( $field, $id ))['translation'];
 
 					if( !empty( $isTranslated ) ) {
 						if( $isTranslated == $value ) {
 							$translated++;
 						} else {
-							if( $db->update( "UPDATE `translations` SET `translation` = ? WHERE `translations_id` = ? AND `languages_id` = ?", array( $value, $field, $id ) ) ) {
+							if( $db->query( "UPDATE `translations` SET `translation` = ? WHERE `translations_id` = ? AND `languages_id` = ?", array( $value, $field, $id ) ) ) {
 								$translated++;
 							}
 						}
 					} else {
 						// If translation is added to database $translated + 1
-						if( $db->insert( "INSERT INTO `translations` (`translations_id`, `translation`, `languages_id`) VALUES (?, ?, ?)", array( $field, $value, $id ) ) ) {
+						if( $db->query( "INSERT INTO `translations` (`translations_id`, `translation`, `languages_id`) VALUES (?, ?, ?)", array( $field, $value, $id ) ) ) {
 							$translated++;
 						}
 					}
@@ -62,7 +62,7 @@ if( !$user->isLoggedIn() ) {
 				<form action="" method="post">';
 
 		foreach( $translate as $field => $value ) {
-			$translated = $db->select("SELECT `translation` FROM `translations` WHERE `translations_id` = ? AND `languages_id` = ?", array( $value['id'], $id ) )['translation'];
+			$translated = $db->query("SELECT `translation` FROM `translations` WHERE `translations_id` = ? AND `languages_id` = ?", array( $value['id'], $id ) )['translation'];
 			echo '	<div class="sc-floating-input">
 						<input type="text" name="'.$value['id'].'" id="'.$value['translation'].'" value="'.( !empty( $form->input($value['id']) ) ? $form->input($value['id']) : $translated).'">
 						<label for="'.$value['translation'].'">'.$language->translate($value['translation']).'</label>

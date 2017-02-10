@@ -1,4 +1,5 @@
 <?php
+//TODO Load all CMS settings from database
 class Dashboard extends Database {
 	public $path,
 			$menu;

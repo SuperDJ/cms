@@ -5,7 +5,7 @@ if( !$user->isLoggedIn() ) {
 	$title = $language->translate( 'Overview' );
 	require_once $dash->getInclude( 'header' );
 
-	$data = $db->select("
+	$data = $db->query("
 SELECT `l`.`id`, `l`.`language`, `l`.`iso_code`, concat( round( 100 * count(`t`.`languages_id`) / `t2`.`cnt`, 0 ), '%') AS `translated`
 FROM `languages` `l`
   LEFT JOIN `translations` `t`

@@ -29,6 +29,7 @@
 		height: rem-calc(48px);
 		@include font($font-size-menu, 0, $font-weight-menu, $line-height-menu, $font-color-menu, $letter-spacing-menu);
 		color: initial;
+		white-space: nowrap;
 		padding: calc(#{rem-calc(48px)} - (#{rem-calc(20px)} + #{#{$font-size-menu}px})) $gutter rem-calc(20px) $gutter;
 		@include transition(background $transition-small-duration $basic-transition);
 
@@ -41,8 +42,12 @@
 		}
 
 		&:hover {
-			background: $grey-200;
-			color: initial;
+			background: if( $theme == light, $grey-200, null);
+			color: if( $theme == light, initial, $white);
+
+			.material-icons {
+				color: if($theme == light, initial, $white);
+			}
 		}
 	}
 

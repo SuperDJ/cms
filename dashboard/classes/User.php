@@ -8,7 +8,7 @@ class User extends Database {
 		parent::__construct();
 
 		if( $this->isLoggedIn() ) {
-			$this->_id = (int)base64_decode( $_SESSION['user'] );
+			$this->_id = (int)$_SESSION['user']['id'];
 
 			// Check if user data already has been stored
 			if( empty( $this->data ) ) {
@@ -92,8 +92,36 @@ class User extends Database {
 	 * @return bool
 	 */
 	public function isLoggedIn() {
-		if( !empty( $_SESSION['user'] ) && $this->exists('email', 'users', 'id', base64_decode( $_SESSION['user'] ) ) ) {
+		if( !empty( $_SESSION['user'] ) && $this->exists('email', 'users', 'id', $_SESSION['user']['id'] ) ) {
 			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public function hasPermission( $path ) {
+		$group = $_SESSION['user']['group'];
+		if( !empty( $_SESSION['user'] ) && $this->exists('id', 'groups', 'id', $group ) ) {
+			$stmt = $this->mysqli->prepare("SELECT `url` FROM `plugins` `p`
+											JOIN `rights` `r`
+											ON `r`.`plugins_id` = `p`.`id`
+											WHERE `r`.`groups_id` = :groups_id");
+			$stmt->bindParam(':groups_id', $group, PDO::PARAM_INT);
+			$stmt->execute();
+
+			if( $stmt->rowCount() >= 1 ) {
+				$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+				$stmt = null;
+				if( in_array( $path, $result ) ) {
+					return true;
+				} else {
+					return false;
+				}
+			} else {
+				$stmt = null;
+				return false;
+			}
 		} else {
 			return false;
 		}

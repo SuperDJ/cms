@@ -5,7 +5,7 @@ if( !$user->isLoggedIn() ) {
 	$title = $language->translate( 'Overview' );
 	require_once $dash->getInclude( 'header' );
 
-	$data = $db->select("SELECT `id`, `path`, `mime`, `upload_date`, `title`, `description` FROM `files`", array('multipleRows'));
+	$data = $db->query("SELECT `id`, `path`, `mime`, `upload_date`, `title`, `description` FROM `files`", array('multipleRows'));
 
 	echo '<p class="sc-col sc-xs4 sc-s12"><a href="?path=media/add" class="sc-raised-button">'.$language->translate('Add file').'</a></p>';
 
