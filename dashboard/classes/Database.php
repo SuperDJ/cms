@@ -140,9 +140,9 @@ class Database {
 	 *
 	 * @return bool
 	 */
-	public function delete( $query, array $columns ) {
+	/*public function delete( $query, array $columns ) {
 		return $this->insert($query, $columns);
-	}
+	}*/
 
 	/**
 	 * Update items in database
@@ -216,7 +216,7 @@ class Database {
 					$stmt->execute( $columns );
 				} else {
 					//echo 5;
-					$stmt->execute( array_column( $columns ) );
+					$stmt->execute( array_values( $columns ) );
 				}
 			}
 		} else {

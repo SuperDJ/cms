@@ -14,39 +14,39 @@ if( $user->isLoggedIn() ) {
 				'required'  => true,
 				'minLength' => 3,
 				'remember'  => true,
-				'name'      => $language->translate('First name')
+				'name'      => 'First name'
 			),
 			'last_name'          => array(
 				'required'  => true,
 				'minLength' => 4,
 				'remember'  => true,
-				'name'      => $language->translate('Last name')
+				'name'      => 'Last name'
 			),
 			'email'              => array(
 				'unique'   => 'users',
 				'required' => true,
 				'email'    => true,
 				'remember' => true,
-				'name'     => $language->translate('Email')
+				'name'     => 'Email'
 			),
 			'password'           => array(
 				'base64_decode' => true,
 				'required'      => true,
 				'minLength'     => 6,
-				'name'          => $language->translate('Password')
+				'name'          => 'Password'
 			),
 			'password_again'     => array(
 				'base64_decode' => true,
 				'required'      => true,
 				'minLength'     => 6,
 				'matches'       => 'password',
-				'name'          => $language->translate('Password again')
+				'name'          => 'Password again'
 			),
 			'password_encrypted' => array(
 				'required'  => true,
 				'minLength' => 32,
 				'maxLength' => 33,
-				'name'      => $language->translate('Password encrypted')
+				'name'      => 'Password encrypted'
 			),
 			'captcha'            => array(
 				'captcha' => true,
@@ -56,7 +56,7 @@ if( $user->isLoggedIn() ) {
 
 		// If there are no errors register user else show errors
 		if( empty( $form->errors ) ) {
-			if( $user->register( $validation ) ) {
+			if( $user->add( $validation ) ) {
 				echo '<div class="success">'.$language->translate('You have been registered').'</div>';
 			} else {
 				echo '<div class="error">'.$language->translate('Something went wrong registering').'</div>';

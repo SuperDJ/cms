@@ -22,19 +22,21 @@ class Dashboard extends Database {
 	 * @return array|bool
 	 */
 	private function getMenuItems() {
-		$stmt = $this->mysqli->query("SELECT `id`, `name`, `parent`, `icon`, `url` FROM `plugins` WHERE `visible` = 1 ORDER BY `sort`");
+		// TODO add check for user permission
+		$stmt = $this->mysqli->prepare("
+SELECT `p`.`id`, `name`, `parent`, `icon`, `url` FROM `plugins` `p`
+JOIN `rights` `r`
+  ON `p`.`id` = `r`.`plugins_id`
+WHERE `visible` = 1 AND `r`.`groups_id` = :groups_id ORDER BY `sort`");
+		$stmt->bindParam(':groups_id', $_SESSION['user']['group'], PDO::PARAM_INT);
+		$stmt->execute();
 
-		$data = array();
-		/*while( $row = $stmt->fetch_assoc() ) {
-			$data[] = $row;
-		}*/
-		while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-			$data[] = $row;
-		}
-
-		if( !empty( $data ) ) {
-			return $data;
+		if( $stmt->rowCount() >= 1 ) {
+			$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+			$stmt = null;
+			return $result;
 		} else {
+			$stmt = null;
 			return false;
 		}
 	}

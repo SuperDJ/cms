@@ -13,13 +13,13 @@ if( !$user->isLoggedIn() ) {
 			'language' => array(
 				'required' => true,
 				'unique' => 'languages',
-				'name' => $language->translate('Language')
+				'name' => 'Language'
 			),
 			'iso_code' => array(
 				'required' => true,
 				'unique' => 'languages',
 				'maxLength' => 2,
-				'name' =>  $language->translate('ISO code')
+				'name' =>  'ISO code'
 			)
 		), [$language, 'translate'], $id);
 

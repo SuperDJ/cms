@@ -6,6 +6,7 @@ if( $user->isLoggedIn() ) {
 	$title = $language->translate('Login');
 	require_once $dash->getInclude('header', 'lr');
 
+	echo '<div class="sc-card-supporting sc-card-supporting-additional">';
 	$form = new Form();
 	// Check form
 	if( $_POST ) {
@@ -14,19 +15,19 @@ if( $user->isLoggedIn() ) {
 				'required' => true,
 				'email'    => true,
 				'remember' => true,
-				'name'     => $language->translate('Email')
+				'name'     => 'Email'
 			),
 			'password'           => array(
 				'base64_decode' => true,
 				'required'      => true,
 				'minLength'     => 6,
-				'name'          => $language->translate('Password')
+				'name'          => 'Password'
 			),
 			'password_encrypted' => array(
 				'required'  => true,
 				'minLength' => 32,
 				'maxLength' => 33,
-				'name'      => $language->translate('Password encrypted')
+				'name'      => 'Password encrypted'
 			),
             /*'remember' => array(
                 'name' => $language->translate('Keep me logged in')
@@ -37,7 +38,6 @@ if( $user->isLoggedIn() ) {
 			)
 		), [ $language, 'translate' ] );
 
-		echo '<div class="sc-card-supporting sc-card-supporting-additional">';
 		// If there are no errors register user else show errors
 		if( empty( $form->errors ) ) {
 			if( $user->login( $validation ) ) {

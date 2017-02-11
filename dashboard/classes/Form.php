@@ -39,9 +39,13 @@ class Form extends Database {
 		foreach( $items as $item => $rules ) {
 			foreach ( $rules as $rule => $rule_value ) {
 
-				// Remove malicious characters
-				if( !empty( $source[$item] ) || is_numeric( $source[$item] ) ) {
-					$value = $this->sanitize($source[$item], $html);
+				if( isset( $source[$item] ) ) {
+					// Remove malicious characters
+					if( !empty( $source[$item] ) ) {
+						$value = $this->sanitize( $source[$item], $html );
+					} else {
+						$value = '';
+					}
 				} else {
 					$value = '';
 				}
@@ -50,7 +54,7 @@ class Form extends Database {
 					// Check of empty value
 					case 'required':
 						if( empty( $value ) ) {
-							$this->addError($rules['name'].' '.$translate('is empty'));
+							$this->addError($translate( $rules['name'] ).' '.$translate('is empty'));
 						}
 						break;
 					// Validate email and make sure its in lower case
@@ -64,20 +68,20 @@ class Form extends Database {
 					// Validate for numeric value
 					case 'numeric':
 						if( !is_numeric( $value ) ) {
-							$this->addError($rules['name'].' '.$translate('has to be a number'));
+							$this->addError($translate( $rules['name'] ).' '.$translate('has to be a number'));
 						}
 						break;
 					// Maximum length
 					case 'maxLength':
 						if( mb_strlen( $value) > $rule_value ) {
-							$this->addError($rules['name'].' '.$translate('has a maximum of').' '.$rule_value.' '.$translate('characters'));
+							$this->addError($translate( $rules['name'] ).' '.$translate('has a maximum of').' '.$rule_value.' '.$translate('characters'));
 						}
 						break;
 					// Minimal length
 					case 'minLength':
 						if( !empty( $rules['required'] ) && $rules['required'] == true ) {
 							if( mb_strlen( $value ) < $rule_value ) {
-								$this->addError($rules['name'].' '.$translate('has a minimum of').' '.$rule_value.' '.$translate('characters'));
+								$this->addError($translate( $rules['name'] ).' '.$translate('has a minimum of').' '.$rule_value.' '.$translate('characters'));
 							}
 						}
 						break;
@@ -91,25 +95,25 @@ class Form extends Database {
 							if( $current_value != $value ) {
 								// Check if the value is unique in the database
 								if( $this->exists($item, $rule_value, $item, $value) ) {
-									$this->addError($rules['name'].' '.$value.' '.$translate('already exists'));
+									$this->addError($translate( $rules['name'] ).' '.$value.' '.$translate('already exists'));
 								}
 							}
 						} else {
 							if ( $this->exists($item, $rule_value, $item, $value) ) {
-								$this->addError($rules['name'].' '.$value.' '.$translate('already exists'));
+								$this->addError($translate( $rules['name'] ).' '.$value.' '.$translate('already exists'));
 							}
 						}
 						break;
 					// Check against other value
 					case 'matches':
 						if( $value != $source[$rule_value] ) {
-							$this->addError($rules['name'].' '.$translate('does not match').' '.$rule_value);
+							$this->addError($translate( $rules['name'] ).' '.$translate('does not match').' '.$rule_value);
 						}
 						break;
 					// Check if something already exists
 					case 'exists':
 						if( !$this->exists($item, $rule_value, $item, $value) ) {
-							$this->addError($rules['name'].' '.$value.' '.$translate('does not exists'));
+							$this->addError($translate( $rules['name'] ).' '.$value.' '.$translate('does not exists'));
 						}
 						break;
 					// base64 encode
@@ -134,13 +138,15 @@ class Form extends Database {
 						break;
 					// Remember entered data
 					case 'remember':
-						$this->remember[$item] = $value;
+						if( !empty( $value ) ) {
+							$this->remember[$item] = $value;
+						}
 						break;
 					// Check if a date is actually a date
 					case 'date':
 						if( !empty( $value ) ) {
 							if( !preg_match('/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/', $value) ) {
-								$this->addError($rules['name'].' '.$translate('has no valid date').' '.$value);
+								$this->addError($translate( $rules['name'] ).' '.$translate('has no valid date').' '.$value);
 							}
 						}
 						break;
@@ -148,7 +154,7 @@ class Form extends Database {
 					case 'time':
 						if( !empty( $value ) ) {
 							if( !preg_match('/([01]?[0-9]|2[0-3]):[0-5][0-9](:[0-5][0-9])?/', $value) ) {
-								$this->addError($rules['name'].' '.$translate('has no valid time'));
+								$this->addError($translate( $rules['name'] ).' '.$translate('has no valid time'));
 							}
 						}
 						break;
@@ -159,17 +165,14 @@ class Form extends Database {
 						}
 					// Capitalize first letter
 					case 'capitalize':
-						$value = ucfirst( $value );
+						$source[$item] = ucfirst( $value );
 						break;
 					case 'checkbox':
-						if( ! empty( $value ) && $value == 'on') {
-							$value = 1;
-						} else {
-							$value = null;
+						if( !empty( $source[$item] ) && $source[$item] == 'on' ) {
+							$source[$item] = 1;
 						}
 						break;
 				}
-
 				$this->return[$item] = $value;
 			}
 		}
@@ -201,13 +204,13 @@ class Form extends Database {
 	public function outputErrors() {
 		$html = '';
 		if( !empty( $this->errors ) ) {
-			$html .= '<div class="error sc-card sc-card-supporting">
-						<ul>';
+			$html .= '	<div class="error sc-card sc-card-supporting" role="error">
+							<ul>';
 			foreach( $this->errors as $error ) {
-				$html .= '<li>' . $error . '</li>';
+				$html .= '		<li>' . $error . '</li>';
 			}
-			$html .=    '</ul>
-					';
+			$html .= '		</ul>
+						</div>';
 		}
 		return $html;
 	}
@@ -227,7 +230,11 @@ class Form extends Database {
 
 		if( !empty( $_SESSION['form'] ) ) {
 			$input = $_SESSION['form'];
-			return $input[$field];
+			if( !empty( $input[$field] ) ) {
+				return $input[$field];
+			} else {
+				return false;
+			}
 		} else {
 			return false;
 		}

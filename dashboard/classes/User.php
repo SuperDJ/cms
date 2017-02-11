@@ -1,5 +1,5 @@
 <?php
-class User extends Database {
+class User extends Database implements Plugin {
 	public $data = array(); // Store logged in user data so it isn't queried each time
 
 	private $_id; // Store user id
@@ -18,13 +18,13 @@ class User extends Database {
 	}
 
 	/**
-	 * Register user
+	 * Add/ Register user
 	 *
 	 * @param array $data All data needed to register user
 	 *
 	 * @return bool
 	 */
-	public function register( array $data ) {
+	public function add( array $data ) {
 		$password = password_hash( $this->passwordGenerate( $data['password_encrypted'] ), PASSWORD_DEFAULT );
 		$register_date = date('Y-m-d H:i:s');
 
@@ -110,7 +110,7 @@ class User extends Database {
 			$stmt->execute();
 
 			if( $stmt->rowCount() >= 1 ) {
-				$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+				$result = array_column($stmt->fetchAll(PDO::FETCH_ASSOC), 'url');
 
 				$stmt = null;
 				if( in_array( $path, $result ) ) {
@@ -143,7 +143,7 @@ class User extends Database {
 		}
 	}
 
-	public function data( $id ) {
+	public function data( int $id = null) {
 		if( empty( $id ) ) {
 			return false;
 		} else {
@@ -156,6 +156,35 @@ class User extends Database {
 			} else {
 				return false;
 			}
+		}
+	}
+
+	public function edit( array $data ) {
+		$stmt = $this->mysqli->prepare("UPDATE `users` SET `active` = :active, `groups_id` = :groups_id");
+		$stmt->bindParam(':active', $data['active'], PDO::PARAM_INT);
+		$stmt->bindParam(':groups_id', $data['groups_id'], PDO::PARAM_INT);
+		$stmt->execute();
+
+		if( $stmt->rowCount() >= 1 ) {
+			$stmt = null;
+			return true;
+		} else {
+			$stmt = null;
+			return false;
+		}
+	}
+
+	public function delete( int $id ) {
+		$stmt = $this->mysqli->prepare("DELETE FROM `users` WHERE `id` = :id");
+		$stmt->bindParam(':id', $id, PDO::PARAM_INT);
+		$stmt->execute();
+
+		if( $stmt->rowCount() >= 1 ) {
+			$stmt = null;
+			return true;
+		} else {
+			$stmt = null;
+			return false;
 		}
 	}
 

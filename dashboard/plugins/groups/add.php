@@ -30,7 +30,7 @@ if( !$user->isLoggedIn() ) {
 		$html = '';
 
 		foreach( $plugins as $fields => $field ) {
-			$checked = (!empty( $form($field['id'] ) ) && $form($field['id']) == 'on' ? 'checked' : '' );
+			$checked = (!empty( $form($field['id'] ) ) && $form($field['id']) == 'on' || $form($field['id']) == 1 ? 'checked' : '' );
 
 			if( !empty( $field['children'] ) ) {
 				$html .= '	<li>
@@ -51,58 +51,41 @@ if( !$user->isLoggedIn() ) {
 	}
 
 	if( $_POST ) {
-		$validation = $form->check($_POST, array(
-		    'group' => array(
-		        'capitalize' => true,
-		        'required' => true,
-                'minLength' => 3,
-                'unique' => 'groups',
-                'name' => $language->translate('Group')
-            ),
-            'description' => array(
-                'name' => $language->translate('Description')
-            )
-        ), [$language, 'translate']);
+	    $post = array(
+			'group' => array(
+				'capitalize' => true,
+				'required' => true,
+				'minLength' => 3,
+				'unique' => 'groups',
+                'remember' => true,
+				'name' => 'Group'
+			),
+			'description' => array(
+			    'remember' => true,
+				'name' => 'Description'
+			),
+        );
 
-		die();
+		foreach( $_POST as $plugin => $field ) {
+			if( is_numeric( $plugin ) ) {
+				$post[$plugin] = array(
+				    'checkbox' => true,
+                    'remember' => true,
+                    'maxLength' => 2,
+                    'name'      => $db->detail('name', 'plugins', 'id', $plugin )
+				);
+			}
+		}
+
+		$validation = $form->check($_POST, $post, [$language, 'translate']);
 
 		if( empty( $form->errors ) ) {
 		    // Add group to database or give error message
-		    if( $db->query("INSERT INTO `groups` (`group`, `description`) VALUES (?, ?)", $validation) ) {
-                // Add rights to database
-                // Get insert id from database
-                $id = $db->detail('id', 'groups', 'group', $validation['group']);
-
-                $i = 0;
-                $p = 0;
-                foreach( $_POST as $plugin => $field ) {
-                    echo $plugin;
-                    if( is_numeric( $plugin ) ) {
-                        $i++;
-						$validation = $form->check( $_POST, array(
-							$plugin => array(
-								'maxLength' => 2,
-								'name'      => $language->translate( $db->detail('name', 'plugins', 'id', $plugin ) )
-							)
-						), [ $language, 'translate' ] );
-
-						if( empty( $form->errors ) ) {
-							if( $db->query( "INSERT INTO `rights` (`groups_id`, `plugins_id`) VALUES (?, ?)", array( $id, $plugin ) ) ) {
-							    $p++;
-							}
-						} else {
-							echo $form->outputErrors();
-						}
-					}
-                }
-
-                if( $i === $p ) {
-                    $user->to('?path=groups/overview&message='.$language->translate('Group has been added').'&messageType=success');
-                } else {
-					echo '<div class="error sc-card sc-card-supporting">'.$language->translate('Something went wrong adding the group rights').'</div>';
-                }
+            $group = new Group();
+		    if( $group->add( $validation ) ) {
+                $user->to('?path=groups/overview&message='.$language->translate('Group has been added').'&messageType=success');
             } else {
-		        echo '<div class="error sc-card sc-card-supporting">'.$language->translate('Something went wrong adding the group').'</div>';
+		        echo '<div class="error sc-card sc-card-supporting" role="error">'.$language->translate('Something went wrong adding the group').'</div>';
             }
         } else {
 		    echo $form->outputErrors();

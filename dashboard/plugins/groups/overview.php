@@ -17,7 +17,12 @@ JOIN `rights` `r`
 GROUP BY `g`.`id`
 ", array(), array('multipleRows'));
 
-	echo '<p class="sc-col sc-xs4 sc-s12"><a href="?path=groups/add" class="sc-raised-button">'.$language->translate('Add group').'</a></p>';
+	echo '	<p class="sc-col sc-xs4 sc-s12">
+				<a href="?path=groups/add" class="sc-raised-button">
+					<i class="material-icons">add</i>'
+					.$language->translate('Add group').'
+				</a>
+			</p>';
 	if( empty( $data ) ) {
 		echo $language->translate('No results found');
 	} else {
@@ -38,6 +43,7 @@ GROUP BY `g`.`id`
 						<td>'.$field['group'].'</td>
 						<td>'.$field['description'].'</td>
 						<td>'.$field['rights'].'</td>
+						<td></td>
 						<td>
 							<a href="?path=groups/edit&id='.base64_encode($field['id']).'" class="edit sc-flat-button">
 								<i class="material-icons">edit</i>

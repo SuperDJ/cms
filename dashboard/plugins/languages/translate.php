@@ -18,7 +18,7 @@ if( !$user->isLoggedIn() ) {
 					$validation = $form->check( $_POST, array(
 						$translate[$i]['id'] => array(
 							'minLength' => 2,
-							'name'      => $language->translate( $translate[$i]['translation'] )
+							'name'      => $translate[$i]['translation']
 						)
 					), [ $language, 'translate' ] );
 				}

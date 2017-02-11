@@ -8,8 +8,8 @@ RewriteRule .* ? [F,L]
 
 # Redirect url
 RewriteEngine on
-RewriteCond %{HTTP_HOST} !^www.cms.dsuper.nl$ [NC]
-RewriteRule ^(.*)$ http://www.cms.dsuper.nl/$1 [R=301]
+#RewriteCond %{HTTP_HOST} !^www.cms.dsuper.nl$ [NC]
+#RewriteRule ^(.*)$ http://www.cms.dsuper.nl/$1 [R=301]
 
 ##-------Forceer HTTPS verbinding van een map-------##
 RewriteCond %{HTTPS} !=on
@@ -17,8 +17,8 @@ RewriteRule ^/?(.*) https://cms.dsuper.nl/$1 [R,L]
 ##
 
 # Redirect url
-RewriteCond %{HTTP_HOST} ^159.253.0.82
-RewriteRule (.*) http://www.cms.dsuper.nl/$1 [L,R=301]
+#RewriteCond %{HTTP_HOST} ^159.253.0.82
+#RewriteRule (.*) http://www.cms.dsuper.nl/$1 [L,R=301]
 
 <FilesMatch "\.htaccess|credentials\.json|google-credentials\.json">
   Order allow,deny

@@ -21,8 +21,11 @@ if( !empty( $_GET['path'] ) ) {
 			}
 		}*/
 
+		// If user has no permission for certain page redirect back
 		if( $user->isLoggedIn() ) {
-			// TODO Add Group
+			if( !$user->hasPermission( $path ) ) {
+				$user->to('?path=overview/overview');
+			}
 		}
 
 		require_once 'plugins/'.$dash->path.'.php';

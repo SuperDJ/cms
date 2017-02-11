@@ -5,9 +5,10 @@ if( !$user->isLoggedIn() ) {
 	$title = $language->translate( 'Edit' );
 	require_once $dash->getInclude( 'header' );
 	$form = new Form();
+	$group = new Group();
 
-	$data = $db->query("SELECT `group`, `description` FROM `groups` WHERE `id` = ?", array($id));
-	$rights = $db->query("SELECT `id`, `plugins_id` FROM `rights` WHERE `groups_id` = ?", array($id), array('multipleRows'));
+	$data = $group->data($id);
+	$rights = $group->rights($id);
 
 	$plugins = $db->query("SELECT `id`, `name`, `parent` FROM `plugins`");
 
@@ -57,22 +58,36 @@ if( !$user->isLoggedIn() ) {
 	}
 
 	if( $_POST ) {
-		$validation = $form->check($_POST, array(
+		$post = array(
 			'group' => array(
+				'capitalize' => true,
 				'required' => true,
 				'minLength' => 3,
 				'unique' => 'groups',
-                'capitalize' => true,
-				'name' => $language->translate('Group')
+				'remember' => true,
+				'name' => 'Group'
 			),
 			'description' => array(
-				'name' => $language->translate('Description')
-			)
-		), [$language, 'translate'], $id);
+				'remember' => true,
+				'name' => 'Description'
+			),
+		);
+
+		foreach( $_POST as $plugin => $field ) {
+			if( is_numeric( $plugin ) ) {
+				$post[$plugin] = array(
+					'checkbox' => true,
+					'remember' => true,
+					'maxLength' => 2,
+					'name'      => $db->detail('name', 'plugins', 'id', $plugin )
+				);
+			}
+		}
+		$validation = $form->check($_POST, $post, [$language, 'translate'], $id);
 
 		if( empty( $form->errors ) ) {
 			// Add group to database or give error message
-			if( $db->query("UPDATE `groups` SET `group` = ?, `description` = ? WHERE `id` = ?", $validation) ||
+			if( $group->edit($validation) ||
                 $validation['group'] == $db->detail('group', 'groups', 'id', $id) && $validation['description'] == $db->detail('description', 'groups', 'id', $id) ) {
 				// Add rights to database;
 
@@ -97,7 +112,7 @@ if( !$user->isLoggedIn() ) {
                     $validation = $form->check( $_POST, array(
                         $plugin => array(
                             'maxLength' => 2,
-                            'name'      => $language->translate( $db->detail('name', 'plugins', 'id', $plugin ) )
+                            'name'      => $db->detail('name', 'plugins', 'id', $plugin )
                         )
                     ), [ $language, 'translate' ] );
 
@@ -125,10 +140,10 @@ if( !$user->isLoggedIn() ) {
 				if( $i === $p ) {
 					$user->to('?path=groups/overview&message='.$language->translate('Group has been edited').'&messageType=success');
 				} else {
-					echo '<div class="error sc-card sc-card-supporting">'.$language->translate('Something went wrong edited the group rights').'</div>';
+					echo '<div class="error sc-card sc-card-supporting" role="error">'.$language->translate('Something went wrong edited the group rights').'</div>';
 				}
 			} else {
-				echo '<div class="error sc-card sc-card-supporting">'.$language->translate('Something went wrong editing the group').'</div>';
+				echo '<div class="error sc-card sc-card-supporting" role="error">'.$language->translate('Something went wrong editing the group').'</div>';
 			}
 		} else {
 			echo $form->outputErrors();
