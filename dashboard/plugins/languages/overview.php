@@ -1,5 +1,5 @@
 <?php
-if( !$user->isLoggedIn() ) {
+if( !$user->isLoggedIn() && $user->hasPermission($path) ) {
 	$user->to('?path=users/login');
 } else {
 	$title = $language->translate( 'Overview' );
@@ -30,22 +30,32 @@ GROUP BY `l`.`id`;
 							<th>'.$language->translate( 'Options' ).'</th>
 						</tr>
 					</thead>
+					
 					<tbody>';
+
+		// Check if use has permission
+		($user->hasPermission('languages/translate') ? $translate = true : $translate = false);
+		($user->hasPermission('languages/edit') ? $edit = true : $edit = false);
+		($user->hasPermission('languages/delete') ? $delete = true : $delete = false);
 		foreach( $data as $key => $field ) {
 			echo '		<tr>
 							<td>'.$language->translate( $field['language'] ).'</td>
 							<td>'.$field['iso_code'].'</td>
 							<td>'.$field['translated'].'</td>
 							<td>
+							'.( $translate ? '
 								<a href="?path=languages/translate&id='.base64_encode($field['id']).'" class="sc-flat-button">
 									<i class="material-icons">translate</i>
-								</a>
+								</a>' : '').'
+							'.( $edit ? '
 								<a href="?path=languages/edit&id='.base64_encode($field['id']).'" class="edit sc-flat-button">
 									<i class="material-icons">edit</i>
-								</a>
+								</a>' : '').'
+							'.( $delete ? '
 								<a href="?path=languages/delete&id='.base64_encode($field['id']).'" class="delete sc-flat-button">
 									<i class="material-icons">delete</i>
-								</a>
+								</a>' : '').'	
+								
 							</td>
 						</tr>';
 		}

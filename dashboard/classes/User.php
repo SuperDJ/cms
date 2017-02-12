@@ -147,7 +147,7 @@ class User extends Database implements Plugin {
 		if( empty( $id ) ) {
 			return false;
 		} else {
-			$stmt = $this->mysqli->prepare("SELECT `id`, `first_name`, `last_name`, `email`, `register_date`, `active_date` FROM `users` WHERE `id` = :id");
+			$stmt = $this->mysqli->prepare("SELECT `id`, `first_name`, `last_name`, `email`, `register_date`, `active_date`, `languages_id` FROM `users` WHERE `id` = :id");
 			$stmt->bindParam(':id', $id, PDO::PARAM_INT);
 			$stmt->execute();
 
@@ -264,6 +264,37 @@ class User extends Database implements Plugin {
 			} else {
 				return false;
 			}
+		}
+	}
+
+	public function profile( array $data ) {
+		$stmt = $this->mysqli->prepare("
+			UPDATE `users` SET 
+				`first_name` = :first_name,
+				`last_name` = :last_name,
+				`email` = :email,
+				`languages_id` = :languages_id
+			WHERE `id` = :id");
+
+		if(!$stmt){
+			print_r($this->mysqli->errorInfo());
+		}
+		$stmt->bindParam(':first_name', $data['first_name'], PDO::PARAM_STR);
+		$stmt->bindParam(':last_name', $data['last_name'], PDO::PARAM_STR);
+		$stmt->bindParam(':email', $data['email'], PDO::PARAM_STR);
+		$stmt->bindParam(':languages_id', $data['languages_id'], PDO::PARAM_INT);
+		$stmt->bindParam(':id', $data['id'], PDO::PARAM_INT);
+		$stmt->execute();
+		if(!$stmt){
+			print_r($this->mysqli->errorInfo());
+		}
+
+		if( $stmt->rowCount() >= 1 ) {
+			$stmt = null;
+			return true;
+		} else {
+			$stmt = null;
+			return false;
 		}
 	}
 }

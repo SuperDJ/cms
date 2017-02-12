@@ -1,5 +1,5 @@
 <?php
-if( !$user->isLoggedIn() ) {
+if( !$user->isLoggedIn() && $user->hasPermission($path) ) {
 	$user->to('?path=users/login');
 } else {
 	$title = $language->translate( 'Overview' );
@@ -29,6 +29,10 @@ if( !$user->isLoggedIn() ) {
 					</thead>
 					
 					<tbody>';
+
+		// Check if user has permission
+		($user->hasPermission('groups/edit') ? $edit = true : $edit = false);
+		($user->hasPermission('groups/delete') ? $delete = true : $delete = false);
 		foreach( $data as $row => $field ) {
 			echo '	<tr>
 						<td>'.$field['group'].'</td>
@@ -36,12 +40,14 @@ if( !$user->isLoggedIn() ) {
 						<td>'.$field['rights'].'</td>
 						<td></td>
 						<td>
+						'.( $edit ? '
 							<a href="?path=groups/edit&id='.base64_encode($field['id']).'" class="edit sc-flat-button">
 								<i class="material-icons">edit</i>
-							</a>	
+							</a>' : '').'
+						'.( $delete ? '
 							<a href="?path=groups/delete&id='.base64_encode($field['id']).'" class="delete sc-flat-button">
 								<i class="material-icons">delete</i>
-							</a>
+							</a>' : '').'	
 						</td>
 					</tr>';
 		}

@@ -1,5 +1,5 @@
 <?php
-if( !$user->isLoggedIn() ) {
+if( !$user->isLoggedIn() && $user->hasPermission($path) ) {
 	$user->to('?path=users/login');
 } else {
 	$title = $language->translate('Overview');
@@ -24,7 +24,12 @@ if( !$user->isLoggedIn() ) {
 							<th>'.$language->translate( 'Options' ).'</th>
 						</tr>
 					</thead>
+					
 					<tbody>';
+
+		// Check if user has permission
+		($user->hasPermission('users/edit') ? $edit = true : $edit = false);
+		($user->hasPermission('users/delete') ? $delete = true : $delete = false);
 		foreach( $data as $key => $field ) {
 			echo '		<tr>
 							<td>'.$field['first_name'].'</td>
@@ -35,12 +40,14 @@ if( !$user->isLoggedIn() ) {
 							<td>'.$field['active_date'].'</td>
 							<td>'.( $field['active'] == 1 ? '<i class="material-icons success">check</i>' : '<i class="material-icons error">clear</i>' ).'</td>
 							<td>
+							'.( $edit ? '
 								<a href="?path=users/edit&id='.base64_encode( $field['id'] ).'" class="edit sc-flat-button">
 									<i class="material-icons">edit</i>
-								</a>
+								</a>' : '').'
+							'.( $delete ? '
 								<a href="?path=users/delete&id='.base64_encode( $field['id'] ).'" class="delete sc-flat-button">
 									<i class="material-icons">delete</i>
-								</a>
+								</a>' : '').'
 							</td>
 						</tr>';
 		}

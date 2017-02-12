@@ -1,5 +1,5 @@
 <?php
-if( !$user->isLoggedIn() ) {
+if( !$user->isLoggedIn() && $user->hasPermission($path) ) {
 	$user->to('?path=overview/overview');
 } else {
 	// Define page title

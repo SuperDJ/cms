@@ -77,6 +77,42 @@ class Language extends Database implements Plugin {
 	}
 
 	public function data( int $id = null ) {
+		if( !is_null( $id ) ) {
+			$stmt = $this->mysqli->prepare("
+				SELECT `l`.`id`, `l`.`language`, `l`.`iso_code`, concat( round( 100 * count(`t`.`languages_id`) / `t2`.`cnt`, 0 ), '%') AS `translated`
+				FROM `languages` `l`
+				  	LEFT JOIN `translations` `t`
+						ON `l`.`id` = `t`.`languages_id`
+				  	CROSS JOIN (
+						SELECT count(`id`) `cnt`
+						FROM `translations`
+						WHERE `languages_id` = 1
+					) `t2`
+				WHERE `l`.`id` = :id	 
+				GROUP BY `l`.`id`");
+			$stmt->bindParam(':id', $id, PDO::PARAM_INT);
+		} else {
+			$stmt = $this->mysqli->prepare("
+				SELECT `l`.`id`, `l`.`language`, `l`.`iso_code`, concat( round( 100 * count(`t`.`languages_id`) / `t2`.`cnt`, 0 ), '%') AS `translated`
+				FROM `languages` `l`
+				  	LEFT JOIN `translations` `t`
+						ON `l`.`id` = `t`.`languages_id`
+				  	CROSS JOIN (
+						SELECT count(`id`) `cnt`
+						FROM `translations`
+						WHERE `languages_id` = 1
+					) `t2`	 
+				GROUP BY `l`.`id`");
+		}
+		$stmt->execute();
 
+		if( $stmt->rowCount() >= 1 ) {
+			$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+			$stmt = null;
+			return $result;
+		} else {
+			$stmt = null;
+			return false;
+		}
 	}
 }

@@ -55,7 +55,14 @@
                     <i class="material-icons sc-trigger" data-sc-trigger="profile-more">arrow_drop_down</i>
 
                     <nav class="sc-menu" id="profile-more">
-                        <a href="#"><i class="material-icons">add</i>Add account</a>
+                        <a href="#">
+                            <i class="material-icons">add</i>
+                            <?php echo $language->translate('Add account'); ?>
+                        </a>
+                        <a href="?path=users/profile">
+                            <i class="material-icons">settings</i>
+                            <?php echo $language->translate('Profile settings'); ?>
+                        </a>
                         <a href="?path=users/logout">
                             <i class="material-icons">exit_to_app</i>
                             <?php echo $language->translate('Logout'); ?>

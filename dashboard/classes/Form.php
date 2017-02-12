@@ -112,8 +112,15 @@ class Form extends Database {
 						break;
 					// Check if something already exists
 					case 'exists':
-						if( !$this->exists($item, $rule_value, $item, $value) ) {
-							$this->addError($translate( $rules['name'] ).' '.$value.' '.$translate('does not exists'));
+						// If $value is numeric most likely it's an id
+						if( is_numeric( $value ) ) {
+							if( !$this->exists( $item, $rule_value, 'id', $value) ) {
+								$this->addError( $translate( $rules['name'] ).' '.$value.' '.$translate( 'does not exists' ) );
+							}
+						} else {
+							if( !$this->exists( $item, $rule_value, $item, $value ) ) {
+								$this->addError( $translate( $rules['name'] ).' '.$value.' '.$translate( 'does not exists' ) );
+							}
 						}
 						break;
 					// base64 encode
