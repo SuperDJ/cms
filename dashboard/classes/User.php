@@ -92,7 +92,7 @@ class User extends Database implements Plugin {
 	 * @return bool
 	 */
 	public function isLoggedIn() {
-		if( !empty( $_SESSION['user'] ) && $this->exists('email', 'users', 'id', $_SESSION['user']['id'] ) ) {
+		if( !empty( $_SESSION['user']['id'] ) && $this->exists('email', 'users', 'id', $_SESSION['user']['id'] ) ) {
 			return true;
 		} else {
 			return false;

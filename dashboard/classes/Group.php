@@ -68,10 +68,29 @@ class Group extends Database implements Plugin {
 
 	public function data( int $id = null ) {
 		if( !is_null( $id ) ) {
-			$stmt = $this->mysqli->prepare( "SELECT `group`, `description` FROM `groups` WHERE `id` = :id");
+			$stmt = $this->mysqli->prepare("
+				SELECT `g`.`id`, `group`, `default`, `description`, concat( round( ( COUNT(`r`.`id`) / `plugins` ) * 100 ), '%' ) as `rights`
+				FROM `groups` `g`
+				JOIN (
+					SELECT COUNT(`id`) `plugins`
+					FROM `plugins`
+					) `p`
+				JOIN `rights` `r`
+				  ON `r`.`groups_id` = `g`.`id`
+				WHERE `g`.`id` = :id
+				GROUP BY `g`.`id`");
 			$stmt->bindParam( ':id', $id, PDO::PARAM_INT );
 		} else {
-			$stmt = $this->mysqli->prepare("SELECT `group`, `description` FROM `groups`");
+			$stmt = $this->mysqli->prepare("
+				SELECT `g`.`id`, `group`, `default`, `description`, concat( round( ( COUNT(`r`.`id`) / `plugins` ) * 100 ), '%' ) as `rights`
+				FROM `groups` `g`
+				JOIN (
+					SELECT COUNT(`id`) `plugins`
+					FROM `plugins`
+					) `p`
+				JOIN `rights` `r`
+				  ON `r`.`groups_id` = `g`.`id`
+				GROUP BY `g`.`id`");
 		}
 		$stmt->execute();
 
@@ -101,6 +120,111 @@ class Group extends Database implements Plugin {
 	}
 
 	public function edit( array $data ) {
+		$q = 0; // Store query success
+		// Check if description or group needs to be update
+		if( $data['description'] !== $this->detail('description', 'groups', 'id', $data['id']) || $data['group'] !== $this->detail('group', 'groups', 'id', $data['id']) ) {
+			$stmt = $this->mysqli->prepare("UPDATE `groups` SET `group` = :group, `description` = :description");
+			$stmt->bindParam(':group', $data['group'], PDO::PARAM_STR);
+			$stmt->bindParam(':description', $data['description'], PDO::PARAM_STR);
+			$stmt->execute();
 
+			if( $stmt->rowCount() >= 1 ) {
+				$stmt = null;
+				$q++;
+			} else {
+				$stmt = null;
+				return false;
+			}
+		} else {
+			$q++;
+		}
+
+		// Set all posted plugins in array
+		$plugins = array();
+		foreach( $data as $plugin => $value ) {
+			if( is_numeric( $plugin ) ) {
+				$plugins[] = $plugin;
+			}
+		}
+
+		/*
+		 * Check if plugin rights need to be deleted
+		 * If plugins_id from rights isn't in $plugins delete rights
+		 */
+		$rights = $this->rights($data['id']);
+		$delete = array();
+		foreach( $rights as $key => $field ) {
+			if( !in_array( $field['plugins_id'], $plugins ) ) {
+				$delete[] = $field['plugins_id'];
+			}
+		}
+
+		// Check if rights need to be added
+		$add = array();
+		foreach( $plugins as $key => $plugin ) {
+			if( !in_array( $plugin, array_column( $rights, 'plugins_id' ) ) ) {
+				$add[] = $plugin;
+			}
+		}
+
+		// Delete rights
+		if( !empty( $delete ) ) {
+			$stmt = $this->mysqli->prepare("DELETE FROM `rights` WHERE `groups_id` = :groups_id AND `plugins_id` = :plugins_id");
+
+			$count = count( $delete );
+			$i = 0;
+			foreach( $delete as $key => $row ) {
+				$stmt->bindParam(':groups_id', $data['id'], PDO::PARAM_INT);
+				$stmt->bindParam(':plugins_id', $row, PDO::PARAM_INT);
+				$stmt->execute();
+
+				if( $stmt->rowCount() >= 1 ) {
+					$i++;
+				}
+			}
+
+			$stmt = null;
+			if( $count === $i ) {
+				$q++;
+			} else {
+				return false;
+			}
+		} else {
+			$q++;
+		}
+
+		// Add rights
+		if( !empty( $add ) ) {
+			$stmt = $this->mysqli->prepare("INSERT INTO `rights` (`groups_id`, `plugins_id`) VALUES (:groups_id, :plugins_id) ");
+
+			$count = count( $add );
+			$i = 0;
+			foreach( $add as $key => $plugin ) {
+				$stmt->bindParam(':groups_id', $data['id'], PDO::PARAM_INT);
+				$stmt->bindParam(':plugins_id', $plugin, PDO::PARAM_INT);
+				$stmt->execute();
+
+				if( $stmt->rowCount() >= 1 ) {
+					$i++;
+				} else {
+					return false;
+				}
+			}
+
+			$stmt = null;
+			if( $count === $i ) {
+				$q++;
+			} else {
+				return false;
+			}
+		} else {
+			$q++;
+		}
+
+		if( $q === 3 ) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 }

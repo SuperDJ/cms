@@ -5,17 +5,8 @@ if( !$user->isLoggedIn() ) {
 	$title = $language->translate( 'Overview' );
 	require_once $dash->getInclude( 'header' );
 
-	$data = $db->query("
-SELECT `g`.`id`, `group`, `default`, `description`, concat( round( ( COUNT(`r`.`id`) / `plugins` ) * 100 ), '%' ) as `rights`
-FROM `groups` `g`
-JOIN (
-    SELECT COUNT(`id`) `plugins`
-    FROM `plugins`
-    ) `p`
-JOIN `rights` `r`
-  ON `r`.`groups_id` = `g`.`id`
-GROUP BY `g`.`id`
-", array(), array('multipleRows'));
+	$group = new Group();
+	$data = $group->data();
 
 	echo '	<p class="sc-col sc-xs4 sc-s12">
 				<a href="?path=groups/add" class="sc-raised-button">

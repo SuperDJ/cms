@@ -78,7 +78,10 @@ if( !empty( $_GET['message'] ) ) {
                             '.$db->sanitize( $_GET['message'] ).'
                         </div>
                         <div class="sc-dialog-actions">
-                            <button class="sc-flat-button sc-trigger" data-sc-trigger="notification">'.$language->translate('Close').'</button>
+                            <a href="?path='.$path.'" class="sc-raised-button">
+                                <i class="material-icons">close</i>
+                                '.$language->translate('Close').'
+                            </a>
                         </div>
                     </div>    
                 </div>';

@@ -2,15 +2,18 @@
 if( !$user->isLoggedIn() ) {
 	$user->to('?path=users/login');
 } else {
+    if( empty( $id ) && !$db->exists('id', 'groups', 'id', $id)) {
+        $user->to('?path=groups/overview');
+    }
 	$title = $language->translate( 'Edit' );
 	require_once $dash->getInclude( 'header' );
 	$form = new Form();
 	$group = new Group();
 
-	$data = $group->data($id);
-	$rights = $group->rights($id);
+	$data = $group->data($id); // Get all data for group
+	$rights = $group->rights($id); // Get all rights
 
-	$plugins = $db->query("SELECT `id`, `name`, `parent` FROM `plugins`");
+	$plugins = $db->query("SELECT `id`, `name`, `parent` FROM `plugins`"); // Get all plugins
 
 	function buildTree( array $elements, $parentId = 0 ) {
 		$branch = array();
@@ -86,62 +89,9 @@ if( !$user->isLoggedIn() ) {
 		$validation = $form->check($_POST, $post, [$language, 'translate'], $id);
 
 		if( empty( $form->errors ) ) {
-			// Add group to database or give error message
-			if( $group->edit($validation) ||
-                $validation['group'] == $db->detail('group', 'groups', 'id', $id) && $validation['description'] == $db->detail('description', 'groups', 'id', $id) ) {
-				// Add rights to database;
-
-				// Set al posted plugins in array
-                $posted = array();
-                foreach( $_POST as $plugin => $field ) {
-                    if( is_numeric( $plugin ) ) {
-                        $posted[$plugin] = $field;
-                    }
-                }
-                // Check if plugin rights need to be deleted
-				$delete = array();
-                foreach( $rights as $key => $field ) {
-                    if( !in_array( $field['plugins_id'], array_keys( $posted ) ) ) {
-                        $delete[] = $field['plugins_id'];
-                    }
-                }
-
-				$i = 0;
-				$p = 0;
-				foreach( $posted as $plugin => $field ) {
-                    $validation = $form->check( $_POST, array(
-                        $plugin => array(
-                            'maxLength' => 2,
-                            'name'      => $db->detail('name', 'plugins', 'id', $plugin )
-                        )
-                    ), [ $language, 'translate' ] );
-
-                    if( empty( $form->errors ) ) {
-                        // Insert or delete depending on addition or removal of rights
-                        if( in_array( $plugin, $delete ) ) {
-                            if( $db->query("DELETE FROM `rights` WHERE `groups_id` = ? AND `plugins_id` = ?", array( $id, $plugin ) ) ) {
-                                $p++;
-                            }
-                        } else {
-                            // Check if plugin is already added to group
-                            if( in_array( $plugin, array_column( $rights, 'plugins_id' ) ) ) {
-                                $p++;
-                            } else if( $db->query( "INSERT INTO `rights` (`groups_id`, `plugins_id`) VALUES (?, ?)", array( $id, $plugin ) ) ) {
-								$p++;
-							}
-
-						}
-                    } else {
-                        echo $form->outputErrors();
-                    }
-					$i++;
-				}
-
-				if( $i === $p ) {
-					$user->to('?path=groups/overview&message='.$language->translate('Group has been edited').'&messageType=success');
-				} else {
-					echo '<div class="error sc-card sc-card-supporting" role="error">'.$language->translate('Something went wrong edited the group rights').'</div>';
-				}
+			// Edit group in database or give error message
+			if( $group->edit($validation) ) {
+				$user->to('?path=groups/overview&message='.$language->translate('Group has been edited').'&messageType=success');
 			} else {
 				echo '<div class="error sc-card sc-card-supporting" role="error">'.$language->translate('Something went wrong editing the group').'</div>';
 			}

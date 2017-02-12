@@ -13,7 +13,9 @@ class Dashboard extends Database {
 
 		$this->_pluginsPath = PLUGINS;
 
-		$this->menu = $this->createMenu( $this->buildTree( $this->getMenuItems() ), $translate, $this->path );
+		if( !empty( $_SESSION['user']['id'] ) ) {
+			$this->menu = $this->createMenu( $this->buildTree( $this->getMenuItems() ), $translate, $this->path );
+		}
 	}
 
 	/**

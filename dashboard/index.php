@@ -26,6 +26,8 @@ if( !empty( $_GET['path'] ) ) {
 			if( !$user->hasPermission( $path ) ) {
 				$user->to('?path=overview/overview');
 			}
+
+			//TODO Add AFK check (Optional)
 		}
 
 		require_once 'plugins/'.$dash->path.'.php';
