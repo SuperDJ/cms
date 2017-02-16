@@ -5,7 +5,7 @@ if( !$user->isLoggedIn() && $user->hasPermission($path) ) {
 	if( empty( $_GET['id'] ) ) {
 		$user->to('?path=languages/overview');
 	} else {
-		$title = $language->translate( 'Translate' ).' '.$language->translate($db->detail('language', 'languages', 'id', $id));
+		$title = $language->translate( 'Translate' ).': '.$language->translate($db->detail('language', 'languages', 'id', $id));
 		require_once $dash->getInclude( 'header' );
 		$form = new Form();
 

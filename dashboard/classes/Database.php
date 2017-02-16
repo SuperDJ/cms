@@ -4,7 +4,7 @@
  * Handles database connection and database requests
  */
 class Database {
-	public $mysqli;
+	protected $mysqli;
 
 	// Set database credentials
 	private $_db = array();

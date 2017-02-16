@@ -38,7 +38,7 @@ if( !$user->isLoggedIn() && $user->hasPermission($path) ) {
 						<td>'.$field['group'].'</td>
 						<td>'.$field['description'].'</td>
 						<td>'.$field['rights'].'</td>
-						<td></td>
+						<td>'.($field['default'] == 1 ? '<i class="material-icons success">check</i>' : '<i class="material-icons error">clear</i>' ).'</td>
 						<td>
 						'.( $edit ? '
 							<a href="?path=groups/edit&id='.base64_encode($field['id']).'" class="edit sc-flat-button">

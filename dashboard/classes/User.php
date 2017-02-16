@@ -27,13 +27,16 @@ class User extends Database implements Plugin {
 	public function add( array $data ) {
 		$password = password_hash( $this->passwordGenerate( $data['password_encrypted'] ), PASSWORD_DEFAULT );
 		$register_date = date('Y-m-d H:i:s');
+		$groups_id = $this->detail('id', 'groups', 'default', 1);
+		$groups_id = ( !empty( $groups_id ) ? $groups_id : 0 );
 
-		$stmt = $this->mysqli->prepare("INSERT INTO `users` (`first_name`, `last_name`, `email`, `password`, `register_date`) VALUES (:first_name, :last_name, :email, :password, :register_date)");
+		$stmt = $this->mysqli->prepare("INSERT INTO `users` (`first_name`, `last_name`, `email`, `password`, `register_date`, `groups_id`) VALUES (:first_name, :last_name, :email, :password, :register_date, :groups_id)");
 		$stmt->bindParam(':first_name', $data['first_name'], PDO::PARAM_STR);
 		$stmt->bindParam(':last_name', $data['last_name'], PDO::PARAM_STR);
 		$stmt->bindParam(':email', $data['email'], PDO::PARAM_STR);
 		$stmt->bindParam(':password', $password, PDO::PARAM_STR);
 		$stmt->bindParam(':register_date', $register_date, PDO::PARAM_STR);
+		$stmt->bindParam(':groups_id', $groups_id, PDO::PARAM_INT);
 		$stmt->execute();
 
 		if( $stmt->countRows() >= 1 ) {

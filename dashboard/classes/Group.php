@@ -2,9 +2,10 @@
 class Group extends Database implements Plugin {
 	public function add( array $data ) {
 		$q = 0; // Store completed queries
-		$stmt = $this->mysqli->prepare("INSERT INTO `groups` (`group`, `description`) VALUES (:group, :description)");
+		$stmt = $this->mysqli->prepare("INSERT INTO `groups` (`group`, `description`, `default`) VALUES (:group, :description, :default)");
 		$stmt->bindParam(':group', $data['group'], PDO::PARAM_STR);
 		$stmt->bindParam(':description', $data['description'], PDO::PARAM_STR);
+		$stmt->bindParam(':default', $data['default'], PDO::PARAM_INT);
 		$stmt->execute();
 
 		$id = $this->mysqli->lastInsertId(); // Store insert id
@@ -122,10 +123,19 @@ class Group extends Database implements Plugin {
 	public function edit( array $data ) {
 		$q = 0; // Store query success
 		// Check if description or group needs to be update
-		if( $data['description'] !== $this->detail('description', 'groups', 'id', $data['id']) || $data['group'] !== $this->detail('group', 'groups', 'id', $data['id']) ) {
-			$stmt = $this->mysqli->prepare("UPDATE `groups` SET `group` = :group, `description` = :description");
+		if( $data['description'] !== $this->detail('description', 'groups', 'id', $data['id']) ||
+			$data['group'] !== $this->detail('group', 'groups', 'id', $data['id']) ||
+			$data['default'] !== $this->detail('default', 'groups', 'id', $data['id'])
+		) {
+			if( !empty( $data['default'] ) ) {
+				$stmt = $this->mysqli->prepare("UPDATE `groups` SET `group` = :group, `description` = :description, `default` = :default WHERE `id` = :id");
+				$stmt->bindParam(':default', $data['default'], PDO::PARAM_INT);
+			} else {
+				$stmt = $this->mysqli->prepare("UPDATE `groups` SET `group` = :group, `description` = :description, `default` = DEFAULT WHERE `id` = :id");
+			}
 			$stmt->bindParam(':group', $data['group'], PDO::PARAM_STR);
 			$stmt->bindParam(':description', $data['description'], PDO::PARAM_STR);
+			$stmt->bindParam(':id', $data['id'], PDO::PARAM_INT);
 			$stmt->execute();
 
 			if( $stmt->rowCount() >= 1 ) {

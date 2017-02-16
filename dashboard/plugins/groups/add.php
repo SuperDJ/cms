@@ -64,8 +64,16 @@ if( !$user->isLoggedIn() && $user->hasPermission($path) ) {
 			    'remember' => true,
 				'name' => 'Description'
 			),
+            'default' => array(
+                'remember' => true,
+                'maxLength' => 2,
+                'checkbox' => true,
+                'unique' => 'groups',
+                'name' => 'Default'
+            )
         );
 
+	    // For all plugins
 		foreach( $_POST as $plugin => $field ) {
 			if( is_numeric( $plugin ) ) {
 				$post[$plugin] = array(
@@ -102,6 +110,18 @@ if( !$user->isLoggedIn() && $user->hasPermission($path) ) {
 			<textarea name="description" id="description"><?php echo $form->input('description'); ?></textarea>
 			<label for="description"><?php echo $language->translate('Description'); ?></label>
 		</div>
+
+        <div class="sc-col sc-xs4">
+            <div class="sc-switch" role="switch">
+                <label>
+                    <span class="sc-tooltip" title="<?php echo $language->translate('Default new user group'); ?>">
+                        <?php echo $language->translate('Default'); ?>
+                    </span>
+                    <input type="checkbox" name="default">
+                    <span class="sc-lever"></span>
+                </label>
+            </div>
+        </div>
 
 		<div class="sc-col sc-xs4 sc-s12">
 			<ul>

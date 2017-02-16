@@ -38,7 +38,6 @@ class Form extends Database {
 
 		foreach( $items as $item => $rules ) {
 			foreach ( $rules as $rule => $rule_value ) {
-
 				if( isset( $source[$item] ) ) {
 					// Remove malicious characters
 					if( !empty( $source[$item] ) ) {
@@ -88,7 +87,7 @@ class Form extends Database {
 					// Unique in database
 					// For example used to check if a username, email etc is changed for a user
 					case 'unique':
-						if( !is_null( $id ) ) {
+						if( !is_null( $id ) && !empty( $value ) ) {
 							// Get the current value
 							$current_value = $this->detail($item, $rule_value, 'id', $id);
 							// Check if the current value is not equal to the the value
@@ -99,7 +98,7 @@ class Form extends Database {
 								}
 							}
 						} else {
-							if ( $this->exists($item, $rule_value, $item, $value) ) {
+							if( $this->exists($item, $rule_value, $item, $value) && !empty( $value ) ) {
 								$this->addError($translate( $rules['name'] ).' '.$value.' '.$translate('already exists'));
 							}
 						}
@@ -177,6 +176,8 @@ class Form extends Database {
 					case 'checkbox':
 						if( !empty( $source[$item] ) && $source[$item] == 'on' ) {
 							$source[$item] = 1;
+						} else {
+							$source[$item] = 0;
 						}
 						break;
 				}

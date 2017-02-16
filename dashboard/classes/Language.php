@@ -22,7 +22,11 @@ class Language extends Database implements Plugin {
 				// Return translation
 				return $word;
 			} else {
-				if( $this->insert("INSERT INTO `translations` (`translation`) VALUES (?)", array($word)) ) {
+				$stmt = $this->mysqli->prepare("INSERT INTO `translations` (`translation`) VALUES (:translation)");
+				$stmt->bindParam(':translation', $word, PDO::PARAM_STR);
+				$stmt->execute();
+
+				if( $stmt->rowCount() >= 1 ) {
 					return $word;
 				} else {
 					return false;

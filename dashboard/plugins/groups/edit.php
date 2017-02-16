@@ -5,14 +5,12 @@ if( !$user->isLoggedIn() && $user->hasPermission($path) ) {
     if( empty( $id ) && !$db->exists('id', 'groups', 'id', $id)) {
         $user->to('?path=groups/overview');
     }
-	$title = $language->translate( 'Edit' );
-	require_once $dash->getInclude( 'header' );
 	$form = new Form();
 	$group = new Group();
-
 	$data = $group->data($id); // Get all data for group
+	$title = $language->translate( 'Edit' ).': '.$language->translate($data[0]['group']);
+	require_once $dash->getInclude( 'header' );
 	$rights = $group->rights($id); // Get all rights
-
 	$plugins = $db->query("SELECT `id`, `name`, `parent` FROM `plugins`"); // Get all plugins
 
 	function buildTree( array $elements, $parentId = 0 ) {
@@ -74,6 +72,13 @@ if( !$user->isLoggedIn() && $user->hasPermission($path) ) {
 				'remember' => true,
 				'name' => 'Description'
 			),
+			'default' => array(
+				'remember' => true,
+				'maxLength' => 2,
+				'checkbox' => true,
+				'unique' => 'groups',
+				'name' => 'Default'
+			)
 		);
 
 		foreach( $_POST as $plugin => $field ) {
@@ -82,10 +87,11 @@ if( !$user->isLoggedIn() && $user->hasPermission($path) ) {
 					'checkbox' => true,
 					'remember' => true,
 					'maxLength' => 2,
-					'name'      => $db->detail('name', 'plugins', 'id', $plugin )
+					'name'      => $db->detail( 'name', 'plugins', 'id', $plugin )
 				);
 			}
 		}
+
 		$validation = $form->check($_POST, $post, [$language, 'translate'], $id);
 
 		if( empty( $form->errors ) ) {
@@ -110,6 +116,18 @@ if( !$user->isLoggedIn() && $user->hasPermission($path) ) {
 			<textarea name="description" id="description"><?php echo ( !empty( $form->input('description') ) ? $form->input('description') : $data[0]['description'] ); ?></textarea>
 			<label for="description"><?php echo $language->translate('Description'); ?></label>
 		</div>
+
+        <div class="sc-col sc-xs4">
+            <div class="sc-switch" role="switch">
+                <label>
+                    <span class="sc-tooltip" title="<?php echo $language->translate('Default new user group'); ?>">
+                        <?php echo $language->translate('Default'); ?>
+                    </span>
+                    <input type="checkbox" name="default" <?php echo ( !empty( $form->input('default') ) || !empty( $data[0]['default'] ) ? 'checked' : '' ); ?>>
+                    <span class="sc-lever"></span>
+                </label>
+            </div>
+        </div>
 
 		<div class="sc-col sc-xs4 sc-s12">
 			<ul>
