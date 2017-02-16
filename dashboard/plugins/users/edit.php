@@ -2,6 +2,10 @@
 if( !$user->isLoggedIn() && $user->hasPermission($path) ) {
 	$user->to('?path=overview/overview');
 } else {
+	if( empty( $id ) && !$db->exists('id', 'users', 'id', $id) ) {
+		$user->to('?path=users/overview');
+	}
+
 	// Define page title
 	$title = $language->translate( 'Edit' ).': '.substr( $db->detail('first_name', 'users', 'id', $id), 0, 1 ).'. '.$db->detail('last_name', 'users', 'id', $id);
 	require_once $dash->getInclude( 'header' );

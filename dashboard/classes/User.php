@@ -103,12 +103,18 @@ class User extends Database implements Plugin {
 	}
 
 	public function hasPermission( $path ) {
+		if( empty( $_SESSION['user'] ) ) {
+			return false;
+		}
+
 		$group = $_SESSION['user']['group'];
 		if( !empty( $_SESSION['user'] ) && $this->exists('id', 'groups', 'id', $group ) ) {
-			$stmt = $this->mysqli->prepare("SELECT `url` FROM `plugins` `p`
-											JOIN `rights` `r`
-											ON `r`.`plugins_id` = `p`.`id`
-											WHERE `r`.`groups_id` = :groups_id");
+			$stmt = $this->mysqli->prepare("
+				SELECT `url` FROM `plugins` `p`
+				JOIN `rights` `r`
+					ON `r`.`plugins_id` = `p`.`id`
+				WHERE `r`.`groups_id` = :groups_id
+			");
 			$stmt->bindParam(':groups_id', $group, PDO::PARAM_INT);
 			$stmt->execute();
 

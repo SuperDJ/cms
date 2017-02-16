@@ -1,7 +1,11 @@
 <?php
-if( !$user->isLoggedIn() && $user->hasPermission($path) ) {
+if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 	$user->to('?path=users/login');
 } else {
+    if( empty( $id ) && !$db->exists('id', 'languages', 'id', $id) ) {
+        $user->to('?path=users/overview');
+    }
+
 	$title = $language->translate( 'Edit' );
 	require_once $dash->getInclude( 'header' );
     $data = $db->select("SELECT `language`, `iso_code` FROM `languages` WHERE `id` = ?", array($id));

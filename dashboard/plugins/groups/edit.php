@@ -1,10 +1,11 @@
 <?php
-if( !$user->isLoggedIn() && $user->hasPermission($path) ) {
+if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 	$user->to('?path=users/login');
 } else {
     if( empty( $id ) && !$db->exists('id', 'groups', 'id', $id)) {
         $user->to('?path=groups/overview');
     }
+
 	$form = new Form();
 	$group = new Group();
 	$data = $group->data($id); // Get all data for group

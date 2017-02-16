@@ -1,5 +1,5 @@
 <?php
-if( !$user->isLoggedIn() && $user->hasPermission($path) ) {
+if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 	$user->to('?path=users/login');
 } else {
 	$title = $language->translate( 'Overview' );
@@ -44,7 +44,7 @@ if( !$user->isLoggedIn() && $user->hasPermission($path) ) {
 							<a href="?path=groups/edit&id='.base64_encode($field['id']).'" class="edit sc-flat-button">
 								<i class="material-icons">edit</i>
 							</a>' : '').'
-						'.( $delete ? '
+						'.( $delete && !$db->exists('id', 'users', 'groups_id', $field['id']) ? '
 							<a href="?path=groups/delete&id='.base64_encode($field['id']).'" class="delete sc-flat-button">
 								<i class="material-icons">delete</i>
 							</a>' : '').'	
