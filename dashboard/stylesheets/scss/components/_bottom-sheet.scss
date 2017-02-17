@@ -135,13 +135,13 @@ $bottom-sheet-music-height: rem-calc(50px); // Default rem-calc(40px)
 			img {
 				@include square($bottom-sheet-music-image-size);
 				position: absolute;
-				top: calc(#{$bottom-sheet-music-height} - #{$bottom-sheet-music-image-size});
+				top: $bottom-sheet-music-height - $bottom-sheet-music-image-size;
 				left: 0;
 			}
 
 			.sc-determinate {
 				background: transparent;
-				top: calc(#{$bottom-sheet-music-height} - #{$bottom-sheet-music-image-size});
+				top: $bottom-sheet-music-height - $bottom-sheet-music-image-size;
 				left: $bottom-sheet-music-image-size;
 				right: 0;
 				position: absolute;

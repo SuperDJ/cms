@@ -23,8 +23,6 @@ $drawer-profile-height: $drawer-padding + $drawer-profile-img + $drawer-profile-
 	background: $drawer-background;
 	bottom: 0;
 	overflow-x: hidden;
-	overflow-y: auto;
-	overflow: auto;
 	max-width: calc(100% - #{rem-calc(56px)});
 
 	&-permanent-full-height, &-permanent-clipped, &-permanent-floating, &-persistent, &-temporary {
@@ -164,7 +162,7 @@ $drawer-profile-height: $drawer-padding + $drawer-profile-img + $drawer-profile-
 
 				img, .sc-drawer-profile-img {
 					@include square($drawer-icon-size);
-					margin: 0 calc(#{rem-calc(72px)} - #{$drawer-icon-size} - #{$drawer-padding}) 0 $gutter;
+					margin: 0 (rem-calc(72px) - $drawer-icon-size - $drawer-padding) 0 $gutter;
 					@include border-radius(50%);
 					border: rem-calc(1px) solid if($theme == light, rgba($black, .12), rgba($white, .12));
 					top: 50%;
@@ -273,9 +271,7 @@ $drawer-profile-height: $drawer-padding + $drawer-profile-img + $drawer-profile-
 				}
 
 				.sc-scrim {
-					background: -moz-linear-gradient($drawer-profile-scrim);
-					background: -webkit-linear-gradient($drawer-profile-scrim);
-					background: linear-gradient($drawer-profile-scrim);
+					@include linear-gradient($drawer-profile-scrim);
 					bottom: $drawer-profile-bottom-padding;
 					content: '';
 					left: 0;
@@ -297,35 +293,43 @@ $drawer-profile-height: $drawer-padding + $drawer-profile-img + $drawer-profile-
 				}
 
 				.sc-drawer-profile-name, .sc-drawer-profile-email {
-					line-height: calc(#{$drawer-profile-content-height} / 2);
+					line-height: $drawer-profile-content-height / 2;
 					left: $drawer-padding;
-					height: calc(#{$drawer-profile-content-height} / 2);
+					height: $drawer-profile-content-height / 2;
 					color: $white;
 				}
 
 				.sc-drawer-profile-name {
-					top: calc(#{$drawer-profile-img} + #{$drawer-padding});
+					top: $drawer-profile-img + $drawer-padding;
 					font-size: rem-calc(14px);
 					font-weight: 500;
 					right: 0;
 				}
 
 				.sc-drawer-profile-email {
-					top: calc(#{$drawer-profile-img} + #{$drawer-padding} + (#{$drawer-profile-content-height} / 2));
+					top: $drawer-profile-img + $drawer-padding + ($drawer-profile-content-height / 2);
 					font-size: rem-calc(14px);
 					font-weight: 400;
-					right: calc(#{$drawer-profile-content-height} + #{$drawer-padding});
+					right: $drawer-profile-content-height + $drawer-padding;
 				}
 
 				.sc-drawer-profile-more {
-					height: calc(#{$drawer-profile-content-height} / 2);
+					height: $drawer-profile-content-height / 2;
 					line-height: $drawer-profile-content-height;
 					right: $drawer-padding;
-					top: calc(#{$drawer-profile-img} + #{$drawer-padding} + (#{$drawer-profile-content-height} / 2));
+					top: $drawer-profile-img + $drawer-padding + ($drawer-profile-content-height / 2);
 					text-align: right;
+					position: relative;
+
+					.sc-menu {
+						z-index: 4;
+						top: $gutter;
+						right: 0;
+						left: auto;
+					}
 
 					.material-icons {
-						margin: calc((#{$drawer-profile-content-height} / 2) * -1) 0 0 0;
+						margin: (($drawer-profile-content-height / 4) * -1) ($gutter * -1) 0 0;
 						color: $white;
 					}
 				}
@@ -411,8 +415,8 @@ $drawer-profile-height: $drawer-padding + $drawer-profile-img + $drawer-profile-
 		@include square($drawer-icon-size);
 		font-size: $drawer-icon-size;
 		vertical-align: middle;
-		//color: if( $theme == light, rgba($black, .54), rgba($white, .5) );
-		margin: 0 calc(#{rem-calc(72px)} - #{$drawer-padding} - #{$drawer-icon-size}) 0 0;
+		color: if( $theme == light, rgba($black, .54), rgba($white, .5) );
+		margin: 0 (rem-calc(72px) - $drawer-padding - $drawer-icon-size) 0 0;
 		@include transition(color $transition-small-duration $basic-transition);
 
 		@media #{$medium-only} {
@@ -433,7 +437,7 @@ $drawer-profile-height: $drawer-padding + $drawer-profile-img + $drawer-profile-
 	.sc-arrow {
 		position: absolute;
 		right: rem-calc(16px);
-		top: calc( (#{$drawer-item-height} - (#{$drawer-item-height} / 2)) - (#{$drawer-icon-size} / 2) );
+		top: ($drawer-item-height - ($drawer-item-height / 2)) - ($drawer-icon-size / 2);
 		margin: 0;
 		@include transition(all $transition-small-duration $basic-transition);
 

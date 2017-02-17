@@ -2,58 +2,36 @@
 if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 	$user->to('?path=users/login');
 } else {
-	if( empty( $_GET['id'] ) ) {
+	if( empty( $id ) && !$db->exists('id', 'languages', 'id', $id) ) {
 		$user->to('?path=languages/overview');
 	} else {
 		$title = $language->translate( 'Translate' ).': '.$language->translate($db->detail('language', 'languages', 'id', $id));
 		require_once $dash->getInclude( 'header' );
 		$form = new Form();
 
-		$translate = $db->query( "SELECT `id`, `translation` FROM `translations`WHERE `languages_id` = ?", array( 1 ) ); // TODO Get default `languages_id` from database
+		$data = $language->translationData(1); // TODO Get default `languages_id` from database
+		//print_r($data);
 
 		if( $_POST ) {
 			$i = 0;
+			$post = array();
 			foreach( $_POST as $field => $value ) {
 				if( !empty( $value ) ) {
-					$validation = $form->check( $_POST, array(
-						$translate[$i]['id'] => array(
-							'minLength' => 2,
-							'name'      => $translate[$i]['translation']
-						)
-					), [ $language, 'translate' ] );
+					$post[$field] = array(
+						'minLength' => 2,
+						'name'      => $data[$i]['translation']
+					);
 				}
 				$i++;
 			}
 
+			$validation = $form->check($_POST, $post, [$language, 'translate'], $id);
+
 			if( empty( $form->errors ) ) {
-				$translations = count($validation);
-				$translated = 0;
-				foreach( $validation as $field => $value ) {
-					// $field = `translations`.`id`
-					// $value = `translations`.`translation`
-					//Check to see if it's only needed to update
-					$isTranslated = $db->query("SELECT `translation` FROM `translations` WHERE `translations_id` = ? AND `languages_id` = ?", array( $field, $id ))['translation'];
-
-					if( !empty( $isTranslated ) ) {
-						if( $isTranslated == $value ) {
-							$translated++;
-						} else {
-							if( $db->query( "UPDATE `translations` SET `translation` = ? WHERE `translations_id` = ? AND `languages_id` = ?", array( $value, $field, $id ) ) ) {
-								$translated++;
-							}
-						}
-					} else {
-						// If translation is added to database $translated + 1
-						if( $db->query( "INSERT INTO `translations` (`translations_id`, `translation`, `languages_id`) VALUES (?, ?, ?)", array( $field, $value, $id ) ) ) {
-							$translated++;
-						}
-					}
-				}
-
-				if( $translations === $translated ) {
+				if( $language->translation( $validation ) ) {
 					$user->to('?path=languages/overview&message='.$language->translate('Language translated').'&messageType=success');
 				} else {
-					echo '<div class="error sc-card sc-card-supporting">'.$language->translate('Something went wrong adding translations').'</div>';
+					echo '<div class="error sc-card sc-card-supporting" role="error">'.$language->translate('Something went wrong adding translations').'</div>';
 				}
 			}
 		}
@@ -61,10 +39,19 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 		echo '	<a href="?path=languages/overview" class="sc-raised-button"><i class="material-icons">arrow_back</i> '.$language->translate('Back').'</a>
 				<form action="" method="post">';
 
-		foreach( $translate as $field => $value ) {
-			$translated = $db->query("SELECT `translation` FROM `translations` WHERE `translations_id` = ? AND `languages_id` = ?", array( $value['id'], $id ) )['translation'];
+		// Get translations from database
+		$translated = $language->translated($id);
+		foreach( $data as $field => $value ) {
+			$key = array_search_multi($value['id'], $translated);
+
+			if( !empty( $key ) || $key === 0 ) {
+				$translation = $translated[$key]['translation'];
+			} else {
+				$translation = '';
+			}
+
 			echo '	<div class="sc-floating-input">
-						<input type="text" name="'.$value['id'].'" id="'.$value['translation'].'" value="'.( !empty( $form->input($value['id']) ) ? $form->input($value['id']) : $translated).'">
+						<input type="text" name="'.$value['id'].'" id="'.$value['translation'].'" value="'.( !empty( $form->input($value['id']) ) ? $form->input($value['id']) : ( !empty( $translation ) ? $translation : '' ) ).'">
 						<label for="'.$value['translation'].'">'.$language->translate($value['translation']).'</label>
 					</div>';
 		}

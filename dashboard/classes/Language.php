@@ -119,4 +119,131 @@ class Language extends Database implements Plugin {
 			return false;
 		}
 	}
+
+	public function translationData( int $id ) {
+		$stmt = $this->mysqli->prepare("SELECT `id`, `translation` FROM `translations`WHERE `languages_id` = :languages_id");
+		$stmt->bindParam(':languages_id', $id, PDO::PARAM_INT);
+		$stmt->execute();
+
+		if( $stmt->rowCount() >= 1 ) {
+			$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+			$stmt = null;
+			return $result;
+		} else {
+			$stmt = null;
+			return false;
+		}
+	}
+
+	public function translated( int $id ) {
+		// Get all translated fields
+		$stmt = $this->mysqli->prepare("SELECT `translation`, `translations_id` FROM `translations` WHERE `languages_id` = :languages_id");
+		$stmt->bindParam(':languages_id', $id, PDO::PARAM_INT);
+		$stmt->execute();
+
+		if( $stmt->rowCount() >= 1 ) {
+			$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+			$stmt = null;
+			return $result;
+		} else {
+			$stmt = null;
+			return false;
+		}
+	}
+
+	public function translation( array $data ) {
+		// Get all translated fields
+		$result = $this->translated($data['id']);
+
+		$update = array();
+		$insert = array();
+		foreach( $data as $field => $value ) {
+			if( $field !== 'id' ) {
+				if( in_array( $field, array_column( $result, 'translations_id' ) ) ) {
+					// Get result key
+					$resultKey = array_search_multi($field, $result);
+					// If submitted value is not equal to current value add $value to update array
+					if( $value != $result[$resultKey]['translation'] ) {
+						$update[] = array(
+							'value' => $value,
+							'translations_id' => $field
+						);
+					}
+				} else {
+					$insert[] = array(
+						'value' => $value,
+						'translations_id' => $field
+					);
+				}
+			}
+		}
+
+		$q = 0; // Store finished queries
+
+		if( !empty( $update ) ) {
+			$stmt = $this->mysqli->prepare("UPDATE `translations` SET `translation` = :translation WHERE `translations_id` = :translations_id AND `languages_id` = :languages_id");
+
+			$count = count($update);
+			$i = 0;
+			foreach( $update as $key => $value ) {
+				$stmt->bindParam(':translation', $value['value'], PDO::PARAM_STR);
+				$stmt->bindParam(':translations_id', $value['translations_id'], PDO::PARAM_INT);
+				$stmt->bindParam(':languages_id', $data['id'], PDO::PARAM_INT);
+				$stmt->execute();
+
+				if( $stmt->rowCount() >= 1 ) {
+					$i++;
+				} else {
+					$stmt = null;
+					return false;
+				}
+			}
+
+			if( $count === $i ) {
+				$stmt = null;
+				$q++;
+			} else {
+				$stmt = null;
+				return false;
+			}
+		} else {
+			$q++;
+		}
+
+		if( !empty( $insert ) ) {
+			$stmt = $this->mysqli->prepare("INSERT INTO `translations` (`translation`, `translations_id`, `languages_id`) VALUES (:translation, :translations_id, :languages_id)");
+
+			$count = count($insert);
+			$i = 0;
+			foreach( $insert as $key => $value ) {
+				$stmt->bindParam(':translation', $value['value'], PDO::PARAM_STR);
+				$stmt->bindParam(':translations_id', $value['translations_id'], PDO::PARAM_INT);
+				$stmt->bindParam(':languages_id', $data['id'], PDO::PARAM_INT);
+				$stmt->execute();
+
+				if( $stmt->rowCount() >= 1 ) {
+					$i++;
+				} else {
+					$stmt = null;
+					return false;
+				}
+			}
+
+			if( $count === $i ) {
+				$stmt = null;
+				$q++;
+			} else {
+				$stmt = null;
+				return false;
+			}
+		} else {
+			$q++;
+		}
+
+		if( $q === 2 ) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 }

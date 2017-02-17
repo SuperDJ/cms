@@ -47,7 +47,9 @@
 		$directBlur: rem-calc( if( $dp == 1, 3, $dp * 2 ) + 0px );
 		$directAlpha: ( 24 - decimal-round( $dp / 10 ) ) / 100;
 
-		@include box-shadow( 0 $ambientY $ambientBlur 0 rgba(0, 0, 0, $ambientAlpha) unquote(',') 0 $directY $directBlur 0 rgba(0, 0, 0, $directAlpha) );
+		@if( $ambientY > 0rem ) {
+			@include box-shadow(0 $ambientY $ambientBlur 0 rgba(0, 0, 0, $ambientAlpha) unquote(',') 0 $directY $directBlur 0 rgba(0, 0, 0, $directAlpha));
+		}
 	}
 }
 
@@ -182,9 +184,16 @@
 
 @mixin radial-gradient( $setting ) {
 	background: -webkit-radial-gradient($setting);
-	background: -o-radial-gradient($setting);
 	background: -moz-radial-gradient($setting);
+	background: -o-radial-gradient($setting);
 	background: radial-gradient($setting);
+}
+
+@mixin linear-gradient( $setting ) {
+	background: -webkit-linear-gradient($setting);
+	background: -moz-linear-gradient($setting);
+	background: -o-linear-gradient($setting);
+	background: linear-gradient($setting);
 }
 
 @mixin scrollbar() {
@@ -355,7 +364,6 @@
 @mixin flex-container( $direction: row, $wrap: no-wrap, $justify: flex-start, $items: stretch, $content: stretch ) {
 	display: -webkit-flex;
 	display: -moz-flex;
-	display: -ms-flex;
 	display: flex;
 	@include flex-flow( $direction $wrap );
 	@include justify-content( $justify );

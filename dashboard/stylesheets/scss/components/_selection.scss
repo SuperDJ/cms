@@ -156,12 +156,12 @@ input[type="checkbox"].sc-checkbox, input[type="radio"].sc-radio {
 $switch-track-height: rem-calc(12px);
 $switch-track-width: rem-calc(24px);
 $switch-thumb-size: rem-calc(14px);
-$switch-thumb-top: calc( ( #{$switch-track-height} - #{$switch-thumb-size} ) / 2 );
-$switch-thumb-left: calc( #{$switch-track-width} - #{$switch-thumb-size} );
-$switch-thumb-radial-size: calc( #{$switch-thumb-size} * 2 );
-$switch-thumb-radial-top: calc( ( #{$switch-track-height} - #{$switch-thumb-radial-size} ) / 2 );
-$switch-thumb-radial-left: calc( #{$switch-thumb-size} / -2 );
-$switch-thumb-radial-left-active: calc( #{$switch-thumb-left} - ( #{$switch-thumb-size} / 2 ) );
+$switch-thumb-top: ($switch-track-height - $switch-thumb-size ) / 2;
+$switch-thumb-left: $switch-track-width - $switch-thumb-size;
+$switch-thumb-radial-size: $switch-thumb-size * 2;
+$switch-thumb-radial-top: ($switch-track-height - $switch-thumb-radial-size ) / 2;
+$switch-thumb-radial-left: $switch-thumb-size / -2;
+$switch-thumb-radial-left-active: $switch-thumb-left - ($switch-thumb-size / 2 );
 
 @if( in-array( 'switch', $selection ) ) {
 	.sc-switch {
@@ -170,7 +170,7 @@ $switch-thumb-radial-left-active: calc( #{$switch-thumb-left} - ( #{$switch-thum
 			background: $switch-track-background;
 			display: inline-block;
 			height: $switch-track-height;
-			margin: calc(#{$switch-thumb-radial-size} / 2);
+			margin: $switch-thumb-radial-size / 2;
 			@include border-radius($switch-track-height);
 			position: relative;
 			vertical-align: middle;
@@ -218,14 +218,10 @@ $switch-thumb-radial-left-active: calc( #{$switch-thumb-left} - ( #{$switch-thum
 					left: $switch-thumb-left;
 					position: absolute;
 					top: $switch-thumb-top;
-					@include transition(
-							background $transition-small-duration $basic-transition unquote(',') left $transition-small-duration $basic-transition unquote(',') width $transition-small-duration $basic-transition unquote(',') height $transition-small-duration $basic-transition unquote(',') top $transition-small-duration $basic-transition
-					);
+					@include transition(background $transition-small-duration $basic-transition unquote(',') left $transition-small-duration $basic-transition unquote(',') width $transition-small-duration $basic-transition unquote(',') height $transition-small-duration $basic-transition unquote(',') top $transition-small-duration $basic-transition);
 
 					@media #{$medium-only} {
-						@include transition(
-								background $transition-medium-duration $basic-transition unquote(',') left $transition-medium-duration $basic-transition unquote(',') width $transition-medium-duration $basic-transition unquote(',') height $transition-medium-duration $basic-transition unquote(',') top $transition-medium-duration $basic-transition
-						);
+						@include transition(background $transition-medium-duration $basic-transition unquote(',') left $transition-medium-duration $basic-transition unquote(',') width $transition-medium-duration $basic-transition unquote(',') height $transition-medium-duration $basic-transition unquote(',') top $transition-medium-duration $basic-transition);
 					}
 				}
 

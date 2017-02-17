@@ -7,10 +7,10 @@
 // More menu
 $appbar-more-margin: rem-calc(4px); // Default rem-calc(4px)
 
-$appbar-icon-default-size: calc(#{$appbar-mobile-portrait-height} - (#{$gutter} * 2));
-$appbar-icon-landscape-size: calc(#{$appbar-mobile-landscape-height} - (#{$gutter} * 2));
+$appbar-icon-default-size: $appbar-mobile-portrait-height - ($gutter * 2);
+$appbar-icon-landscape-size: $appbar-mobile-landscape-height - ($gutter * 2);
 $appbar-icon-portrait-size: $appbar-icon-default-size;
-$appbar-icon-large-size: calc(#{$appbar-large-height} - (#{rem-calc(20px)} * 2));
+$appbar-icon-large-size: $appbar-large-height - (rem-calc(20px) * 2);
 
 .sc-appbar {
 	@include material-shadow(4);
@@ -71,22 +71,22 @@ $appbar-icon-large-size: calc(#{$appbar-large-height} - (#{rem-calc(20px)} * 2))
 	}
 
 	&-title {
-		padding: calc(#{$appbar-mobile-portrait-height} - (#{rem-calc($font-size-title+0px)} + #{rem-calc(20px)})) 0 #{rem-calc(20px)} 0;
-		margin-left: calc(#{rem-calc(72px)} - ((#{$gutter} * 2) + #{$appbar-icon-default-size}));
+		padding: ($appbar-mobile-portrait-height - (rem-calc($font-size-title+0px) + rem-calc(20px))) 0 rem-calc(20px) 0;
+		margin-left: rem-calc(72px) - (($gutter * 2) + $appbar-icon-default-size);
 
 		@media only screen and (orientation: landscape) and (max-width: #{$small-screen}) {
-			padding: calc(#{$appbar-mobile-landscape-height} - (#{rem-calc($font-size-title+0px)} + #{rem-calc(20px)})) 0 #{rem-calc(20px)} 0;
-			margin-left: calc(#{rem-calc(72px)} - ((#{$gutter} * 2) + #{$appbar-icon-landscape-size}));
+			padding: ($appbar-mobile-landscape-height - (rem-calc($font-size-title+0px) + rem-calc(20px))) 0 rem-calc(20px) 0;
+			margin-left: rem-calc(72px) - (($gutter * 2) + $appbar-icon-landscape-size);
 		}
 
 		@media only screen and (orientation: portrait) and (max-width: #{$xsmall-screen}) {
-			padding: calc(#{$appbar-mobile-portrait-height} - (#{rem-calc($font-size-title+0px)} + #{rem-calc(20px)})) 0 #{rem-calc(20px)} 0;
-			margin-left: calc(#{rem-calc(72px)} - ((#{$gutter} * 2) + #{$appbar-icon-portrait-size}));
+			padding: ($appbar-mobile-portrait-height - (rem-calc($font-size-title+0px) + rem-calc(20px))) 0 rem-calc(20px) 0;
+			margin-left: rem-calc(72px) - (($gutter * 2) + $appbar-icon-portrait-size);
 		}
 
 		@media #{$small-up} {
-			padding: calc(#{$appbar-large-height} - (#{rem-calc($font-size-title+0px)} + #{rem-calc(20px)})) 0 #{rem-calc(20px)} 0;
-			margin-left: calc(#{$drawer-small-width} - (#{$large-gutter} + #{$appbar-icon-large-size}));
+			padding: ($appbar-large-height - (rem-calc($font-size-title+0px) + rem-calc(20px))) 0 rem-calc(20px) 0;
+			margin-left: $drawer-small-width - ($large-gutter + $appbar-icon-large-size);
 		}
 	}
 

@@ -28,9 +28,8 @@
 		display: block;
 		height: rem-calc(48px);
 		@include font($font-size-menu, 0, $font-weight-menu, $line-height-menu, $font-color-menu, $letter-spacing-menu);
-		color: initial;
-		white-space: nowrap;
-		padding: calc(#{rem-calc(48px)} - (#{rem-calc(20px)} + #{#{$font-size-menu}px})) $gutter rem-calc(20px) $gutter;
+		color: if( $theme == light, initial, rgba($white, .7));
+		padding: (rem-calc(48px) - (rem-calc(20px) + rem-calc($font-size-menu + 0px))) $gutter rem-calc(20px) $gutter;
 		@include transition(background $transition-small-duration $basic-transition);
 
 		@media #{$medium-only} {
@@ -73,25 +72,5 @@
 }
 
 select.sc-select {
-	border: none;
-	background: none;
-	color: if($theme == light, rgba($black, .87), rgba($white, 1));
-	max-width: 100%;
-	outline: none;
-	font-family: inherit;
-	font-size: rem-calc(13px);
-	height: rem-calc(48px);
-	border-bottom: $textfield-border-size solid if($theme == light, rgba($black, .38), rgba($white, .5));
-	-webkit-appearance: none;
-	-moz-appearance: none;
-	appearance: none;
-
-	option {
-		border: none;
-		@include material-shadow(8);
-		font-family: inherit;
-		font-size: rem-calc(13px);
-		height: rem-calc(48px);
-		outline: none;
-	}
+	display: none;
 }

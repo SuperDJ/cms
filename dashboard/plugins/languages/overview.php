@@ -51,7 +51,7 @@ GROUP BY `l`.`id`;
 								<a href="?path=languages/edit&id='.base64_encode($field['id']).'" class="edit sc-flat-button">
 									<i class="material-icons">edit</i>
 								</a>' : '').'
-							'.( $delete ? '
+							'.( $delete && !$db->exists('id', 'users', 'languages_id', $field['id']) ? '
 								<a href="?path=languages/delete&id='.base64_encode($field['id']).'" class="delete sc-flat-button">
 									<i class="material-icons">delete</i>
 								</a>' : '').'	
