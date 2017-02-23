@@ -123,9 +123,9 @@ class Group extends Database implements Plugin {
 	public function edit( array $data ) {
 		$q = 0; // Store query success
 		// Check if description or group needs to be update
-		if( $data['description'] !== $this->detail('description', 'groups', 'id', $data['id']) ||
-			$data['group'] !== $this->detail('group', 'groups', 'id', $data['id']) ||
-			$data['default'] !== $this->detail('default', 'groups', 'id', $data['id'])
+		if( $data['description'] != $this->detail('description', 'groups', 'id', $data['id']) ||
+			$data['group'] != $this->detail('group', 'groups', 'id', $data['id']) ||
+			$data['default'] != $this->detail('default', 'groups', 'id', $data['id'])
 		) {
 			if( !empty( $data['default'] ) ) {
 				$stmt = $this->mysqli->prepare("UPDATE `groups` SET `group` = :group, `description` = :description, `default` = :default WHERE `id` = :id");

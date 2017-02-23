@@ -61,6 +61,24 @@ class User extends Database implements Plugin {
 		$date = date('Y-m-d H:i:s');
 
 		if( password_verify( $password, $hash ) ) {
+			// Check if better password methods are available
+			if( password_needs_rehash( $hash, PASSWORD_DEFAULT ) ) {
+				// Set rehashed password
+				$newHash = password_hash( $this->passwordGenerate( $data['password_encrypted'] ), PASSWORD_DEFAULT );
+				$stmt = $this->mysqli->prepare("UPDATE `users` SET `password` = :password WHERE `email` = :email");
+				$stmt->bindParam(':password', $newHash, PDO::PARAM_STR);
+				$stmt->bindParam(':email', $data['email'], PDO::PARAM_STR);
+				$stmt->execute();
+
+				if( $stmt->rowCount() >= 1 ) {
+					$stmt = null;
+				} else {
+					$stmt = null;
+					return false;
+				}
+			}
+
+			// Login user
 			$stmt = $this->mysqli->prepare("UPDATE `users` SET `active_date` = :active_date WHERE `email` = :email");
 			$stmt->bindParam(':active_date', $date, PDO::PARAM_STR);
 			$stmt->bindParam(':email', $data['email'], PDO::PARAM_STR);
@@ -285,18 +303,12 @@ class User extends Database implements Plugin {
 				`languages_id` = :languages_id
 			WHERE `id` = :id");
 
-		if(!$stmt){
-			print_r($this->mysqli->errorInfo());
-		}
 		$stmt->bindParam(':first_name', $data['first_name'], PDO::PARAM_STR);
 		$stmt->bindParam(':last_name', $data['last_name'], PDO::PARAM_STR);
 		$stmt->bindParam(':email', $data['email'], PDO::PARAM_STR);
 		$stmt->bindParam(':languages_id', $data['languages_id'], PDO::PARAM_INT);
 		$stmt->bindParam(':id', $data['id'], PDO::PARAM_INT);
 		$stmt->execute();
-		if(!$stmt){
-			print_r($this->mysqli->errorInfo());
-		}
 
 		if( $stmt->rowCount() >= 1 ) {
 			$stmt = null;

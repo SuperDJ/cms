@@ -62,8 +62,7 @@ class Session {
 	public function delete( $name ) {
 		if( $this->exists( $name ) ) {
 			// Unset all sessions
-			session_unset();
-			session_destroy();
+			unset( $_SESSION[$name] );
 
 			// Check again if the session exists
 			if( $this->exists( $name ) ) {
