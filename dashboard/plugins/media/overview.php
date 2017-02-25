@@ -1,13 +1,16 @@
 <?php
-if( !$user->isLoggedIn() && $user->hasPermission($path) ) {
+if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 	$user->to('?path=users/login');
 } else {
 	$title = $language->translate( 'Overview' );
 	require_once $dash->getInclude( 'header' );
+	$media = new Media();
+	$data = $media->data();
 
-	$data = $db->query("SELECT `id`, `path`, `mime`, `upload_date`, `title`, `description` FROM `files`", array('multipleRows'));
-
-	echo '<p class="sc-col sc-xs4 sc-s12"><a href="?path=media/add" class="sc-raised-button">'.$language->translate('Add file').'</a></p>';
+	echo '  <style>img, video, audio {max-width: 250px;}</style>
+			<p class="sc-col sc-xs4 sc-s12">
+				<a href="?path=media/add" class="sc-raised-button">'.$language->translate('Add file').'</a>
+			</p>';
 
 	if( empty( $data ) ) {
 		echo $language->translate('No results found');
@@ -30,9 +33,29 @@ if( !$user->isLoggedIn() && $user->hasPermission($path) ) {
 		($user->hasPermission('groups/delete') ? $delete = true : $delete = false);
 		foreach( $data as $row => $field ) {
 			echo '	<tr>
-						<td></td>
+						<td>';
+			switch( explode( '/', $field['mime'] )[0] ) {
+				case 'image':
+					echo '<img src="'.$field['path'].'">';
+					break;
+				case 'video':
+					echo '	<video controls>
+								<source src="'.$field['path'].'" type="'.$field['mime'].'">
+								'.$language->translate('Your browser does not support video').'
+							</video>';
+					break;
+				case 'audio':
+					echo '	<audio controls>
+								<source src="'.$field['path'].'" type="'.$field['mime'].'">
+								'.$language->translate('Your browser does not support audio').'
+							</audio>';
+					break;
+				case 'application':
+					echo '<a href="'.$field['path'].'"><i class="material-icons">insert_drive_file</i></a>';
+			}
+			echo '		</td>
 						<td>'.$field['description'].'</td>
-						<td>'.explode( '/', $field['mime'] )[0].'</td>
+						<td>'.$language->translate(ucfirst( explode( '/', $field['mime'] )[0] )).'</td>
 						<td>'.$field['upload_date'].'</td>
 						<td>
 						'.( $edit ? '
