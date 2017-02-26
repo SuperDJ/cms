@@ -1,5 +1,5 @@
 <?php
-if( !$user->isLoggedIn() && $user->hasPermission($path) ) {
+if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 	$user->to('?path=overview/overview');
 } else {
 	if( empty( $id ) && !$db->exists('id', 'users', 'id', $id) ) {

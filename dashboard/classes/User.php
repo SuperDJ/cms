@@ -306,7 +306,7 @@ class User extends Database implements Plugin {
 		$stmt->bindParam(':first_name', $data['first_name'], PDO::PARAM_STR);
 		$stmt->bindParam(':last_name', $data['last_name'], PDO::PARAM_STR);
 		$stmt->bindParam(':email', $data['email'], PDO::PARAM_STR);
-		$stmt->bindParam(':languages_id', $data['languages_id'], PDO::PARAM_INT);
+		$stmt->bindParam(':languages_id', $data['language'], PDO::PARAM_INT);
 		$stmt->bindParam(':id', $data['id'], PDO::PARAM_INT);
 		$stmt->execute();
 

@@ -1,7 +1,6 @@
 <?php
 class Media extends Database implements Plugin {
 	public function add( array $data ) {
-		print_r($data);
 		$keys = array_keys($data);
 		$files = count( $data[$keys[0]]['name'] );
 		$u = 0;

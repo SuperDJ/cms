@@ -1,16 +1,22 @@
 <?php
 class Language extends Database implements Plugin {
-	private $_current; // Store current language
+	public $languages;
 
-	public 	$languages, // Store all languages data
-			$translation; // Store translation of language
+	private $_current, // Store current language
+			$_translations = array(); // Store translation of language
 
 	function __construct( $language ) {
 		parent::__construct();
 
 		$this->_current = $language;
+		$this->languages = array_column( $this->data(), 'id');
 
-		$this->languages = $this->select("SELECT `language` FROM `languages`");
+		// Store translations to improve page load speed
+		if( !empty( $_SESSION['translations'] ) ) {
+			$this->_translations = $_SESSION['translations'];
+		} else {
+			$_SESSION['translations'] = $this->translations($this->_current);
+		}
 	}
 
 	public function translate( $word ) {
@@ -18,9 +24,12 @@ class Language extends Database implements Plugin {
 			return false;
 		} else {
 			// If word already in database return translation else add word to database
-			if( $this->exists('translation', 'translations', 'translation', $word) ) {
-				// Return translation
-				return $word;
+			if( in_array( $word, array_keys( $this->_translations ) ) ) {
+				if( empty($this->_translations[ $word ] ) ) {
+					return $word;
+				} else {
+					return $this->_translations[$word];
+				}
 			} else {
 				$stmt = $this->mysqli->prepare("INSERT INTO `translations` (`translation`) VALUES (:translation)");
 				$stmt->bindParam(':translation', $word, PDO::PARAM_STR);
@@ -32,6 +41,36 @@ class Language extends Database implements Plugin {
 					return false;
 				}
 			}
+		}
+	}
+
+	private function translations( $id ) {
+		$stmt = $this->mysqli->prepare("
+			SELECT `d`.`translation` as `default`, `t`.`translation` FROM `translations` `d`
+			CROSS JOIN `translations` `t`
+			ON `d`.`id` = `t`.`translations_id`
+			WHERE `t`.`languages_id` = :languages_id
+		");
+		$stmt->bindParam(':languages_id', $id, PDO::PARAM_INT);
+		$stmt->execute();
+
+		if( $stmt->rowCount() >= 1 ) {
+			$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+			$stmt = null;
+
+			$data = array();
+			foreach( $result as $row => $field ) {
+				$data[$field['default']] = $field['translation'];
+			}
+
+			if( !empty( $data ) ) {
+				return $data;
+			} else {
+				return false;
+			}
+		} else {
+			$stmt = null;
+			return false;
 		}
 	}
 

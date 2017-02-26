@@ -5,8 +5,8 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 	$title = $language->translate( 'Overview' );
 	require_once $dash->getInclude( 'header' );
 
-	$group = new Group();
-	$data = $group->data();
+	$page = new Page();
+	$data = $page->data();
 
 	echo '	<p class="sc-col sc-xs4 sc-s12">
 				<a href="?path=groups/add" class="sc-raised-button">
@@ -31,8 +31,8 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 					<tbody>';
 
 		// Check if user has permission
-		($user->hasPermission('groups/edit') ? $edit = true : $edit = false);
-		($user->hasPermission('groups/delete') ? $delete = true : $delete = false);
+		($user->hasPermission('pages/edit') ? $edit = true : $edit = false);
+		($user->hasPermission('pages/delete') ? $delete = true : $delete = false);
 		foreach( $data as $row => $field ) {
 			echo '	<tr>
 						<td>'.$field['group'].'</td>
@@ -41,19 +41,18 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 						<td>'.($field['default'] == 1 ? '<i class="material-icons success">check</i>' : '<i class="material-icons error">clear</i>' ).'</td>
 						<td>
 						'.( $edit ? '
-							<a href="?path=groups/edit&id='.base64_encode($field['id']).'" class="edit sc-flat-button">
+							<a href="?path=pages/edit&id='.base64_encode($field['id']).'" class="edit sc-flat-button">
 								<i class="material-icons">edit</i>
 							</a>' : '').'
-						'.( $delete && !$db->exists('id', 'users', 'groups_id', $field['id']) ? '
-							<a href="?path=groups/delete&id='.base64_encode($field['id']).'" class="delete sc-flat-button">
+						'.( $delete ? '
+							<a href="?path=pages/delete&id='.base64_encode($field['id']).'" class="delete sc-flat-button">
 								<i class="material-icons">delete</i>
 							</a>' : '').'	
 						</td>
 					</tr>';
 		}
 
-		echo '		</tbody>
-				</table>';
+		echo '		</tbody>';
 	}
 
 	require_once $dash->getInclude( 'footer' );
