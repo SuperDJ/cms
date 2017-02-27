@@ -18,13 +18,16 @@ class Plugins extends Database {
 			// If there are more plugins in database delete from database else insert plugins
 			if( count( $this->_compareDb ) > count( $this->_compareDir ) ) {
 				if( $this->deleteFromDb( $this->_compareDir, $this->_compareDb ) ) {
-					header('Location: ?path=plugins/overview&message=Plugins deleted&messageType=success');
+					return true;
+					//header('Location: ?path=plugins/overview&message=Plugins deleted&messageType=success');
 				} else {
-					header('Location: ?path=plugins/overview&message=Plugins not deleted&messageType=error');
+					return false;
+					//header('Location: ?path=plugins/overview&message=Plugins not deleted&messageType=error');
 				}
 			} else {
 				if( $this->insertInDb( $this->_directory ) ) {
-					header('Location: ?path=plugins/overview&message=Plugins added&messageType=success');
+					//header('Location: ?path=plugins/overview&message=Plugins added&messageType=success');
+					return true;
 				}
 			}
 		}

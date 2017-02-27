@@ -11,7 +11,7 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 	echo '	<p class="sc-col sc-xs4 sc-s12">
 				<a href="?path=groups/add" class="sc-raised-button">
 					<i class="material-icons">add</i>'
-					.$language->translate('Add group').'
+					.$language->translate('Add page').'
 				</a>
 			</p>';
 	if( empty( $data ) ) {
@@ -20,11 +20,12 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 		echo '	<table>
 					<thead>
 					<tr>
-						<th>'.$language->translate('Group').'</th>
-						<th>'.$language->translate('Description').'</th>
-						<th>'.$language->translate('Rights').'</th>
-						<th>'.$language->translate('Default group').'</th>
-						<th>'.$language->translate('Options').'</th>
+						<th>'.$language->translate('Page').'</th>
+						<th>'.$language->translate('Language').'</th>
+						<th>'.$language->translate('Created on').'</th>
+						<th>'.$language->translate('Created by').'</th>
+						<th>'.$language->translate('Edited by').'</th>
+						<th>'.$language->translate('Keywords').'</th>
 					</tr>
 					</thead>
 					
@@ -35,9 +36,11 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 		($user->hasPermission('pages/delete') ? $delete = true : $delete = false);
 		foreach( $data as $row => $field ) {
 			echo '	<tr>
-						<td>'.$field['group'].'</td>
-						<td>'.$field['description'].'</td>
-						<td>'.$field['rights'].'</td>
+						<td>'.$field['title'].'</td>
+						<td>'.$field['create_date'].'</td>
+						<td>'.$field['created_by'].'</td>
+						<td>'.$field['edited_by'].'</td>
+						<td>'.$field['keywords'].'</td>
 						<td>'.($field['default'] == 1 ? '<i class="material-icons success">check</i>' : '<i class="material-icons error">clear</i>' ).'</td>
 						<td>
 						'.( $edit ? '

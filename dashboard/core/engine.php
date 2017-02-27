@@ -68,7 +68,7 @@ if( $session->exists('language') ) {
 	if( $session->get('language') != $cookie->get('language') ) {
 		$cookie->set( 'language', $session->get( 'language' ), 31536000 ); // Set cookie for 1 year // TODO Make length dynamic
 		$language = new Language( $session->get( 'language' ) );
-		$user->to($_SERVER['REQUEST_URI']);
+		//$user->to($_SERVER['REQUEST_URI']);
 	} else {
 		$language = new Language( $session->get( 'language' ) );
 	}
