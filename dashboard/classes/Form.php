@@ -212,16 +212,16 @@ class Form extends Database {
 		}
 	}
 	/**
-	 * [Add error messages to array]
-	 * @param string $error [The error message]
+	 * Add error messages to array
+	 * @param string $error The error message
 	 */
 	private function addError( string $error ) {
 		$this->errors[] = $error;
 	}
 
 	/**
-	 * [Output all error message in list]
-	 * @return string [Error messages]
+	 * Output all error message in list
+	 * @return string Error messages
 	 */
 	public function outputErrors() {
 		$html = '';
@@ -262,6 +262,15 @@ class Form extends Database {
 		}
 	}
 
+	/**
+	 * Validate media
+	 *
+	 * @param array    $data All files
+	 * @param callable $translate Translate function
+	 * @param string   $type (Optional) check if file is of specific type
+	 *
+	 * @return bool
+	 */
 	public function media( array $data, callable $translate, string $type = '' ) {
 		$totalFiles = count($data);
 

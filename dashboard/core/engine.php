@@ -37,18 +37,6 @@ $user = new User();
 $session = new Session();
 $cookie = new Cookie();
 
-// If the $_GET[] is set and not empty
-if( !empty( $_GET['language'] ) ) {
-	$lang = $db->sanitize($_GET['language']);
-
-	// Check if language exists
-	if( in_array( $lang, $language->languages ) ) {
-		$session->set('language', $lang); // Put language in session
-	} else { // If the language doesn't exists
-		$session->set('language', 1); // Set default language // TODO Make 1 (default) dynamic
-	}
-}
-
 // If a user is logged in set the desired language
 if( $user->isLoggedIn() ) {
 	$session->set('language', $user->data['languages_id']);
@@ -68,7 +56,6 @@ if( $session->exists('language') ) {
 	if( $session->get('language') != $cookie->get('language') ) {
 		$cookie->set( 'language', $session->get( 'language' ), 31536000 ); // Set cookie for 1 year // TODO Make length dynamic
 		$language = new Language( $session->get( 'language' ) );
-		//$user->to($_SERVER['REQUEST_URI']);
 	} else {
 		$language = new Language( $session->get( 'language' ) );
 	}

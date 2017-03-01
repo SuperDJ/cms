@@ -54,30 +54,31 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 			<input type="text" name="first_name" id="first_name" required value="<?php echo ( !empty( $form->input('first_name') ) ? $form->input('first_name') : $user->data['first_name'] ); ?>">
 			<label for="first_name"><?php echo $language->translate('First name'); ?></label>
 		</div>
+
 		<div class="sc-floating-input">
 			<input type="text" name="last_name" id="last_name" required value="<?php echo ( !empty( $form->input('last_name') ) ? $form->input('last_name') : $user->data['last_name'] ); ?>">
 			<label for="last_name"><?php echo $language->translate('Last name'); ?></label>
 		</div>
+
 		<div class="sc-floating-input">
 			<input type="email" name="email" id="email" required value="<?php echo ( !empty( $form->input('email') ) ? $form->input('email') : $user->data['email'] ); ?>">
 			<label for="email"><?php echo $language->translate('Email'); ?></label>
 		</div>
-		<div class="sc-floating-input">
-			<label for="language"><?php echo $language->translate('Language'); ?></label>
-			<select name="language" id="language">
-                <?php
-                echo '  <option value="'.( !empty( $form->input('language') ) ? $form->input('language') : $user->data['languages_id'] ).'">'
-                            .$language->translate($db->detail('language', 'languages', 'id', ( !empty( $form->input('language') ) ? $form->input('language') : $user->data['languages_id'] ))).
-                        '</option>';
 
-                foreach( $language->data() as $row => $field ) {
-                    if( $field['id'] != $user->data['languages_id'] ) {
-                        echo '<option value="'.$field['id'].'">'.$language->translate($field['language']).'</option>';
-                    }
+        <select name="language" id="language" class="sc-select">
+            <?php
+            echo '  <option value="'.( !empty( $form->input('language') ) ? $form->input('language') : $user->data['languages_id'] ).'">'
+                        .$language->translate($db->detail('language', 'languages', 'id', ( !empty( $form->input('language') ) ? $form->input('language') : $user->data['languages_id'] ))).
+                    '</option>';
+
+            foreach( $language->data() as $row => $field ) {
+                if( $field['id'] != $user->data['languages_id'] ) {
+                    echo '<option value="'.$field['id'].'">'.$language->translate($field['language']).'</option>';
                 }
-                ?>
-			</select>
-		</div>
+            }
+            ?>
+        </select>
+
         <div class="sc-col sc-xs">
             <button class="sc-raised-button">
                 <i class="material-icons">save</i>

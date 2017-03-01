@@ -60,9 +60,11 @@ class Plugins extends Database {
 	/**
 	 * Insert plugins into database
 	 *
-	 * @param array  	$plugins 	All Plugins
-	 * @param string	$parent		Parent plugin name
-	 * @param string 	$parentID	Parent plugin id
+	 * @param array  $plugins  All Plugins
+	 * @param string $parent   Parent plugin name
+	 * @param string $parentID Parent plugin id
+	 *
+	 * @return bool
 	 */
 	private function insertInDb( array $plugins, $parent = '', $parentID = '' ) {
 		foreach( $plugins as $key => $value ) {
@@ -72,12 +74,19 @@ class Plugins extends Database {
 				if( !$this->exists('url', 'plugins', 'url', $url) ) {
 					$plugin = ucfirst( str_replace( '-', ' ', $key ) );
 
-					$stmt = $this->mysqli->prepare( "INSERT INTO `plugins` (`name`, `parent`, `url`) VALUES (?, ?, ?)" );
-					$stmt->execute( array( $plugin, $parentID, $url ) );
+					$stmt = $this->mysqli->prepare( "INSERT INTO `plugins` (`name`, `parent`, `url`) VALUES (:name, :parent, :url)" );
+					$stmt->bindParam(':name', $plugin, PDO::PARAM_STR);
+					$stmt->bindParam(':parent', $parentID, PDO::PARAM_INT);
+					$stmt->bindParam(':url', $url, PDO::PARAM_STR);
+					$stmt->execute();
 
-					$this->insertInDb($value, $url, $stmt->lastInsertId());
-
-					$stmt = null;
+					if( $stmt->rowCount() >= 1 ) {
+					 	$stmt = null;
+						$this->insertInDb( $value, $url, $stmt->lastInsertId() );
+					} else {
+						$stmt = null;
+						return false;
+					}
 				} else {
 					$this->insertInDb($value, $url, $this->detail('id', 'plugins', 'url', $url));
 				}
@@ -91,14 +100,31 @@ class Plugins extends Database {
 				if( !$this->exists('url', 'plugins', 'url', $url) ) {
 					$plugin = ucfirst( str_replace( '-', ' ', substr( $value, 0, -4 ) ) );
 
-					$stmt = $this->mysqli->prepare( "INSERT INTO `plugins` (`name`, `parent`, `url`) VALUES (?, ?, ?)" );
-					$stmt->execute( array( $plugin, $parentID, $url ) );
-					$stmt = null;
+					$stmt = $this->mysqli->prepare( "INSERT INTO `plugins` (`name`, `parent`, `url`) VALUES (:name, :parent, :url)" );
+					$stmt->bindParam(':name', $plugin, PDO::PARAM_STR);
+					$stmt->bindParam(':parent', $parentID, PDO::PARAM_INT);
+					$stmt->bindParam(':url', $url, PDO::PARAM_STR);
+					$stmt->execute();
+
+					if( $stmt->rowCount() >= 1 ) {
+						$stmt = null;
+					} else {
+						$stmt = null;
+						return false;
+					}
 				}
 			}
 		}
 	}
 
+	/**
+	 * Delete plugins from database
+	 *
+	 * @param array $dir
+	 * @param array $db
+	 *
+	 * @return bool
+	 */
 	private function deleteFromDb( array $dir, array $db ) {
 		// Get difference
 		$diff = array();

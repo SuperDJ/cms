@@ -352,18 +352,19 @@ $drawer-profile-height: $drawer-padding + $drawer-profile-img + $drawer-profile-
 		line-height: $drawer-item-height;
 		position: relative;
 		padding: 0 $drawer-padding;
-		@include transition(color $transition-small-duration $basic-transition);
+		@include transition(all $transition-small-duration $basic-transition);
 
 		@media #{$medium-only} {
-			@include transition(color $transition-medium-duration $basic-transition);
+			@include transition(all $transition-medium-duration $basic-transition);
 		}
 
 		@media #{$medium-up} {
-			@include transition(color $transition-large-duration $basic-transition);
+			@include transition(all $transition-large-duration $basic-transition);
 		}
 
 		&:hover, &.sc-active {
 			color: if( $theme == light, $main-color, $white);
+			background: if( $theme == light, $grey-200, invert($grey-200) );
 
 			.material-icons {
 				color: if( $theme == light, $main-color, $white);

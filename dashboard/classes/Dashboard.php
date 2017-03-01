@@ -165,6 +165,11 @@ WHERE `visible` = 1 AND `r`.`groups_id` = :groups_id ORDER BY `sort`");
 		}
 	}
 
+	/**
+	 * Get plugin name
+	 *
+	 * @return mixed
+	 */
 	public function plugin() {
 		$plugin = explode( '/', $this->path );
 		$count = count($plugin);

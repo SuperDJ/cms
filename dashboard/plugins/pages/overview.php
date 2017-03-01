@@ -9,9 +9,9 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 	$data = $page->data();
 
 	echo '	<p class="sc-col sc-xs4 sc-s12">
-				<a href="?path=groups/add" class="sc-raised-button">
+				<a href="?path=pages/add" class="sc-raised-button">
 					<i class="material-icons">add</i>'
-					.$language->translate('Add page').'
+					.$language->translate('Add page').' 
 				</a>
 			</p>';
 	if( empty( $data ) ) {

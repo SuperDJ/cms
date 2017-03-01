@@ -2,7 +2,7 @@
 class Language extends Database implements Plugin {
 	public $languages;
 
-	private $_current, // Store current language
+	public $_current, // Store current language
 			$_translations = array(); // Store translation of language
 
 	function __construct( $language ) {
@@ -10,15 +10,17 @@ class Language extends Database implements Plugin {
 
 		$this->_current = $language;
 		$this->languages = array_column( $this->data(), 'id');
-
-		// Store translations to improve page load speed
-		if( !empty( $_SESSION['translations'] ) ) {
-			$this->_translations = $_SESSION['translations'];
-		} else {
-			$_SESSION['translations'] = $this->translations($this->_current);
-		}
+		//print_r($this->translations($this->_current));
+		$this->_translations = $this->translations($this->_current); // Store translations to improve page load speed
 	}
 
+	/**
+	 * Translate word
+	 *
+	 * @param $word string Word to translate
+	 *
+	 * @return bool|mixed
+	 */
 	public function translate( $word ) {
 		if( empty( $word ) ) {
 			return false;
@@ -44,13 +46,25 @@ class Language extends Database implements Plugin {
 		}
 	}
 
+	/**
+	 * Get all translations from a specific language
+	 *
+	 * @param $id
+	 *
+	 * @return array|bool
+	 */
 	private function translations( $id ) {
-		$stmt = $this->mysqli->prepare("
-			SELECT `d`.`translation` as `default`, `t`.`translation` FROM `translations` `d`
-			CROSS JOIN `translations` `t`
-			ON `d`.`id` = `t`.`translations_id`
-			WHERE `t`.`languages_id` = :languages_id
-		");
+		// TODO Make 1 dynamic
+		if( $id != 1 ) {
+			$stmt = $this->mysqli->prepare( "
+				SELECT `d`.`translation` AS `default`, `t`.`translation` FROM `translations` `d`
+				CROSS JOIN `translations` `t`
+				ON `d`.`id` = `t`.`translations_id`
+				WHERE `t`.`languages_id` = :languages_id
+			" );
+		} else {
+			$stmt = $this->mysqli->prepare("SELECT `translation` AS `default`, `translation` FROM `translations` WHERE `languages_id` = :languages_id");
+		}
 		$stmt->bindParam(':languages_id', $id, PDO::PARAM_INT);
 		$stmt->execute();
 
@@ -74,6 +88,13 @@ class Language extends Database implements Plugin {
 		}
 	}
 
+	/**
+	 * Add language to database
+	 *
+	 * @param array $data
+	 *
+	 * @return bool
+	 */
 	public function add( array $data ) {
 		$stmt = $this->mysqli->prepare("INSERT INTO `languages` (`language`, `iso_code`) VALUES (:language, :iso_code)");
 		$stmt->bindParam(':language', $data['language'], PDO::PARAM_STR);
@@ -89,6 +110,13 @@ class Language extends Database implements Plugin {
 		}
 	}
 
+	/**
+	 * Edit language in database
+	 *
+	 * @param array $data
+	 *
+	 * @return bool
+	 */
 	public function edit( array $data ) {
 		$stmt = $this->mysqli->prepare("UPDATE `languages` SET `language` = :language, `iso_code` = :iso_code WHERE `id` = :id");
 		$stmt->bindParam(':language', $data['language'], PDO::PARAM_STR);
@@ -105,6 +133,13 @@ class Language extends Database implements Plugin {
 		}
 	}
 
+	/**
+	 * Delete language from database
+	 *
+	 * @param int $id
+	 *
+	 * @return bool
+	 */
 	public function delete( int $id ) {
 		$stmt = $this->mysqli->prepare("DELETE FROM `languages` WHERE `id` = :id");
 		$stmt->bindParam(':id', $id, PDO::PARAM_INT);
@@ -119,6 +154,13 @@ class Language extends Database implements Plugin {
 		}
 	}
 
+	/**
+	 * Get all data from languages
+	 *
+	 * @param int|null $id
+	 *
+	 * @return bool
+	 */
 	public function data( int $id = null ) {
 		if( !is_null( $id ) ) {
 			$stmt = $this->mysqli->prepare("
@@ -159,6 +201,13 @@ class Language extends Database implements Plugin {
 		}
 	}
 
+	/**
+	 * Get all data from translations
+	 *
+	 * @param int $id
+	 *
+	 * @return bool
+	 */
 	public function translationData( int $id ) {
 		$stmt = $this->mysqli->prepare("SELECT `id`, `translation` FROM `translations`WHERE `languages_id` = :languages_id");
 		$stmt->bindParam(':languages_id', $id, PDO::PARAM_INT);
@@ -174,6 +223,14 @@ class Language extends Database implements Plugin {
 		}
 	}
 
+	/**
+	 * Get translated words from database
+	 * Used in translate.php
+	 *
+	 * @param int $id
+	 *
+	 * @return bool
+	 */
 	public function translated( int $id ) {
 		// Get all translated fields
 		$stmt = $this->mysqli->prepare("SELECT `translation`, `translations_id` FROM `translations` WHERE `languages_id` = :languages_id");
@@ -190,6 +247,14 @@ class Language extends Database implements Plugin {
 		}
 	}
 
+	/**
+	 * Insert, delete, edit translations
+	 * Used in translate.php
+	 *
+	 * @param array $data
+	 *
+	 * @return bool
+	 */
 	public function translation( array $data ) {
 		// Get all translated fields
 		$result = $this->translated($data['id']);

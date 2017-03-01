@@ -151,6 +151,7 @@ class User extends Database implements Plugin {
 
 	/**
 	 * Check if user has permission for certain file/ plugin
+	 *
 	 * @param $path
 	 *
 	 * @return bool
@@ -375,6 +376,10 @@ class User extends Database implements Plugin {
 
 		if( $stmt->rowCount() >= 1 ) {
 			$stmt = null;
+
+			// Update user data
+			$this->data = $this->data($this->_id);
+
 			return true;
 		} else {
 			$stmt = null;

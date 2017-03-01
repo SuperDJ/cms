@@ -1,5 +1,6 @@
 <?php
 class Page extends Database implements Plugin {
+
 	public function add( array $data ) {
 		// TODO: Implement add() method.
 	}
@@ -8,6 +9,13 @@ class Page extends Database implements Plugin {
 		// TODO: Implement edit() method.
 	}
 
+	/**
+	 * Delete page from database
+	 *
+	 * @param int $id
+	 *
+	 * @return bool
+	 */
 	public function delete( int $id ) {
 		$stmt = $this->mysqli->prepare("DELETE FROM `pages` WHERE `id` = :id");
 		$stmt->bindParam(':id', $id, PDO::PARAM_INT);

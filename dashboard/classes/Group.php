@@ -62,6 +62,7 @@ class Group extends Database implements Plugin {
 
 	/**
 	 * Delete group from database
+	 *
 	 * @param int $id
 	 *
 	 * @return bool
@@ -82,6 +83,7 @@ class Group extends Database implements Plugin {
 
 	/**
 	 * Get data from database
+	 *
 	 * @param int|null $id
 	 *
 	 * @return bool
@@ -124,6 +126,13 @@ class Group extends Database implements Plugin {
 		}
 	}
 
+	/**
+	 * Get all rights from specific group
+	 *
+	 * @param int $id
+	 *
+	 * @return bool
+	 */
 	public function rights( int $id ) {
 		$stmt = $this->mysqli->prepare("SELECT `groups_id`, `plugins_id` FROM `rights` WHERE `groups_id` = :id");
 		$stmt->bindParam(':id', $id, PDO::PARAM_INT);
@@ -139,6 +148,13 @@ class Group extends Database implements Plugin {
 		}
 	}
 
+	/**
+	 * Edit a group
+	 *
+	 * @param array $data
+	 *
+	 * @return bool
+	 */
 	public function edit( array $data ) {
 		$q = 0; // Store query success
 		// Check if description or group needs to be update

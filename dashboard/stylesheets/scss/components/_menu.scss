@@ -41,7 +41,7 @@
 		}
 
 		&:hover {
-			background: if( $theme == light, $grey-200, null);
+			background: if( $theme == light, $grey-200, invert($grey-200));
 			color: if( $theme == light, initial, $white);
 
 			.material-icons {
@@ -73,4 +73,20 @@
 
 select.sc-select {
 	display: none;
+}
+
+div.sc-select {
+	height: rem-calc(48px);
+	padding: rem-calc(16px) 0 rem-calc(8px) 0;
+	border-bottom: $textfield-border-size solid if($theme == light, rgba($black, .38), rgba($white, .5));
+	position: relative;
+	margin: 0 0 rem-calc(8px) 0;
+
+	.sc-menu {
+		top: 0;
+	}
+
+	.sc-active {
+		color: $main-color;
+	}
 }

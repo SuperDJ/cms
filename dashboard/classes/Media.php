@@ -1,5 +1,12 @@
 <?php
 class Media extends Database implements Plugin {
+	/**
+	 * Add media to database
+	 *
+	 * @param array $data
+	 *
+	 * @return bool
+	 */
 	public function add( array $data ) {
 		$keys = array_keys($data);
 		$files = count( $data[$keys[0]]['name'] );
@@ -43,6 +50,13 @@ class Media extends Database implements Plugin {
 		}
 	}
 
+	/**
+	 * Delete media from database
+	 *
+	 * @param int $id
+	 *
+	 * @return bool
+	 */
 	public function delete( int $id ) {
 		$path = $this->detail('path', 'files', 'id', $id);
 		$stmt = $this->mysqli->prepare("DELETE FROM `files` WHERE `id` = :id");
@@ -58,6 +72,13 @@ class Media extends Database implements Plugin {
 		}
 	}
 
+	/**
+	 * Edit description and title in database
+	 *
+	 * @param array $data
+	 *
+	 * @return bool
+	 */
 	public function edit( array $data ) {
 		$stmt = $this->mysqli->prepare("UPDATE `files` SET `title` = :title, `description` = :description WHERE `id` = :id");
 		$stmt->bindParam(':title', $data['title'], PDO::PARAM_STR);
@@ -74,6 +95,12 @@ class Media extends Database implements Plugin {
 		}
 	}
 
+	/**
+	 * Get all media from database
+	 * @param int|null $id
+	 *
+	 * @return bool
+	 */
 	public function data( int $id = null ) {
 		if( !is_null( $id ) ) {
 			$stmt = $this->mysqli->prepare("SELECT `id`, `path`, `mime`, `upload_date`, `title`, `description` FROM `files` WHERE `id` = :id");
