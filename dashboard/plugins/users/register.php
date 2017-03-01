@@ -56,7 +56,7 @@ if( $user->isLoggedIn() ) {
 
 		// If there are no errors register user else show errors
 		if( empty( $form->errors ) ) {
-			if( $user->add( $validation ) ) {
+			if( $user->register( $validation ) ) {
 				echo '<div class="success">'.$language->translate('You have been registered').'</div>';
 			} else {
 				echo '<div class="error">'.$language->translate('Something went wrong registering').'</div>';

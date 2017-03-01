@@ -18,13 +18,42 @@ class User extends Database implements Plugin {
 	}
 
 	/**
-	 * Add/ Register user
+	 * Add new user
+	 * TODO Send email to confirm new user
+	 * @param array $data
+	 *
+	 * @return bool
+	 */
+	public function add( array $data ) {
+		$register_date = date('Y-m-d H:i:s');
+		$active = 1;
+
+		$stmt = $this->mysqli->prepare("INSERT INTO `users` (`first_name`, `last_name`, `email`, `register_date`, `active`, `groups_id`) VALUES (:first_name, :last_name, :email, :register_date, :active, :groups_id)");
+		$stmt->bindParam(':first_name', $data['first_name'], PDO::PARAM_STR);
+		$stmt->bindParam(':last_name', $data['last_name'], PDO::PARAM_STR);
+		$stmt->bindParam(':email', $data['email'], PDO::PARAM_STR);
+		$stmt->bindParam(':register_date', $register_date, PDO::PARAM_STR);
+		$stmt->bindParam(':active', $active, PDO::PARAM_INT);
+		$stmt->bindParam(':groups_id', $data['group'], PDO::PARAM_STR);
+		$stmt->execute();
+
+		if( $stmt->rowCount() >= 1 ) {
+			$stmt = null;
+			return true;
+		} else {
+			$stmt = null;
+			return false;
+		}
+	}
+
+	/**
+	 * Register user
 	 *
 	 * @param array $data All data needed to register user
 	 *
 	 * @return bool
 	 */
-	public function add( array $data ) {
+	public function register( array $data ) {
 		$password = password_hash( $this->passwordGenerate( $data['password_encrypted'] ), PASSWORD_DEFAULT );
 		$register_date = date('Y-m-d H:i:s');
 		$groups_id = $this->detail('id', 'groups', 'default', 1);
@@ -120,6 +149,12 @@ class User extends Database implements Plugin {
 		}
 	}
 
+	/**
+	 * Check if user has permission for certain file/ plugin
+	 * @param $path
+	 *
+	 * @return bool
+	 */
 	public function hasPermission( $path ) {
 		if( empty( $_SESSION['user'] ) ) {
 			return false;
@@ -170,6 +205,13 @@ class User extends Database implements Plugin {
 		}
 	}
 
+	/**
+	 * Get data from users
+	 *
+	 * @param int|null $id
+	 *
+	 * @return bool
+	 */
 	public function data( int $id = null) {
 		if( empty( $id ) ) {
 			return false;
@@ -186,6 +228,13 @@ class User extends Database implements Plugin {
 		}
 	}
 
+	/**
+	 * Edit a users information
+	 *
+	 * @param array $data
+	 *
+	 * @return bool
+	 */
 	public function edit( array $data ) {
 		$stmt = $this->mysqli->prepare("UPDATE `users` SET `active` = :active, `groups_id` = :groups_id");
 		$stmt->bindParam(':active', $data['active'], PDO::PARAM_INT);
@@ -201,6 +250,13 @@ class User extends Database implements Plugin {
 		}
 	}
 
+	/**
+	 * Delete a user from the database
+	 *
+	 * @param int $id
+	 *
+	 * @return bool
+	 */
 	public function delete( int $id ) {
 		$stmt = $this->mysqli->prepare("DELETE FROM `users` WHERE `id` = :id");
 		$stmt->bindParam(':id', $id, PDO::PARAM_INT);
@@ -294,6 +350,13 @@ class User extends Database implements Plugin {
 		}
 	}
 
+	/**
+	 * Let a user edit their profile
+	 *
+	 * @param array $data
+	 *
+	 * @return bool
+	 */
 	public function profile( array $data ) {
 		$stmt = $this->mysqli->prepare("
 			UPDATE `users` SET 

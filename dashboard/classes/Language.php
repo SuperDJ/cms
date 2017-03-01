@@ -24,7 +24,7 @@ class Language extends Database implements Plugin {
 			return false;
 		} else {
 			// If word already in database return translation else add word to database
-			if( in_array( $word, array_keys( $this->_translations ) ) ) {
+			if( in_array( $word, array_keys( $this->_translations ) ) || $this->exists('translation', 'translations', 'translation', $word) ) {
 				if( empty($this->_translations[ $word ] ) ) {
 					return $word;
 				} else {

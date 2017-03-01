@@ -8,6 +8,10 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 						  JOIN `groups` `g`
 							ON `g`.`id` = `u`.groups_id", array(), array('multipleRows'));
 
+	echo '	<a href="?path=users/add" class="sc-raised-button">
+				<i class="material-icons">add</i>
+				'.$language->translate('Add user').
+			'</a>';
 	if( empty( $data ) ) {
 		echo '<p class="sc-col sc-x4 sc-s12">'.$language->translate('No results found').'</p>';
 	} else {

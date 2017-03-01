@@ -1,5 +1,12 @@
 <?php
 class Group extends Database implements Plugin {
+	/**
+	 * Add group to database
+	 *
+	 * @param array $data
+	 *
+	 * @return bool
+	 */
 	public function add( array $data ) {
 		$q = 0; // Store completed queries
 		$stmt = $this->mysqli->prepare("INSERT INTO `groups` (`group`, `description`, `default`) VALUES (:group, :description, :default)");
@@ -53,6 +60,12 @@ class Group extends Database implements Plugin {
 		}
 	}
 
+	/**
+	 * Delete group from database
+	 * @param int $id
+	 *
+	 * @return bool
+	 */
 	public function delete( int $id ) {
 		$stmt = $this->mysqli->prepare("DELETE FROM `groups` WHERE `id` = :id");
 		$stmt->bindParam(':id', $id, PDO::PARAM_INT);
@@ -67,6 +80,12 @@ class Group extends Database implements Plugin {
 		}
 	}
 
+	/**
+	 * Get data from database
+	 * @param int|null $id
+	 *
+	 * @return bool
+	 */
 	public function data( int $id = null ) {
 		if( !is_null( $id ) ) {
 			$stmt = $this->mysqli->prepare("
