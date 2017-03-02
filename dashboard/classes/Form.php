@@ -80,8 +80,10 @@ class Form extends Database {
 						break;
 					// Validate for numeric value
 					case 'numeric':
-						if( !is_numeric( $value ) ) {
-							$this->addError($translate( $rules['name'] ).' '.$translate('has to be a number'));
+						if( !empty( $rules['required'] ) && $rules['required'] == true ) {
+							if( !is_numeric( $value ) ) {
+								$this->addError( $translate( $rules['name'] ).' '.$translate( 'has to be a number' ) );
+							}
 						}
 						break;
 					// Maximum length

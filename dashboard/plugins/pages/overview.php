@@ -7,6 +7,7 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 
 	$page = new Page();
 	$data = $page->data();
+	print_r($data);
 
 	echo '	<p class="sc-col sc-xs4 sc-s12">
 				<a href="?path=pages/add" class="sc-raised-button">
@@ -26,6 +27,7 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 						<th>'.$language->translate('Created by').'</th>
 						<th>'.$language->translate('Edited by').'</th>
 						<th>'.$language->translate('Keywords').'</th>
+						<th>'.$language->translate('Options').'</th>
 					</tr>
 					</thead>
 					
@@ -37,11 +39,11 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 		foreach( $data as $row => $field ) {
 			echo '	<tr>
 						<td>'.$field['title'].'</td>
+						<td>'.$field['language'].'</td>
 						<td>'.$field['create_date'].'</td>
 						<td>'.$field['created_by'].'</td>
 						<td>'.$field['edited_by'].'</td>
 						<td>'.$field['keywords'].'</td>
-						<td>'.($field['default'] == 1 ? '<i class="material-icons success">check</i>' : '<i class="material-icons error">clear</i>' ).'</td>
 						<td>
 						'.( $edit ? '
 							<a href="?path=pages/edit&id='.base64_encode($field['id']).'" class="edit sc-flat-button">
@@ -55,7 +57,8 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 					</tr>';
 		}
 
-		echo '		</tbody>';
+		echo '		</tbody>
+				</table>';
 	}
 
 	require_once $dash->getInclude( 'footer' );

@@ -6,6 +6,35 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 	require_once $dash->getInclude( 'header' );
 	$form = new Form();
 
+	if( $_POST ) {
+	    $validation = $form->check($_POST, array(
+	        'title' => array(
+                'minLength' => 5,
+                'name' => 'Title'
+            ),
+            'content' => array(
+                'name' => 'Content'
+            ),
+            'language' => array(
+                'numeric' => true,
+                'name' => 'Language'
+            ),
+            'keywords' => array(
+                'name' => 'Keywords'
+            )
+        ), [$language, 'translate'], null, true);
+
+	    if( empty( $form->errors ) ) {
+	        $page = new Page();
+	        if( $page->add($validation) ) {
+	            $user->to('?path=pages/overview&message='.$language->translate('Page added').'&messageType=success');
+            } else {
+	            echo '<div class="error sc-card sc-card-supporting">'.$language->translate('Could not add page').'</div>';
+            }
+        } else {
+	        echo $form->outputErrors();
+        }
+    }
 ?>
 	<form action="" method="post">
 		<div class="sc-floating-input">
@@ -35,7 +64,10 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
                             '<em>('.$language->translate('Separated by comma').')</em>'; ?>
             </label>
         </div>
+
+        <button class="sc-raised-button"><i class="material-icons">save</i><?php echo $language->translate('Save'); ?></button>
 	</form>
+
     <script src="/dashboard/js/ckeditor/ckeditor.js"></script>
     <script>
 		CKEDITOR.replace( 'content', {
