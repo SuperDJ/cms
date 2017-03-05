@@ -46,7 +46,7 @@ class Database {
 	 * @return string|bool Return string or bool depending on value in database
 	 */
 	public function detail( $detail, $table, $column, $value ) {
-		$stmt = $this->mysqli->prepare("SELECT `$detail` FROM `$table` WHERE `$column` = :value");
+		$stmt = $this->mysqli->prepare("SELECT `$detail` FROM `$table` WHERE `$column` = :value LIMIT 1");
 		$stmt->bindParam(':value', $value, ( is_numeric( $value ) ? PDO::PARAM_INT : PDO::PARAM_STR ));
 		$stmt->execute();
 		$result = $stmt->fetch(PDO::FETCH_ASSOC)[$detail];
@@ -71,7 +71,7 @@ class Database {
 	 * @return bool Return true or false depending if value already exists in database
 	 */
 	public function exists( $detail, $table, $column, $value ) {
-		$stmt = $this->mysqli->prepare("SELECT `$detail` FROM `$table` WHERE `$column` = :value");
+		$stmt = $this->mysqli->prepare("SELECT `$detail` FROM `$table` WHERE `$column` = :value LIMIT 1");
 		$stmt->bindParam(':value', $value, ( is_numeric( $value ) ? PDO::PARAM_INT : PDO::PARAM_STR ));
 		$stmt->execute();
 
@@ -80,6 +80,30 @@ class Database {
 		 	return true;
 		} else {
 			$stmt = null;
+			return false;
+		}
+	}
+
+	/**
+	 * Count existence
+	 *
+	 * @param string $detail Column name
+	 * @param string $table  Table name
+	 * @param string $column Column name
+	 * @param string|int $value  Value
+	 *
+	 * @return bool Return true or false depending if value already exists in database
+	 */
+	public function count( $detail, $table, $column, $value ) {
+		$stmt = $this->mysqli->prepare("SELECT `$detail` FROM `$table` WHERE `$column` = :value");
+		$stmt->bindParam(':value', $value, ( is_numeric( $value ) ? PDO::PARAM_INT : PDO::PARAM_STR ));
+		$stmt->execute();
+		$count = $stmt->rowCount();
+		$stmt = null;
+
+		if( $count >= 1 ) {
+			return $count;
+		} else {
 			return false;
 		}
 	}
@@ -110,169 +134,6 @@ class Database {
 		} else {
 			//return $this->mysqli->real_escape_string( trim( htmlentities( strip_tags( stripslashes( $value ) ) ) ) );
 			return trim( htmlentities( strip_tags( stripslashes( $value ) ) ) );
-		}
-	}
-
-	/**
-	 * Insert items in database
-	 *
-	 * @param       $query
-	 * @param array $columns
-	 *
-	 * @return bool
-	 */
-	public function insert( $query, array $columns ) {
-		$stmt = $this->mysqli->prepare($query);
-		$stmt->execute( array_values( $columns ) );
-
-		if( $stmt->rowCount() >= 1 ) {
-			$stmt = null;
-			return true;
-		} else {
-			$stmt = null;
-			return false;
-		}
-	}
-
-	/**
-	 * Delete items from database
-	 *
-	 * @param       $query
-	 * @param array $columns
-	 *
-	 * @return bool
-	 */
-	/*public function delete( $query, array $columns ) {
-		return $this->insert($query, $columns);
-	}*/
-
-	/**
-	 * Update items in database
-	 *
-	 * @param       $query
-	 * @param array $columns
-	 *
-	 * @return bool
-	 */
-	public function update( $query, array $columns ) {
-		return $this->insert($query, $columns);
-	}
-
-	/**
-	 * Select items from database
-	 * @param       $query
-	 * @param array $columns
-	 * @param array $options
-	 *
-	 * @return array|bool
-	 */
-	public function select( $query, array $columns = array(), array $options = array() ) {
-		$stmt = $this->mysqli->prepare($query);
-
-		if( !empty( $columns ) ) {
-			$stmt->execute( $columns );
-		} else {
-			$stmt->execute();
-		}
-
-		if( $stmt->rowCount() >= 1 ) {
-			if( $stmt->rowCount() == 1 && in_array('multipleRows', $options ) ) {
-				$result[] = $stmt->fetch( PDO::FETCH_ASSOC );
-			} else {
-				$result = $stmt->fetch( PDO::FETCH_ASSOC );
-			}
-			$stmt = null;
-			return $result;
-		} else {
-			$stmt = null;
-			return false;
-		}
-	}
-
-	//TODO add possibility to execute (batches/ multidimensional array/ multiple rows at once)
-	public function query( $query, array $columns = array(), array $options = array() ) {
-		$stmt = $this->mysqli->prepare( $query );
-
-		// Create execute
-		if( !empty( $columns ) ) {
-			//echo 1;
-			// Check if named params are used
-			if( in_array( 'named', $options ) ) {
-				//echo 2;
-				$count = count( $columns );
-				$i = 0;
-				foreach( $columns as $column => $value ) {
-					$this->bind($stmt, $column, $value);
-					$i++;
-				}
-
-				if( $count !== $i ) {
-					echo 'Something went wrong binding params';
-					return false;
-				}
-			} else {
-				//echo 3;
-				// If not false query is "SELECT" else query can be "INSERT", "UPDATE" or "DELETE"
-				if( strpos( $query, 'SELECT' ) !== false ) {
-					//echo 4;
-					$stmt->execute( $columns );
-				} else {
-					//echo 5;
-					$stmt->execute( array_values( $columns ) );
-				}
-			}
-		} else {
-			//echo 6;
-			$stmt->execute();
-		}
-
-		// If not false query is "SELECT" else query can be "INSERT", "UPDATE" or "DELETE"
-		if( strpos( $query, 'SELECT' ) !== false ) {
-			//echo 7;
-			if( $stmt->rowCount() >= 1 ) {
-				//echo 8;
-				if( $stmt->rowCount() == 1 && in_array('multipleRows', $options ) ) {
-					//echo 9;
-					$result[] = $stmt->fetch( PDO::FETCH_ASSOC );
-				} else {
-					//echo 10;
-					$result = $stmt->fetchAll( PDO::FETCH_ASSOC );
-				}
-				$stmt = null;
-				return $result;
-			} else {
-				//echo 11;
-				$stmt = null;
-				return false;
-			}
-		} else {
-			if( $stmt->rowCount() >= 1 ) {
-				//echo 12;
-			 	$stmt = null;
-			 	return true;
-			} else {
-				//echo 13;
-				$stmt = null;
-				return false;
-			}
-		}
-	}
-
-	private function bind( $stmt, $name, $value ) {
-		$name = ':'.$name; // Add ":" to name
-
-		switch( gettype( $value ) ) {
-			case 'boolean':
-				return $stmt->bindParam($name, $value, PDO::PARAM_BOOL);
-				break;
-			case 'integer':
-				return $stmt->bindParam($name, $value, PDO::PARAM_INT);
-				break;
-			case 'double':
-			case 'string':
-				return $stmt->bindParam($name, $value, PDO::PARAM_STR);
-			case 'null':
-				return $stmt->bindParam($name, $value, PDO::PARAM_NULL);
 		}
 	}
 }
