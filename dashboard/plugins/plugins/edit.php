@@ -7,26 +7,57 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 	} else {
 		$form = new Form();
 		$plugins = new Plugins();
-		$title = $language->translate( 'Edit' ).': '.$language->translate( $data[0]['group'] );
-		require_once $dash->getInclude( 'header' );
 		$data = $plugins->data($id);
+		$title = $language->translate( 'Edit' ).': '.$language->translate( $data[0]['name'] );
+		require_once $dash->getInclude( 'header' );
 
 		if( $_POST ) {
 			$validation = $form->check($_POST, array(
-				
-			));
+                'name' => array(
+                    'required' => true,
+                    'minLength' => 4,
+                    'name' => 'Name'
+                ),
+                'icon' => array(
+                    'required' => true,
+                    'minLength' => 4,
+                    'name' => 'Icon'
+                ),
+                'sort' => array(
+                    'required' => true,
+                    'numeric' => true,
+                    'name' => 'Sort'
+                )
+			), [$language, 'translate'], $id);
+
+			if( empty( $form->errors ) ) {
+			    if( $plugins->edit($validation) ) {
+			        $user->to('?path=plugins/overview&message='.$language->translate('Plugin edited').'&messageType=success');
+                } else {
+			        echo '<div class="alert sc-card sc-card-supporting">'.$language->translate('The plugin could not be updated').'</div>';
+                }
+            } else {
+			    echo $form->outputErrors();
+            }
 		}
 ?>
 		<form action="" method="post">
 			<div class="sc-floating-input">
-				<input type="text" name="name" id="name" required value="<?php echo ( !empty( $form->input('name') ) ? $form->input('name') : $data['name'] ); ?>">
-				<label for="name"><?php echo $language->translate('Name'); ?></label>
+				<input type="text" name="name" id="name" required value="<?php echo ( !empty( $form->input('name') ) ? $form->input('name') : $data[0]['name'] ); ?>">
+				<label for="name"><?php echo $language->translate('Name'); ?> <em>(<?php echo $language->translate('in English'); ?>)</em></label>
 			</div>
 
+            <a href=""></a>
+
 			<div class="sc-floating-input">
-				<input type="text" name="icon" id="icon" required value="<?php echo ( !empty( $form->input('icon') ) ? $form->input('icon') : $data['icon'] ); ?>">
+				<input type="text" name="icon" id="icon" required value="<?php echo ( !empty( $form->input('icon') ) ? $form->input('icon') : $data[0]['icon'] ); ?>">
 				<label for="icon"><?php echo $language->translate('Icon'); ?></label>
 			</div>
+
+            <div class="sc-floating-input">
+                <input type="number" name="number" id="number" required value="<?php echo ( !empty( $form->input('sort') ) ? $form->input('sort') : $data[0]['sort'] ); ?>">
+                <label for="number"><?php echo $language->translate('Sort'); ?></label>
+            </div>
 
 			<button class="sc-raised-button"><i class="material-icons">save</i><?php echo $language->translate('Save'); ?></button>
 		</form>

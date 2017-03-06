@@ -100,7 +100,8 @@ class Group extends Database implements Plugin {
 				JOIN `rights` `r`
 				  ON `r`.`groups_id` = `g`.`id`
 				WHERE `g`.`id` = :id
-				GROUP BY `g`.`id`");
+				GROUP BY `g`.`id`
+				LIMIT 1");
 			$stmt->bindParam( ':id', $id, PDO::PARAM_INT );
 		} else {
 			$stmt = $this->mysqli->prepare("
@@ -134,7 +135,7 @@ class Group extends Database implements Plugin {
 	 * @return bool
 	 */
 	public function rights( int $id ) {
-		$stmt = $this->mysqli->prepare("SELECT `groups_id`, `plugins_id` FROM `rights` WHERE `groups_id` = :id");
+		$stmt = $this->mysqli->prepare("SELECT `plugins_id` FROM `rights` WHERE `groups_id` = :id");
 		$stmt->bindParam(':id', $id, PDO::PARAM_INT);
 		$stmt->execute();
 

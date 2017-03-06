@@ -174,7 +174,8 @@ class Language extends Database implements Plugin {
 						WHERE `languages_id` = 1
 					) `t2`
 				WHERE `l`.`id` = :id	 
-				GROUP BY `l`.`id`");
+				GROUP BY `l`.`id`
+				LIMIT 1");
 			$stmt->bindParam(':id', $id, PDO::PARAM_INT);
 		} else {
 			$stmt = $this->mysqli->prepare("

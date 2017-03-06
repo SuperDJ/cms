@@ -10,7 +10,6 @@ class Media extends Database implements Plugin {
 	public function add( array $data ) {
 		$keys = array_keys($data);
 		$files = count( $data[$keys[0]]['name'] );
-		$u = 0;
 
 		$stmt = $this->mysqli->prepare("INSERT INTO `files` (`path`, `mime`, `upload_date`) VALUES (:path, :mime, :upload_date)");
 		for( $i = 0; $i < $files; $i++ ) {
@@ -21,7 +20,6 @@ class Media extends Database implements Plugin {
 			$size = $data[$keys[0]]['size'][$i];
 			$path = '/dashboard/uploads/'.$name;
 			$date = date( 'Y-m-d H:i:s' );
-			echo $name;
 
 			// Bind params
 			$stmt->bindParam(':path', $path, PDO::PARAM_STR);
@@ -38,14 +36,10 @@ class Media extends Database implements Plugin {
 		}
 
 		$stmt = null;
-		echo 'u:'.$u;
-		echo 'f:'.$files;
 
 		if( $u === $files ) {
-			echo 7;
 			return true;
 		} else {
-			echo 8;
 			return false;
 		}
 	}
@@ -103,7 +97,7 @@ class Media extends Database implements Plugin {
 	 */
 	public function data( int $id = null ) {
 		if( !is_null( $id ) ) {
-			$stmt = $this->mysqli->prepare("SELECT `id`, `path`, `mime`, `upload_date`, `title`, `description` FROM `files` WHERE `id` = :id");
+			$stmt = $this->mysqli->prepare("SELECT `id`, `path`, `mime`, `upload_date`, `title`, `description` FROM `files` WHERE `id` = :id LIMIT 1");
 			$stmt->bindParam(':id', $id, PDO::PARAM_INT);
 		} else {
 			$stmt = $this->mysqli->prepare( "SELECT `id`, `path`, `mime`, `upload_date`, `title`, `description` FROM `files`" );

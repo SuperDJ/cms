@@ -217,7 +217,7 @@ class User extends Database implements Plugin {
 		if( empty( $id ) ) {
 			return false;
 		} else {
-			$stmt = $this->mysqli->prepare("SELECT `id`, `first_name`, `last_name`, `email`, `register_date`, `active_date`, `languages_id` FROM `users` WHERE `id` = :id");
+			$stmt = $this->mysqli->prepare("SELECT `id`, `first_name`, `last_name`, `email`, `register_date`, `active_date`, `languages_id` FROM `users` WHERE `id` = :id LIMIT 1");
 			$stmt->bindParam(':id', $id, PDO::PARAM_INT);
 			$stmt->execute();
 
@@ -308,7 +308,7 @@ class User extends Database implements Plugin {
 				return false;
 			}
 		} else {
-			$stmt = $this->mysqli->prepare("SELECT `first_name`, `last_name`, `active_date` FROM `users` WHERE `email` = :email");
+			$stmt = $this->mysqli->prepare("SELECT `first_name`, `last_name`, `active_date` FROM `users` WHERE `email` = :email LIMIT 1");
 			$stmt->bindParam(':email', $data['email'], PDO::PARAM_STR);
 			$stmt->execute();
 			$stmt->fetch();

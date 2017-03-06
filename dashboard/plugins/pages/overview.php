@@ -7,7 +7,6 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 
 	$page = new Page();
 	$data = $page->data();
-	print_r($data);
 
 	echo '	<p class="sc-col sc-xs4 sc-s12">
 				<a href="?path=pages/add" class="sc-raised-button">
@@ -25,6 +24,7 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 						<th>'.$language->translate('Language').'</th>
 						<th>'.$language->translate('Created on').'</th>
 						<th>'.$language->translate('Created by').'</th>
+						<th>'.$language->translate('Edited on').'</th>
 						<th>'.$language->translate('Edited by').'</th>
 						<th>'.$language->translate('Keywords').'</th>
 						<th>'.$language->translate('Options').'</th>
@@ -41,8 +41,9 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 						<td>'.$field['title'].'</td>
 						<td>'.$field['language'].'</td>
 						<td>'.$field['create_date'].'</td>
-						<td>'.$field['created_by'].'</td>
-						<td>'.$field['edited_by'].'</td>
+						<td>'.substr( $field['c_first_name'], 0, 1 ).'. '.$field['c_last_name'].'</td>  
+						<td>'.$field['edit_date'].'</td>
+						<td>'.substr( $field['e_first_name'], 0, 1 ).'. '.$field['e_last_name'].'</td>
 						<td>'.$field['keywords'].'</td>
 						<td>
 						'.( $edit ? '

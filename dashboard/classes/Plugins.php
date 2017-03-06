@@ -242,4 +242,55 @@ class Plugins extends Database {
 			return false;
 		}
 	}
+
+	/**
+	 * Get data from plugins
+	 *
+	 * @param int $id
+	 *
+	 * @return bool
+	 */
+	public function data( int $id = null ) {
+		if( !is_null( $id ) ) {
+			$stmt = $this->mysqli->prepare("SELECT `id`, `name`, `icon`, `sort` FROM `plugins` WHERE `parent` = 0 AND `id` = :id");
+			$stmt->bindParam(':id', $id, PDO::PARAM_INT);
+		} else {
+			$stmt = $this->mysqli->prepare( "SELECT `id`, `name`, `icon`, `sort` FROM `plugins` WHERE `parent` = 0" );
+		}
+		$stmt->execute();
+
+		if( $stmt->rowCount() >= 1 ) {
+			$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+			$stmt = null;
+			return $result;
+		} else {
+			$stmt = null;
+			return false;
+		}
+	}
+
+	/**
+	 * Edit plugin
+	 *
+	 * @param array $data
+	 *
+	 * @return bool
+	 */
+	public function edit( array $data ) {
+		$icon = str_replace(' ', '_', $data['icon']);
+		$stmt = $this->mysqli->prepare("UPDATE `plugins` SET `name` = :name, `icon` = :icon, `sort` = :sort WHERE `id` = :id");
+		$stmt->bindParam(':name', $data['name'], PDO::PARAM_STR);
+		$stmt->bindParam(':icon', $icon, PDO::PARAM_STR);
+		$stmt->bindParam(':sort', $data['sort'], PDO::PARAM_INT);
+		$stmt->bindParam(':id', $data['id'], PDO::PARAM_INT);
+		$stmt->execute();
+
+		if( $stmt->rowCount() >= 1 ) {
+			$stmt = null;
+			return true;
+		} else {
+			$stmt = null;
+			return false;
+		}
+	}
 }

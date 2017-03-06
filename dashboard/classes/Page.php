@@ -71,20 +71,28 @@ class Page extends Database implements Plugin {
 	public function data( int $id = null ) {
 		if( !is_null( $id ) ) {
 			$stmt = $this->mysqli->prepare( "
-				SELECT `p`.`id`, `title`, `content`, `sidebars_id`, `language`, `create_date`, `edit_date`, `created_by`, `edited_by`, `keywords`
-				FROM `pages` `p`
-				JOIN `languages` `l`
-					 ON `l`.`id` = `p`.`languages_id`
-				WHERE `id` = :id" );
-			$stmt->bindParam( ':id', $id, PDO::PARAM_INT );
-		} else {
-			$stmt = $this->mysqli->prepare( "
-				SELECT `p`.`id`, `title`, `content`, `sidebars_id`, `language`, `create_date`, `edit_date`, `created_by`, `edited_by`, `keywords`
+				SELECT `p`.`id`, `title`, `content`, `sidebars_id`, `language`, `create_date`, `edit_date`, `u`.`first_name` AS `c_first_name`, `u`.`last_name` AS `c_last_name`, `us`.`first_name` AS `e_first_name`, `us`.`last_name` AS `e_last_name`, `keywords`
 				FROM `pages` `p`
 				JOIN `languages` `l`
 					 ON `l`.`id` = `p`.`languages_id`
 				JOIN `users` `u`
-					 ON `u`.`id` = `created_by` AND `u`.`id` = `p`.`edited_by`
+					 ON `u`.`id` = `created_by` 
+              	LEFT JOIN `users` `us`
+              	 	ON `us`.`id` = `p`.`edited_by`
+				WHERE `id` = :id
+				LIMIT 1
+			");
+			$stmt->bindParam( ':id', $id, PDO::PARAM_INT );
+		} else {
+			$stmt = $this->mysqli->prepare( "
+				SELECT `p`.`id`, `title`, `content`, `sidebars_id`, `language`, `create_date`, `edit_date`, `u`.`first_name` AS `c_first_name`, `u`.`last_name` AS `c_last_name`, `us`.`first_name` AS `e_first_name`, `us`.`last_name` AS `e_last_name`, `keywords`
+				FROM `pages` `p`
+				JOIN `languages` `l`
+					 ON `l`.`id` = `p`.`languages_id`
+				JOIN `users` `u`
+					 ON `u`.`id` = `created_by` 
+              	LEFT JOIN `users` `us`
+              	 	ON `us`.`id` = `p`.`edited_by`
 			" );
 		}
 		$stmt->execute();

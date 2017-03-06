@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="EN"><!-- TODO make language dynamic -->
+<html lang="<?php echo $db->detail('iso_code', 'languages', 'id', $session->get('language')); ?>">
 	<head>
 		<title><?php echo $title ?></title>
 

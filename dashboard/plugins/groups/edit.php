@@ -108,14 +108,12 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 ?>
         <form action="" method="post">
             <div class="sc-floating-input">
-                <input type="text" name="group" id="group" required
-                       value="<?php echo( !empty( $form->input( 'group' ) ) ? $form->input( 'group' ) : $data[0]['group'] ); ?>">
+                <input type="text" name="group" id="group" required value="<?php echo( !empty( $form->input( 'group' ) ) ? $form->input( 'group' ) : $data[0]['group'] ); ?>">
                 <label for="group"><?php echo $language->translate( 'Group' ); ?></label>
             </div>
 
             <div class="sc-multi-input">
-                <textarea name="description"
-                          id="description"><?php echo( !empty( $form->input( 'description' ) ) ? $form->input( 'description' ) : $data[0]['description'] ); ?></textarea>
+                <textarea name="description" id="description"><?php echo( !empty( $form->input( 'description' ) ) ? $form->input( 'description' ) : $data[0]['description'] ); ?></textarea>
                 <label for="description"><?php echo $language->translate( 'Description' ); ?></label>
             </div>
 
