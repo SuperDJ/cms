@@ -6,8 +6,8 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 		$user->to('?path=pages/overview');
 	} else {
 		$page = new Page();
-		$data = $page->data( $id );
-		$title = $language->translate( 'Edit' );
+		$data = $page->data( $id )[0];
+		$title = $language->translate( 'Edit' ).': '.$data['title'];
 		require_once $dash->getInclude( 'header' );
 		$form = new Form();
 
@@ -15,26 +15,29 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 			$validation = $form->check( $_POST, array(
 				'title'    => array(
 					'minLength' => 5,
+                    'remember' => true,
 					'name'      => 'Title'
 				),
 				'content'  => array(
+				    'remember' => true,
 					'name' => 'Content'
 				),
 				'language' => array(
+				    'remember' => true,
 					'numeric' => true,
 					'name'    => 'Language'
 				),
 				'keywords' => array(
+				    'remember' => true,
 					'name' => 'Keywords'
 				)
-			), [ $language, 'translate' ], null, true );
+			), [ $language, 'translate' ], $id, true );
 
 			if( empty( $form->errors ) ) {
-				$page = new Page();
-				if( $page->add( $validation ) ) {
-					$user->to( '?path=pages/overview&message='.$language->translate( 'Page added' ).'&messageType=success' );
+				if( $page->edit( $validation ) ) {
+					$user->to( '?path=pages/overview&message='.$language->translate( 'Page edited' ).'&messageType=success' );
 				} else {
-					echo '<div class="error sc-card sc-card-supporting">'.$language->translate( 'Could not add page' ).'</div>';
+					echo '<div class="error sc-card sc-card-supporting">'.$language->translate( 'Could not edit page' ).'</div>';
 				}
 			} else {
 				echo $form->outputErrors();
@@ -43,17 +46,20 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 		?>
 		<form action="" method="post">
 			<div class="sc-floating-input">
-				<input type="text" name="title" id="title" required value="<?php echo( !empty( $form->input( 'title' ) ? $form->input( 'title' ) : $data[0]['title'] ) ); ?>">
+				<input type="text" name="title" id="title" required value="<?php echo ( !empty( $form->input( 'title' ) ) ? $form->input( 'title' ) : $data['title'] ); ?>">
 				<label for="title"><?php echo $language->translate( 'Title' ); ?></label>
 			</div>
 
 			<div class="sc-col sc-xs4">
-				<textarea name="content" id="content"><?php echo ( !empty( $form->input('content') ) ? $form->input('content') : $data[0]['content'] ); ?></textarea>
+				<textarea name="content" id="content"><?php echo ( !empty( $form->input('content') ) ? $form->input('content') : $data['content'] ); ?></textarea>
 			</div>
 
 			<select name="language" id="language" class="sc-select">
 				<?php
+                echo '<option value="'.$data['languages_id'].'">'.$language->translate($data['language']).'</option>';
+
 				foreach( $language->data() as $row => $field ) {
+				    if( $field['id'] !== $data['languages_id'])
 					echo '<option value="'.$field['id'].'">'.$language->translate( $field['language'] ).'</option>';
 				}
 				?>
@@ -61,7 +67,7 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 
 			<div class="sc-multi-input">
             <textarea name="keywords" id="keywords">
-                <?php echo( !empty( $form->input( 'keywords' ) ) ? $form->input( 'keywords' ) : $data[0]['keywords'] ); ?>
+                <?php echo( !empty( $form->input( 'keywords' ) ) ? $form->input( 'keywords' ) : $data['keywords'] ); ?>
             </textarea>
 
 				<label for="keywords" class="sc-tooltip"

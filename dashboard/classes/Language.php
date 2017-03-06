@@ -156,6 +156,7 @@ class Language extends Database implements Plugin {
 
 	/**
 	 * Get all data from languages
+	 * TODO make languages_id dynamic
 	 *
 	 * @param int|null $id
 	 *

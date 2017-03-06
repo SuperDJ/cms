@@ -33,21 +33,23 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 		($user->hasPermission('plugins/edit') ? $edit = true : $edit = false);
 		($user->hasPermission('plugins/delete') ? $delete = true : $delete = false);
 		foreach( $data as $row => $field ) {
-			echo '	<tr>
-						<td>'.$field['name'].'</td>
-						<td><i class="material-icons">'.$field['icon'].'</i></td>
-						<td>'.$field['sort'].'</td>
-						<td>
-						'.( $edit ? '
-							<a href="?path=plugins/edit&id='.base64_encode($field['id']).'" class="edit sc-flat-button">
-								<i class="material-icons">edit</i>
-							</a>' : '').'
-						'.( $delete ? '
-							<a href="?path=plugins/delete&id='.base64_encode($field['id']).'" class="delete sc-flat-button">
-								<i class="material-icons">delete</i>
-							</a>' : '').'	
-						</td>
-					</tr>';
+			if( $field['parent'] == 0 ) {
+				echo '	<tr>
+							<td>'.$field['name'].'</td>
+							<td><i class="material-icons">'.$field['icon'].'</i></td>
+							<td>'.$field['sort'].'</td>
+							<td>
+							'.( $edit ? '
+								<a href="?path=plugins/edit&id='.base64_encode( $field['id'] ).'" class="edit sc-flat-button">
+									<i class="material-icons">edit</i>
+								</a>' : '' ).'
+							'.( $delete ? '
+								<a href="?path=plugins/delete&id='.base64_encode( $field['id'] ).'" class="delete sc-flat-button">
+									<i class="material-icons">delete</i>
+								</a>' : '' ).'	
+							</td>
+						</tr>';
+			}
 		}
 
 		echo '		</tbody>

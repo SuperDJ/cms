@@ -5,18 +5,7 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 	$title = $language->translate( 'Overview' );
 	require_once $dash->getInclude( 'header' );
 
-	$data = $db->query("
-SELECT `l`.`id`, `l`.`language`, `l`.`iso_code`, concat( round( 100 * count(`t`.`languages_id`) / `t2`.`cnt`, 0 ), '%') AS `translated`
-FROM `languages` `l`
-  LEFT JOIN `translations` `t`
-    ON `l`.`id` = `t`.`languages_id`
-  CROSS JOIN (
-               SELECT count(`id`) `cnt`
-               FROM `translations`
-               WHERE `languages_id` = 1
-             ) `t2`
-GROUP BY `l`.`id`;
-", array(), array('multipleRows')); // TODO Get `languages_id` from database
+	$data = $language->data();
 
 	echo '<p class="sc-col sc-xs4 sc-s12"><a href="?path=languages/add" class="sc-raised-button">'.$language->translate('Add language').'</a></p>';
 

@@ -12,7 +12,7 @@ class User extends Database implements Plugin {
 
 			// Check if user data already has been stored
 			if( empty( $this->data ) ) {
-				$this->data = $this->data($this->_id);
+				$this->data = $this->data($this->_id)[0];
 			}
 		}
 	}
@@ -213,19 +213,38 @@ class User extends Database implements Plugin {
 	 *
 	 * @return bool
 	 */
-	public function data( int $id = null) {
-		if( empty( $id ) ) {
-			return false;
-		} else {
-			$stmt = $this->mysqli->prepare("SELECT `id`, `first_name`, `last_name`, `email`, `register_date`, `active_date`, `languages_id` FROM `users` WHERE `id` = :id LIMIT 1");
+	public function data( int $id = null ) {
+		if( !is_null( $id ) ) {
+			$stmt = $this->mysqli->prepare("
+				SELECT `u`.`id`, `first_name`, `last_name`, `email`, `register_date`, `active_date`, `groups_id`, `group`, `active`, `languages_id`, `language` 
+				FROM `users` `u`
+			  	LEFT JOIN `groups` `g`
+					ON `g`.`id` = `u`.groups_id
+				LEFT JOIN `languages` `l`
+					ON `l`.`id` = `u`.languages_id
+				WHERE `u`.`id` = :id	
+				LIMIT 1
+			");
 			$stmt->bindParam(':id', $id, PDO::PARAM_INT);
-			$stmt->execute();
+		} else {
+			$stmt = $this->mysqli->prepare("
+				SELECT `u`.`id`, `first_name`, `last_name`, `email`, `register_date`, `active_date`, `groups_id`, `group`, `active`, `languages_id`, `language` 
+				FROM `users` `u`
+			  	LEFT JOIN `groups` `g`
+					ON `g`.`id` = `u`.groups_id
+				LEFT JOIN `languages` `l`
+					ON `l`.`id` = `u`.languages_id
+			");
+		}
+		$stmt->execute();
 
-			if( $stmt->rowCount() >= 1 ) {
-				return $stmt->fetch(PDO::FETCH_ASSOC);
-			} else {
-				return false;
-			}
+		if( $stmt->rowCount() >= 1 ) {
+			$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+			$stmt = null;
+			return $result;
+		} else {
+			$stmt = null;
+			return false;
 		}
 	}
 

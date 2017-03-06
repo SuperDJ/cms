@@ -7,11 +7,12 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
     } else {
 		$form = new Form();
 		$group = new Group();
-		$data = $group->data( $id ); // Get all data for group
-		$title = $language->translate( 'Edit' ).': '.$language->translate( $data[0]['group'] );
+		$plugin = new Plugins();
+		$data = $group->data( $id )[0]; // Get all data for group
+		$title = $language->translate( 'Edit' ).': '.$language->translate( $data['group'] );
 		require_once $dash->getInclude( 'header' );
 		$rights = $group->rights( $id ); // Get all rights
-		$plugins = $db->query( "SELECT `id`, `name`, `parent` FROM `plugins`" ); // Get all plugins
+		$plugins = $plugin->data(); // Get all plugins
 
 		function buildTree( array $elements, $parentId = 0 ) {
 			$branch = array();
@@ -108,12 +109,12 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 ?>
         <form action="" method="post">
             <div class="sc-floating-input">
-                <input type="text" name="group" id="group" required value="<?php echo( !empty( $form->input( 'group' ) ) ? $form->input( 'group' ) : $data[0]['group'] ); ?>">
+                <input type="text" name="group" id="group" required value="<?php echo( !empty( $form->input( 'group' ) ) ? $form->input( 'group' ) : $data['group'] ); ?>">
                 <label for="group"><?php echo $language->translate( 'Group' ); ?></label>
             </div>
 
             <div class="sc-multi-input">
-                <textarea name="description" id="description"><?php echo( !empty( $form->input( 'description' ) ) ? $form->input( 'description' ) : $data[0]['description'] ); ?></textarea>
+                <textarea name="description" id="description"><?php echo( !empty( $form->input( 'description' ) ) ? $form->input( 'description' ) : $data['description'] ); ?></textarea>
                 <label for="description"><?php echo $language->translate( 'Description' ); ?></label>
             </div>
 
@@ -124,7 +125,7 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
                         <?php echo $language->translate( 'Default' ); ?>
                     </span>
                         <input type="checkbox"
-                               name="default" <?php echo( !empty( $form->input( 'default' ) ) || !empty( $data[0]['default'] ) ? 'checked' : '' ); ?>>
+                               name="default" <?php echo( !empty( $form->input( 'default' ) ) || !empty( $data['default'] ) ? 'checked' : '' ); ?>>
                         <span class="sc-lever"></span>
                     </label>
                 </div>

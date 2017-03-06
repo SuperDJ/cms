@@ -4,9 +4,7 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 } else {
 	$title = $language->translate('Overview');
 	require_once $dash->getInclude('header');
-	$data = $db->query("SELECT `u`.`id`, `first_name`, `last_name`, `email`, `register_date`, `active_date`, `group`, `active` FROM `users` `u`
-						  JOIN `groups` `g`
-							ON `g`.`id` = `u`.groups_id", array(), array('multipleRows'));
+	$data = $user->data();
 
 	echo '	<a href="?path=users/add" class="sc-raised-button">
 				<i class="material-icons">add</i>
@@ -18,14 +16,14 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 		echo '    <table class="sc-table-hover">
 					<thead>
 						<tr>
-							<th>'.$language->translate( 'First name' ).'</th>
-							<th>'.$language->translate( 'Last name' ).'</th>
+							<th>'.$language->translate('First name').'</th>
+							<th>'.$language->translate('Last name').'</th>
 							<th>'.$language->translate('Email').'</th>
-							<th>'.$language->translate( 'Group' ).'</th>
-							<th>'.$language->translate( 'Register date' ).'</th>
-							<th>'.$language->translate( 'Last active' ).'</th>
-							<th>'.$language->translate( 'Active' ).'</th>
-							<th>'.$language->translate( 'Options' ).'</th>
+							<th>'.$language->translate('Group').'</th>
+							<th>'.$language->translate('Register date').'</th>
+							<th>'.$language->translate('Last active').'</th>
+							<th>'.$language->translate('Active').'</th>
+							<th>'.$language->translate('Options').'</th>
 						</tr>
 					</thead>
 					

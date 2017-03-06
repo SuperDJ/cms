@@ -6,9 +6,9 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
         $user->to('?path=users/overview');
     }
 
-	$title = $language->translate( 'Edit' );
+	$data = $language->data($id)[0];
+	$title = $language->translate( 'Edit' ).': '.$data['language'];
 	require_once $dash->getInclude( 'header' );
-    $data = $db->select("SELECT `language`, `iso_code` FROM `languages` WHERE `id` = ?", array($id));
 
 	$form = new Form();
 
@@ -28,7 +28,7 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 		), [$language, 'translate'], $id);
 
 		if( empty( $validation->errors ) ) {
-			if( $db->query("UPDATE `languages` SET `language` = ?, `iso_code` = ? WHERE `id` = ?", $validation ) ) {
+			if( $language->edit($validation) ) {
 				$user->to('?path=languages/overview&message='.$language->translate('Language edited').'&messageType=success');
 			} else {
 				echo '<div class="alert sc-card sc-card-supporting">'.$language->translate('Something went wrong editing the language').': '.$language->translate($data['language']).'</div>';

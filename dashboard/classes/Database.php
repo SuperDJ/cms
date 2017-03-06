@@ -129,10 +129,8 @@ class Database {
 		}
 
 		if( $html === true ) {
-			//return $this->mysqli->real_escape_string( trim( $value ) );
 			return trim( $value );
 		} else {
-			//return $this->mysqli->real_escape_string( trim( htmlentities( strip_tags( stripslashes( $value ) ) ) ) );
 			return trim( htmlentities( strip_tags( stripslashes( $value ) ) ) );
 		}
 	}

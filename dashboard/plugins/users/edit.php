@@ -5,12 +5,12 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 	if( empty( $id ) && !$db->exists('id', 'users', 'id', $id) ) {
 		$user->to('?path=users/overview');
 	} else {
-		// Define page title
-		$title = $language->translate( 'Edit' ).': '.substr( $db->detail( 'first_name', 'users', 'id', $id ), 0, 1 ).'. '.$db->detail( 'last_name', 'users', 'id', $id );
+		$data = $user->data($id);
+		$title = $language->translate( 'Edit' ).': '.substr( $data[0]['first_name'], 0, 1 ).'. '.$data[0]['last_name'];
 		require_once $dash->getInclude( 'header' );
 
-		$data = $db->query( "SELECT `active`, `groups_id`, `group` FROM `users` `u` JOIN `groups` `g` ON `g`.`id` = `u`.`groups_id` WHERE `u`.`id` = ?", array( $id ) );
-		$groups = $db->query( "SELECT `id`, `group` FROM `groups`", array(), array( 'multipleRows' ) );
+		$group = new Group();
+		$groups = $group->data();
 
 		$form = new Form();
 		// Check form
@@ -42,7 +42,6 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 ?>
         <form action="" method="post">
             <div class="sc-col sc-xs">
-                <label for="active"><?php echo $language->translate( 'Active' ); ?></label>
                 <div class="sc-switch" role="switch">
                     <label>
 						<?php echo $language->translate( 'Inactive' ); ?>

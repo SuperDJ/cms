@@ -8,20 +8,24 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 
 	if( $_POST ) {
 	    $validation = $form->check($_POST, array(
-	        'title' => array(
-                'minLength' => 5,
-                'name' => 'Title'
-            ),
-            'content' => array(
-                'name' => 'Content'
-            ),
-            'language' => array(
-                'numeric' => true,
-                'name' => 'Language'
-            ),
-            'keywords' => array(
-                'name' => 'Keywords'
-            )
+			'title'    => array(
+				'minLength' => 5,
+				'remember' => true,
+				'name'      => 'Title'
+			),
+			'content'  => array(
+				'remember' => true,
+				'name' => 'Content'
+			),
+			'language' => array(
+				'remember' => true,
+				'numeric' => true,
+				'name'    => 'Language'
+			),
+			'keywords' => array(
+				'remember' => true,
+				'name' => 'Keywords'
+			)
         ), [$language, 'translate'], null, true);
 
 	    if( empty( $form->errors ) ) {

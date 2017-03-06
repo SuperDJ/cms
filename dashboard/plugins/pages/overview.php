@@ -39,12 +39,19 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 		foreach( $data as $row => $field ) {
 			echo '	<tr>
 						<td>'.$field['title'].'</td>
-						<td>'.$field['language'].'</td>
+						<td>'.$language->translate($field['language']).'</td>
 						<td>'.$field['create_date'].'</td>
 						<td>'.substr( $field['c_first_name'], 0, 1 ).'. '.$field['c_last_name'].'</td>  
 						<td>'.$field['edit_date'].'</td>
-						<td>'.substr( $field['e_first_name'], 0, 1 ).'. '.$field['e_last_name'].'</td>
-						<td>'.$field['keywords'].'</td>
+						<td>'.( !empty( $field['e_first_name'] ) ? substr( $field['e_first_name'], 0, 1 ).'. '.$field['e_last_name'] : '' ).'</td>
+						<td>';
+							if( !empty( $field['keywords'] ) ) {
+								$keywords = explode( ',', $field['keywords'] );
+								foreach( $keywords as $key => $word ) {
+									echo '<div class="sc-chip">'.$word.'</div>';
+								}
+							}
+			echo '		</td>
 						<td>
 						'.( $edit ? '
 							<a href="?path=pages/edit&id='.base64_encode($field['id']).'" class="edit sc-flat-button">

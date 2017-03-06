@@ -84,17 +84,25 @@ class Form extends Database {
 							if( !is_numeric( $value ) ) {
 								$this->addError( $translate( $rules['name'] ).' '.$translate( 'has to be a number' ) );
 							}
+						} else if( !empty( $value ) ) {
+							if( !is_numeric( $value ) ) {
+								$this->addError( $translate( $rules['name'] ).' '.$translate( 'has to be a number' ) );
+							}
 						}
 						break;
 					// Maximum length
 					case 'maxLength':
-						if( mb_strlen( $value) > $rule_value ) {
+						if( mb_strlen( $value ) > $rule_value ) {
 							$this->addError($translate( $rules['name'] ).' '.$translate('has a maximum of').' '.$rule_value.' '.$translate('characters'));
 						}
 						break;
 					// Minimal length
 					case 'minLength':
 						if( !empty( $rules['required'] ) && $rules['required'] == true ) {
+							if( mb_strlen( $value ) < $rule_value ) {
+								$this->addError($translate( $rules['name'] ).' '.$translate('has a minimum of').' '.$rule_value.' '.$translate('characters'));
+							}
+						} else if( !empty( $value ) ) {
 							if( mb_strlen( $value ) < $rule_value ) {
 								$this->addError($translate( $rules['name'] ).' '.$translate('has a minimum of').' '.$rule_value.' '.$translate('characters'));
 							}

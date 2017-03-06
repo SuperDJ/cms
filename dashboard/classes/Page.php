@@ -28,13 +28,14 @@ class Page extends Database implements Plugin {
 
 	public function edit( array $data ) {
 		$date = date('Y-m-d H:i:s');
+		$user = $_SESSION['user']['id'];
 		$stmt = $this->mysqli->prepare("UPDATE `pages` SET `title` = :title, `content` = :content, `languages_id` = :languages_id, `edit_date` = :edit_date, `edited_by` = :edited_by, `keywords` = :keywords WHERE `id` = :id");
 		$stmt->bindParam(':title', $data['title'], PDO::PARAM_STR);
 		$stmt->bindParam(':content', $data['content'], PDO::PARAM_STR);
 		/*$stmt->bindParam(':sidebars_id', $data['sidebars_id'], PDO::PARAM_STR);*/
 		$stmt->bindParam(':languages_id', $data['language'], PDO::PARAM_STR);
 		$stmt->bindParam(':edit_date', $date, PDO::PARAM_STR);
-		$stmt->bindParam(':edited_by', $_SESSION['user']['id'], PDO::PARAM_INT);
+		$stmt->bindParam(':edited_by', $user, PDO::PARAM_INT);
 		$stmt->bindParam(':keywords', $data['keywords'], PDO::PARAM_STR);
 		$stmt->bindParam(':id', $data['id'], PDO::PARAM_INT);
 
@@ -71,7 +72,7 @@ class Page extends Database implements Plugin {
 	public function data( int $id = null ) {
 		if( !is_null( $id ) ) {
 			$stmt = $this->mysqli->prepare( "
-				SELECT `p`.`id`, `title`, `content`, `sidebars_id`, `language`, `create_date`, `edit_date`, `u`.`first_name` AS `c_first_name`, `u`.`last_name` AS `c_last_name`, `us`.`first_name` AS `e_first_name`, `us`.`last_name` AS `e_last_name`, `keywords`
+				SELECT `p`.`id`, `title`, `content`, `sidebars_id`, `p`.`languages_id`, `language`, `create_date`, `edit_date`, `u`.`first_name` AS `c_first_name`, `u`.`last_name` AS `c_last_name`, `us`.`first_name` AS `e_first_name`, `us`.`last_name` AS `e_last_name`, `keywords`
 				FROM `pages` `p`
 				JOIN `languages` `l`
 					 ON `l`.`id` = `p`.`languages_id`
@@ -79,13 +80,13 @@ class Page extends Database implements Plugin {
 					 ON `u`.`id` = `created_by` 
               	LEFT JOIN `users` `us`
               	 	ON `us`.`id` = `p`.`edited_by`
-				WHERE `id` = :id
+				WHERE `p`.`id` = :id
 				LIMIT 1
 			");
-			$stmt->bindParam( ':id', $id, PDO::PARAM_INT );
+			$stmt->bindParam(':id', $id, PDO::PARAM_INT);
 		} else {
 			$stmt = $this->mysqli->prepare( "
-				SELECT `p`.`id`, `title`, `content`, `sidebars_id`, `language`, `create_date`, `edit_date`, `u`.`first_name` AS `c_first_name`, `u`.`last_name` AS `c_last_name`, `us`.`first_name` AS `e_first_name`, `us`.`last_name` AS `e_last_name`, `keywords`
+				SELECT `p`.`id`, `title`, `content`, `sidebars_id`, `p`.`languages_id`, `language`, `create_date`, `edit_date`, `u`.`first_name` AS `c_first_name`, `u`.`last_name` AS `c_last_name`, `us`.`first_name` AS `e_first_name`, `us`.`last_name` AS `e_last_name`, `keywords`
 				FROM `pages` `p`
 				JOIN `languages` `l`
 					 ON `l`.`id` = `p`.`languages_id`

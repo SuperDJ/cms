@@ -6,7 +6,8 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 	require_once $dash->getInclude( 'header' );
 	$form = new Form();
 
-	$plugins = $db->query("SELECT `id`, `name`, `parent` FROM `plugins`");
+	$plugin = new Plugins();
+	$plugins = $plugin->data();
 
 	function buildTree( array $elements, $parentId = 0 ) {
 		$branch = array();

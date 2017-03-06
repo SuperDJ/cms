@@ -252,10 +252,10 @@ class Plugins extends Database {
 	 */
 	public function data( int $id = null ) {
 		if( !is_null( $id ) ) {
-			$stmt = $this->mysqli->prepare("SELECT `id`, `name`, `icon`, `sort` FROM `plugins` WHERE `parent` = 0 AND `id` = :id");
+			$stmt = $this->mysqli->prepare("SELECT `id`, `name`, `parent`, `icon`, `sort` FROM `plugins` WHERE `id` = :id LIMIT 1");
 			$stmt->bindParam(':id', $id, PDO::PARAM_INT);
 		} else {
-			$stmt = $this->mysqli->prepare( "SELECT `id`, `name`, `icon`, `sort` FROM `plugins` WHERE `parent` = 0" );
+			$stmt = $this->mysqli->prepare( "SELECT `id`, `name`, `parent`, `icon`, `sort` FROM `plugins`" );
 		}
 		$stmt->execute();
 

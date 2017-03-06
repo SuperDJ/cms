@@ -7,8 +7,8 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 	} else {
 		$form = new Form();
 		$plugins = new Plugins();
-		$data = $plugins->data($id);
-		$title = $language->translate( 'Edit' ).': '.$language->translate( $data[0]['name'] );
+		$data = $plugins->data($id)[0];
+		$title = $language->translate( 'Edit' ).': '.$language->translate( $data['name'] );
 		require_once $dash->getInclude( 'header' );
 
 		if( $_POST ) {
@@ -16,14 +16,17 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
                 'name' => array(
                     'required' => true,
                     'minLength' => 4,
+                    'remember' => true,
                     'name' => 'Name'
                 ),
                 'icon' => array(
                     'required' => true,
+                    'remember' => true,
                     'minLength' => 4,
                     'name' => 'Icon'
                 ),
                 'sort' => array(
+                    'remember' => true,
                     'required' => true,
                     'numeric' => true,
                     'name' => 'Sort'
@@ -43,19 +46,19 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 ?>
 		<form action="" method="post">
 			<div class="sc-floating-input">
-				<input type="text" name="name" id="name" required value="<?php echo ( !empty( $form->input('name') ) ? $form->input('name') : $data[0]['name'] ); ?>">
+				<input type="text" name="name" id="name" required value="<?php echo ( !empty( $form->input('name') ) ? $form->input('name') : $data['name'] ); ?>">
 				<label for="name"><?php echo $language->translate('Name'); ?> <em>(<?php echo $language->translate('in English'); ?>)</em></label>
 			</div>
 
             <a href=""></a>
 
 			<div class="sc-floating-input">
-				<input type="text" name="icon" id="icon" required value="<?php echo ( !empty( $form->input('icon') ) ? $form->input('icon') : $data[0]['icon'] ); ?>">
+				<input type="text" name="icon" id="icon" required value="<?php echo ( !empty( $form->input('icon') ) ? $form->input('icon') : $data['icon'] ); ?>">
 				<label for="icon"><?php echo $language->translate('Icon'); ?></label>
 			</div>
 
             <div class="sc-floating-input">
-                <input type="number" name="number" id="number" required value="<?php echo ( !empty( $form->input('sort') ) ? $form->input('sort') : $data[0]['sort'] ); ?>">
+                <input type="number" name="number" id="number" required value="<?php echo ( !empty( $form->input('sort') ) ? $form->input('sort') : $data['sort'] ); ?>">
                 <label for="number"><?php echo $language->translate('Sort'); ?></label>
             </div>
 
