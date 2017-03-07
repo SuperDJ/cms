@@ -81,8 +81,9 @@ class Plugins extends Database {
 					$stmt->execute();
 
 					if( $stmt->rowCount() >= 1 ) {
+						$id = $this->mysqli->lastInsertId();
 					 	$stmt = null;
-						$this->insertInDb( $value, $url, $stmt->lastInsertId() );
+						$this->insertInDb( $value, $url, $id );
 					} else {
 						$stmt = null;
 						return false;

@@ -3,7 +3,6 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 	$user->to('?path=users/login');
 } else {
 	if( !empty( $_GET['id'] ) ) {
-
 		$id = (int)$db->sanitize( base64_decode( $_GET['id'] ) );
 		if( $db->exists('id', 'groups', 'id', $id) ) {
 

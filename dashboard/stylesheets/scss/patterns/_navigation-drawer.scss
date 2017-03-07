@@ -412,6 +412,10 @@ $drawer-profile-height: $drawer-padding + $drawer-profile-img + $drawer-profile-
 		}
 	}
 
+	.sc-dropdown .sc-dropdown a {
+		padding: 0 0 0 ($gutter * 4);
+	}
+
 	.material-icons {
 		@include square($drawer-icon-size);
 		font-size: $drawer-icon-size;

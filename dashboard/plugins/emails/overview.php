@@ -36,8 +36,8 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 			echo '	<tr>
 						<td>'.$field['subject'].'</td>
 						<td>'.( $field['read'] == 1 ? '<i class="material-icons success">check</i>' : '<i class="material-icons error">clear</i>' ).'</td>
-						<td>'.$field['send_by'].'</td>
-						<td>'.($field['to'] == 0 ? $language->translate('Everyone') : $field['to'] ).'</td>
+						<td>'.$field['email'].'</td>
+						<td>'.($field['to'] == 0 ? $language->translate('Everyone') : $db->detail('email', 'users', 'id', $field['to']) ).'</td>
 						<td>
 						'.( $delete && !$db->exists('id', 'users', 'groups_id', $field['id']) ? '
 							<a href="?path=emails/delete&id='.base64_encode($field['id']).'" class="delete sc-flat-button">
