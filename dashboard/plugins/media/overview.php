@@ -22,6 +22,7 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 						<th>'.$language->translate('Description').'</th>
 						<th>'.$language->translate('Type').'</th>
 						<th>'.$language->translate('Upload date').'</th>
+						<th>'.$language->translate('URL').'</th>
 						<th>'.$language->translate('Options').'</th>
 					</tr>
 					</thead>
@@ -57,6 +58,7 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 						<td>'.$field['description'].'</td>
 						<td>'.$language->translate(ucfirst( explode( '/', $field['mime'] )[0] )).'</td>
 						<td>'.$field['upload_date'].'</td>
+						<td>'.$field['path'].'</td>
 						<td>
 						'.( $edit ? '
 							<a href="?path=media/edit&id='.base64_encode($field['id']).'" class="edit sc-flat-button">

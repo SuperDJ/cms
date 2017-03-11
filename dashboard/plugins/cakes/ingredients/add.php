@@ -12,6 +12,7 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 			'ingredient' => array(
 				'required' => true,
 				'remember' => true,
+				'unique' => 'ingredients',
 				'minLength' => 4,
 				'name' => 'Ingredient'
 			),

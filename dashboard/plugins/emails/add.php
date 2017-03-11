@@ -53,26 +53,28 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 			<label for="content"><?php echo $language->translate('Content'); ?></label>
 		</div>
 
-		<div class="sc-col sc-xs4 sc-s12">
+
+        <select class="sc-select" name="language" id="language">
+            <?php
+            foreach( $language->data() as $row => $field ) {
+                echo '<option value="'.$field['id'].'">'.$language->translate($field['language']).'</option>';
+            }
+            ?>
+        </select>
+
+        <div class="sc-col sc-xs4 sc-s12">
 			<?php echo $language->translate('If everyone is chosen, email will be send to everyone based on the selected language'); ?>.
-			<select class="sc-select" name="language" id="language">
-				<?php
-				foreach( $language->data() as $row => $field ) {
-					echo '<option value="'.$field['id'].'">'.$language->translate($field['language']).'</option>';
-				}
-				?>
-			</select>
-		</div>
 
-		<select class="sc-select" name="to" id="to">
-			<?php
-			echo '<option value="0">'.$language->translate('Everyone').'</option>';
+            <select class="sc-select" name="to" id="to">
+                <?php
+                echo '<option value="0">'.$language->translate('Everyone').'</option>';
 
-			foreach( $user->data() as $row => $field ) {
-				echo '<option value="'.$field['id'].'">'.substr( $field['first_name'], 0, 1 ).'. '.$field['last_name'].'</option>';
-			}
-			?>
-		</select>
+                foreach( $user->data() as $row => $field ) {
+                    echo '<option value="'.$field['id'].'">'.substr( $field['first_name'], 0, 1 ).'. '.$field['last_name'].'</option>';
+                }
+                ?>
+            </select>
+        </div>
 
 		<button class="sc-raised-button"><i class="material-icons">send</i> <?php echo $language->translate('Send'); ?></button>
 	</form>

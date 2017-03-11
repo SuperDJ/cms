@@ -8,14 +8,39 @@ class Cake extends Database implements Plugin {
 	 * @return bool
 	 */
 	public function add( array $data ) {
-		$stmt = $this->mysqli->prepare("INSERT INTO `cakes` (`cake`, `description`) VALUES (:cake, :description)");
+		$stmt = $this->mysqli->prepare("INSERT INTO `cakes` (`cake`, `description`, `image`) VALUES (:cake, :description, :image)");
 		$stmt->bindParam(':cake', $data['cake'], PDO::PARAM_STR);
 		$stmt->bindParam(':description', $data['description'], PDO::PARAM_STR);
+		$stmt->bindParam(':image', $data['path'], PDO::PARAM_STR);
 		$stmt->execute();
 
 		if( $stmt->rowCount() >= 1 ) {
+			$insertID = $this->mysqli->lastInsertId();
 			$stmt = null;
-			return true;
+
+			$count = count( $data['recipe'] );
+			$i = 0;
+			$stmt = $this->mysqli->prepare("INSERT INTO `recipes` (`cakes_id`, `ingredients_id`) VALUES (:cakes_id, :ingredients_id)");
+			foreach( $data['recipe'] as $key => $id ) {
+				echo 'id: '.$id.' ';
+				$stmt->bindParam(':cakes_id', $insertID, PDO::PARAM_INT);
+				$stmt->bindParam(':ingredients_id', $id, PDO::PARAM_INT);
+				$stmt->execute();
+
+				if( $stmt->rowCount() >= 1 ) {
+					$stmt = null;
+					$i++;
+				} else {
+					$stmt = null;
+					return true;
+				}
+			}
+
+			if( $count == $i ) {
+				return true;
+			} else {
+				return false;
+			}
 		} else {
 			$stmt = null;
 			return false;
@@ -32,23 +57,24 @@ class Cake extends Database implements Plugin {
 	public function data( int $id = null ) {
 		if( !is_null( $id ) ) {
 			$stmt = $this->mysqli->prepare("
-				SELECT `c`.`id`, `cake`, `description`, SUM(i.calories) AS `calories`, SUM(i.buy_price) AS `buy_price`, SUM(i.sell_price) AS `sell_price`
+				SELECT `c`.`id`, `cake`, `description`, `image`, SUM(i.calories) AS `calories`, SUM(i.buy_price) AS `buy_price`, SUM(i.sell_price) AS `sell_price`
 				FROM `cakes` `c`
-				JOIN `recipes` `r`
+				LEFT JOIN `recipes` `r`
 					ON `c`.`id` = `r`.`cakes_id`
-				JOIN `ingredients` `i`
+				LEFT JOIN `ingredients` `i`
 					ON `r`.`ingredients_id` = `i`.`id`
 				WHERE `c`.`id` = :id
 				GROUP BY `c`.`id`
+				LIMIT 1
 			");
 			$stmt->bindParam(':id', $id, PDO::PARAM_INT);
 		} else {
 			$stmt = $this->mysqli->prepare("
-				SELECT `c`.`id`, `cake`, `description`, SUM(i.calories) AS `calories`, SUM(i.buy_price) AS `buy_price`, SUM(i.sell_price) AS `sell_price`
+				SELECT `c`.`id`, `cake`, `description`, `image`, SUM(i.calories) AS `calories`, SUM(i.buy_price) AS `buy_price`, SUM(i.sell_price) AS `sell_price`
 				FROM `cakes` `c`
-				JOIN `recipes` `r`
+				LEFT JOIN `recipes` `r`
 					ON `c`.`id` = `r`.`cakes_id`
-				JOIN `ingredients` `i`
+				LEFT JOIN `ingredients` `i`
 					ON `r`.`ingredients_id` = `i`.`id`
 				GROUP BY `c`.`id`
 			");
@@ -94,35 +120,66 @@ class Cake extends Database implements Plugin {
 	 * @return bool
 	 */
 	public function edit( array $data ) {
-		$stmt = $this->mysqli->prepare("UPDATE `cakes` SET `cake` = :cake, `description` = :description WHERE `id` = :id");
+		$q = 0;
+		$stmt = $this->mysqli->prepare("UPDATE `cakes` SET `cake` = :cake, `description` = :description, `image` = :image WHERE `id` = :id");
 		$stmt->bindParam(':cake', $data['cake'], PDO::PARAM_STR);
 		$stmt->bindParam(':description', $data['description'], PDO::PARAM_STR);
+		$stmt->bindParam(':image', $data['path'], PDO::PARAM_STR);
 		$stmt->bindParam(':id', $data['id'], PDO::PARAM_INT);
 		$stmt->execute();
 
-		if( $stmt->rowCount >= 1 ) {
+		if( $stmt->rowCount() >= 1 ) {
 			$stmt = null;
-			return true;
+			$q++;
+		} else {
+			$stmt = null;
+			$q++;
+		}
+
+		$recipes = $this->dataRecipe($data['id']);
+		// Delete array
+		$add = array();
+		$delete = array();
+		echo 'r';
+		print_r($data['recipe']);
+		foreach( $data['recipe'] as $key => $field ) {
+			if( !in_array( $field, array_column( $recipes, 'ingredients_id' ) ) ) {
+				$add[] = $field;
+			}
+		}
+
+		foreach( $recipes as $key => $field ){
+
+		}
+
+		print_r($add);
+		print_r($delete);
+	}
+
+	/**
+	 * Data from recipes
+	 *
+	 * @param int|null $id
+	 *
+	 * @return bool
+	 */
+	public function dataRecipe( int $id = null ) {
+		if( !is_null( $id ) ) {
+			$stmt = $this->mysqli->prepare("SELECT `id`, `cakes_id`, `ingredients_id` FROM `recipes` WHERE `cakes_id` = :id");
+			$stmt->bindParam(':id', $id, PDO::PARAM_INT);
+		} else {
+			$stmt = $this->mysqli->prepare("SELECT `id`, `cakes_id`, `ingredients_id` FROM `recipes`");
+		}
+		$stmt->execute();
+
+		if( $stmt->rowCount() >= 1 ) {
+			$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+			$stmt = null;
+			return $result;
 		} else {
 			$stmt = null;
 			return false;
 		}
-	}
-
-	public function addRecipe( array $data ) {
-
-	}
-
-	public function dataRecipe( int $id = null ) {
-
-	}
-
-	public function deleteRecipe( int $id ) {
-
-	}
-
-	public function editRecipe( array $data ) {
-
 	}
 
 	/**
@@ -164,7 +221,7 @@ class Cake extends Database implements Plugin {
 	 */
 	public function dataIngredient( int $id = null ) {
 		if( !is_null( $id ) ) {
-			$stmt = $this->mysqli->prepare("SELECT `id`, `ingredient`, `calories`, `allergies`, `buy_price`, `sell_price`, `stock`, `unit` FROM `ingredients` WHERE `id` = : id");
+			$stmt = $this->mysqli->prepare("SELECT `id`, `ingredient`, `calories`, `allergies`, `buy_price`, `sell_price`, `stock`, `unit` FROM `ingredients` WHERE `id` = :id LIMIT 1");
 			$stmt->bindParam(':id', $id, PDO::PARAM_INT);
 		} else {
 			$stmt = $this->mysqli->prepare("SELECT `id`, `ingredient`, `calories`, `allergies`, `buy_price`, `sell_price`, `stock`, `unit` FROM `ingredients`");

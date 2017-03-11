@@ -100,7 +100,7 @@ class Media extends Database implements Plugin {
 			$stmt = $this->mysqli->prepare("SELECT `id`, `path`, `mime`, `upload_date`, `title`, `description` FROM `files` WHERE `id` = :id LIMIT 1");
 			$stmt->bindParam(':id', $id, PDO::PARAM_INT);
 		} else {
-			$stmt = $this->mysqli->prepare( "SELECT `id`, `path`, `mime`, `upload_date`, `title`, `description` FROM `files`" );
+			$stmt = $this->mysqli->prepare("SELECT `id`, `path`, `mime`, `upload_date`, `title`, `description` FROM `files`");
 		}
 		$stmt->execute();
 
