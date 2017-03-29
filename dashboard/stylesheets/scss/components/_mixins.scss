@@ -26,30 +26,19 @@
 	}
 }
 
-@mixin material-shadow( $dp ) {
-	$ambientY: rem-calc( $dp + 0px );
-	$ambientBlur: rem-calc( if( $dp == 1, 3, $dp * 2 ) + 0px );
-	$ambientAlpha: ( $dp + 10 + ( $dp / 9.38 ) ) / 100;
-
-	$directY: rem-calc( if( $dp < 10, if( $dp % 2 == 0, $dp - ( ( $dp / 2 ) - 1 ), ( $dp - ( ( $dp - 1 ) / 2 ) ) ), $dp - 4 ) + 0px );
-	$directBlur: rem-calc( if( $dp == 1, 3, $dp * 2 ) + 0px );
-	$directAlpha: ( 24 - decimal-round( $dp / 10 ) ) / 100;
-
-	@include box-shadow( 0 $ambientY $ambientBlur 0 rgba(0, 0, 0, $ambientAlpha) unquote(',') 0 $directY $directBlur 0 rgba(0, 0, 0, $directAlpha) );
+@mixin material-shadow( $depth ) {
+	@include box-shadow(
+			#{map-get($elevation-umbra-map, $depth)} $elevation-umbra-color unquote(',')
+			#{map-get($elevation-penumbra-map, $depth)} $elevation-penumbra-color unquote(',')
+			#{map-get($elevation-ambient-map, $depth)} $elevation-ambient-color
+	);
 
 	@media #{$medium-up} {
-		$dp: $dp - 2;
-		$ambientY: rem-calc( $dp + 0px );
-		$ambientBlur: rem-calc( if( $dp == 1, 3, $dp * 2 ) + 0px );
-		$ambientAlpha: ( $dp + 10 + ( $dp / 9.38 ) ) / 100;
-
-		$directY: rem-calc( if( $dp < 10, if( $dp % 2 == 0, $dp - ( ( $dp / 2 ) - 1 ), ( $dp - ( ( $dp - 1 ) / 2 ) ) ), $dp - 4 ) + 0px );
-		$directBlur: rem-calc( if( $dp == 1, 3, $dp * 2 ) + 0px );
-		$directAlpha: ( 24 - decimal-round( $dp / 10 ) ) / 100;
-
-		@if( $ambientY > 0rem ) {
-			@include box-shadow(0 $ambientY $ambientBlur 0 rgba(0, 0, 0, $ambientAlpha) unquote(',') 0 $directY $directBlur 0 rgba(0, 0, 0, $directAlpha));
-		}
+		@include box-shadow(
+				#{map-get($elevation-umbra-map, ( $depth - 2 ))} $elevation-umbra-color unquote(',')
+				#{map-get($elevation-penumbra-map, ( $depth - 2 ))} $elevation-penumbra-color unquote(',')
+				#{map-get($elevation-ambient-map, ( $depth - 2 ))} $elevation-ambient-color
+		);
 	}
 }
 
@@ -372,7 +361,15 @@
 }
 
 @mixin flex-item( $grow: 0, $shrink: 1, $basis: auto, $order: 0, $self: auto ) {
-	@include order( $order );
+	@if( $order > 0 ) {
+		@include order($order);
+	}
 	@include flex( $grow $shrink $basis );
 	@include align-self( $self );
+}
+
+@mixin perspective( $setting ) {
+	-webkit-perspective: $setting;
+	-moz-perspective: $setting;
+	perspective: $setting;
 }

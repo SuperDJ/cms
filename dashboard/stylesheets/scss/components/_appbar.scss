@@ -13,7 +13,7 @@ $appbar-icon-portrait-size: $appbar-icon-default-size;
 $appbar-icon-large-size: $appbar-large-height - (rem-calc(20px) * 2);
 
 .sc-appbar {
-	@include material-shadow(4);
+	@include box-shadow(rem-calc(0px) rem-calc(2px) rem-calc(4px) rem-calc(-1px) rgba($black, .2) unquote(',') rem-calc(0px) rem-calc(4px) rem-calc(5px) rem-calc(0px) rgba($black, .14) unquote(',') rem-calc(0px) rem-calc(1px) rem-calc(10px) rem-calc(0px) rgba($black, .12));
 	background: $appbar-background;
 	color: $appbar-text;
 	line-height: normal;

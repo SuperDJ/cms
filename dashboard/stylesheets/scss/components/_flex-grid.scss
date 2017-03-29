@@ -1,21 +1,14 @@
 .sc-row {
 	@include flex-container(row, wrap, flex-start, flex-start, flex-start);
-	margin-bottom: $gutter;
-
-	@media #{$small-up} {
-		margin-bottom: $large-gutter;
-	}
-
-	.sc-row {
-		margin-bottom: 0;
-	}
 
 	.sc-col {
 		flex-grow: 1;
 		padding: 0 ( $gutter / 2 );
+		margin-bottom: $gutter;
 
 		@media #{$small-up} {
 			padding: 0 ( $large-gutter / 2 );
+			margin-bottom: $large-gutter;
 		}
 
 		&.sc-xs {

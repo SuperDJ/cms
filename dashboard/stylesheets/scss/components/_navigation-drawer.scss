@@ -135,6 +135,10 @@ $drawer-profile-height: $drawer-padding + $drawer-profile-img + $drawer-profile-
 			border-right: rem-calc(1px) solid if($theme == light, rgba($black, .12), rgba($white, .12));
 			z-index: 3;
 
+			.sc-menu {
+				top: $gutter;
+			}
+
 			header, .sc-drawer-header {
 				height: $appbar-mobile-portrait-height;
 				line-height: $appbar-mobile-portrait-height;
@@ -258,6 +262,10 @@ $drawer-profile-height: $drawer-padding + $drawer-profile-img + $drawer-profile-
 			z-index: 3;
 			@include material-shadow(16);
 
+			.sc-menu {
+				top: $drawer-profile-img + $drawer-padding + ($drawer-profile-content-height / 2);
+			}
+
 			header, .sc-drawer-header {
 				padding: 0 0 $drawer-profile-bottom-padding 0;
 				margin: 0 0 $drawer-profile-bottom-padding 0;
@@ -321,13 +329,6 @@ $drawer-profile-height: $drawer-padding + $drawer-profile-img + $drawer-profile-
 					text-align: right;
 					position: relative;
 
-					.sc-menu {
-						z-index: 4;
-						top: $gutter;
-						right: 0;
-						left: auto;
-					}
-
 					.material-icons {
 						margin: (($drawer-profile-content-height / 4) * -1) ($gutter * -1) 0 0;
 						color: $white;
@@ -352,19 +353,18 @@ $drawer-profile-height: $drawer-padding + $drawer-profile-img + $drawer-profile-
 		line-height: $drawer-item-height;
 		position: relative;
 		padding: 0 $drawer-padding;
-		@include transition(all $transition-small-duration $basic-transition);
+		@include transition(color $transition-small-duration $basic-transition);
 
 		@media #{$medium-only} {
-			@include transition(all $transition-medium-duration $basic-transition);
+			@include transition(color $transition-medium-duration $basic-transition);
 		}
 
 		@media #{$medium-up} {
-			@include transition(all $transition-large-duration $basic-transition);
+			@include transition(color $transition-large-duration $basic-transition);
 		}
 
 		&:hover, &.sc-active {
 			color: if( $theme == light, $main-color, $white);
-			background: if( $theme == light, $grey-200, invert($grey-200) );
 
 			.material-icons {
 				color: if( $theme == light, $main-color, $white);
@@ -412,10 +412,6 @@ $drawer-profile-height: $drawer-padding + $drawer-profile-img + $drawer-profile-
 		}
 	}
 
-	.sc-dropdown .sc-dropdown a {
-		padding: 0 0 0 ($gutter * 4);
-	}
-
 	.material-icons {
 		@include square($drawer-icon-size);
 		font-size: $drawer-icon-size;
@@ -433,10 +429,8 @@ $drawer-profile-height: $drawer-padding + $drawer-profile-img + $drawer-profile-
 		}
 	}
 
-	.sc-drawer-dropdown.sc-expanded {
-		.sc-arrow {
-			@include transform(rotate(180deg));
-		}
+	.sc-drawer-dropdown.sc-expanded .sc-arrow {
+		@include transform(rotate(180deg));
 	}
 
 	.sc-arrow {
@@ -463,5 +457,11 @@ $drawer-profile-height: $drawer-padding + $drawer-profile-img + $drawer-profile-
 		&:hover {
 			background: none;
 		}
+	}
+
+	.sc-menu {
+		position: fixed;
+		z-index: 4;
+		left: rem-calc(4px);
 	}
 }

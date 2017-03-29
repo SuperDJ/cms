@@ -7,8 +7,8 @@
 $slider-track-height: rem-calc(2px); // Default rem-calc(2px)
 $slider-thumb-size: rem-calc(14px); // Default rem-calc(14px)
 $slider-thumb-active-size: rem-calc(16px); // Default rem-calc(16px)
-$slider-thumb-margin: calc( ( (#{$slider-thumb-size} / 2) - #{$slider-track-height}) * -1);
-$slider-thumb-on-margin: calc( ( (#{$slider-thumb-active-size} / 2) - #{$slider-track-height}) * -1);
+$slider-thumb-margin: ( ( $slider-thumb-size / 2 ) - $slider-track-height ) * -1;
+$slider-thumb-on-margin: ( ( $slider-thumb-active-size / 2 ) - $slider-track-height ) * -1;
 $slider-bubble-active-size: rem-calc(25px); // Default rem-calc(25px)
 $slider-bubble-font-size: rem-calc(10px); // Default 10px
 $slider-triangle-size: rem-calc(10px);
@@ -148,7 +148,7 @@ input[type="range"] {
 
 	.sc-range-track {
 		height: $slider-track-height;
-		margin: calc( ( #{$slider-thumb-active-size} + ( #{$slider-track-height} * 2 ) ) * -1) 0 0 0;
+		margin: ( ( $slider-thumb-active-size + ( $slider-track-height * 2 ) ) * -1 ) 0 0 0;
 		position: relative;
 		width: 100%;
 		z-index: 1;
@@ -175,7 +175,7 @@ input[type="range"] {
 			bottom: $slider-track-height;
 			color: $slider-bubble-font-color;
 			font-size: $slider-bubble-font-size;
-			margin: 0 0 0 calc( (#{$slider-bubble-active-size} / 2) * -1);
+			margin: 0 0 0 ( ( $slider-bubble-active-size  / 2 ) * -1 );
 			text-align: center;
 
 			&:before {
@@ -183,7 +183,7 @@ input[type="range"] {
 				border-right: $slider-triangle-border-hidden;
 				border-top: $slider-triangle-size solid $slider-off-color;
 				right: rem-calc(3.5px);
-				top: calc(#{$slider-bubble-active-size} - (#{$slider-track-height} * 2));
+				top: $slider-bubble-active-size - ( $slider-track-height * 2 );
 			}
 
 			&.sc-not-null {
@@ -206,7 +206,7 @@ input[type="range"] {
 			@include square($slider-thumb-size);
 			background: $slider-bubble-background;
 			border: $slider-track-height solid $slider-bubble-background;
-			bottom: calc((#{$slider-thumb-active-size} + (#{$slider-track-height} * 2)) * -1);
+			bottom: ( $slider-thumb-active-size + ( $slider-track-height * 2 ) ) * -1;
 			color: $slider-bubble-font-color;
 			font-size: 0;
 			margin: 0;

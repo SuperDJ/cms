@@ -24,6 +24,29 @@ class Group extends Database implements Plugin {
 			return false;
 		}
 
+		// Add rights
+		if( $this->addRights($data, $id) ) {
+			$q++;
+		}
+
+
+		// If both queries executed
+		if( $q === 2 ) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * Add rights to group
+	 *
+	 * @param array $data
+	 * @param int   $id
+	 *
+	 * @return bool
+	 */
+	private function addRights( array $data, int $id ) {
 		// Create query to insert all plugins for group
 		$query = "INSERT INTO `rights` (`groups_id`, `plugins_id`) VALUES ";
 		$insertQuery = array();
@@ -45,18 +68,11 @@ class Group extends Database implements Plugin {
 
 			if( $stmt->rowCount() >= 1 ) {
 				$stmt = null;
-				$q++;
+				return true;
 			} else {
 				$stmt = null;
 				return false;
 			}
-		}
-
-		// If both queries executed
-		if( $q === 2 ) {
-			return true;
-		} else {
-			return false;
 		}
 	}
 
@@ -82,6 +98,37 @@ class Group extends Database implements Plugin {
 	}
 
 	/**
+	 * Delete rights
+	 *
+	 * @param array $delete
+	 * @param array $data
+	 *
+	 * @return bool
+	 */
+	private function deleteRights( array $delete, array $data ) {
+		$stmt = $this->mysqli->prepare("DELETE FROM `rights` WHERE `groups_id` = :groups_id AND `plugins_id` = :plugins_id");
+
+		$count = count( $delete );
+		$i = 0;
+		foreach( $delete as $key => $row ) {
+			$stmt->bindParam(':groups_id', $data['id'], PDO::PARAM_INT);
+			$stmt->bindParam(':plugins_id', $row, PDO::PARAM_INT);
+			$stmt->execute();
+
+			if( $stmt->rowCount() >= 1 ) {
+				$i++;
+			}
+		}
+
+		$stmt = null;
+		if( $count === $i ) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
 	 * Get data from database
 	 *
 	 * @param int|null $id
@@ -89,31 +136,28 @@ class Group extends Database implements Plugin {
 	 * @return bool
 	 */
 	public function data( int $id = null ) {
+		$query = "
+			SELECT `g`.`id`, `group`, `default`, `description`, concat( round( ( COUNT(`r`.`id`) / `plugins` ) * 100 ), '%' ) as `rights`
+			FROM `groups` `g`
+			JOIN (
+				SELECT COUNT(`id`) `plugins`
+				FROM `plugins`
+				) `p`
+			JOIN `rights` `r`
+			  	ON `r`.`groups_id` = `g`.`id`
+		";
+
 		if( !is_null( $id ) ) {
-			$stmt = $this->mysqli->prepare("
-				SELECT `g`.`id`, `group`, `default`, `description`, concat( round( ( COUNT(`r`.`id`) / `plugins` ) * 100 ), '%' ) as `rights`
-				FROM `groups` `g`
-				JOIN (
-					SELECT COUNT(`id`) `plugins`
-					FROM `plugins`
-					) `p`
-				JOIN `rights` `r`
-				  ON `r`.`groups_id` = `g`.`id`
+			$query .= "
 				WHERE `g`.`id` = :id
 				GROUP BY `g`.`id`
-				LIMIT 1");
+				LIMIT 1
+			";
+			$stmt = $this->mysqli->prepare($query);
 			$stmt->bindParam( ':id', $id, PDO::PARAM_INT );
 		} else {
-			$stmt = $this->mysqli->prepare("
-				SELECT `g`.`id`, `group`, `default`, `description`, concat( round( ( COUNT(`r`.`id`) / `plugins` ) * 100 ), '%' ) as `rights`
-				FROM `groups` `g`
-				JOIN (
-					SELECT COUNT(`id`) `plugins`
-					FROM `plugins`
-					) `p`
-				JOIN `rights` `r`
-				  ON `r`.`groups_id` = `g`.`id`
-				GROUP BY `g`.`id`");
+			$query .= "GROUP BY `g`.`id`";
+			$stmt = $this->mysqli->prepare($query);
 		}
 		$stmt->execute();
 
@@ -159,8 +203,8 @@ class Group extends Database implements Plugin {
 	public function edit( array $data ) {
 		$q = 0; // Store query success
 		// Check if description or group needs to be update
-		if( $data['description'] != $this->detail('description', 'groups', 'id', $data['id']) ||
-			$data['group'] != $this->detail('group', 'groups', 'id', $data['id']) ||
+		if( $data['description'] != $this->detail('description', 'groups', 'id', $data['id']) &&
+			$data['group'] != $this->detail('group', 'groups', 'id', $data['id']) &&
 			$data['default'] != $this->detail('default', 'groups', 'id', $data['id'])
 		) {
 			if( !empty( $data['default'] ) ) {
@@ -205,6 +249,13 @@ class Group extends Database implements Plugin {
 			}
 		}
 
+		// Delete rights
+		if( !empty( $delete ) ) {
+			$this->deleteRights($delete, $data);
+		} else {
+			$q++;
+		}
+
 		// Check if rights need to be added
 		$add = array();
 		foreach( $plugins as $key => $plugin ) {
@@ -213,55 +264,10 @@ class Group extends Database implements Plugin {
 			}
 		}
 
-		// Delete rights
-		if( !empty( $delete ) ) {
-			$stmt = $this->mysqli->prepare("DELETE FROM `rights` WHERE `groups_id` = :groups_id AND `plugins_id` = :plugins_id");
-
-			$count = count( $delete );
-			$i = 0;
-			foreach( $delete as $key => $row ) {
-				$stmt->bindParam(':groups_id', $data['id'], PDO::PARAM_INT);
-				$stmt->bindParam(':plugins_id', $row, PDO::PARAM_INT);
-				$stmt->execute();
-
-				if( $stmt->rowCount() >= 1 ) {
-					$i++;
-				}
-			}
-
-			$stmt = null;
-			if( $count === $i ) {
-				$q++;
-			} else {
-				return false;
-			}
-		} else {
-			$q++;
-		}
-
 		// Add rights
 		if( !empty( $add ) ) {
-			$stmt = $this->mysqli->prepare("INSERT INTO `rights` (`groups_id`, `plugins_id`) VALUES (:groups_id, :plugins_id) ");
-
-			$count = count( $add );
-			$i = 0;
-			foreach( $add as $key => $plugin ) {
-				$stmt->bindParam(':groups_id', $data['id'], PDO::PARAM_INT);
-				$stmt->bindParam(':plugins_id', $plugin, PDO::PARAM_INT);
-				$stmt->execute();
-
-				if( $stmt->rowCount() >= 1 ) {
-					$i++;
-				} else {
-					return false;
-				}
-			}
-
-			$stmt = null;
-			if( $count === $i ) {
+			if( $this->addRights($add, $data['id']) ) {
 				$q++;
-			} else {
-				return false;
 			}
 		} else {
 			$q++;

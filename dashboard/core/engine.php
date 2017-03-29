@@ -27,6 +27,9 @@ if( TEST === true ) {
 	error_reporting(0);
 }
 
+// Auto loader for facebook
+require_once 'sdk/Facebook/autoload.php';
+
 // Individually load classes
 spl_autoload_register(function( $class ) {
 	require_once 'classes/'.$class.'.php';

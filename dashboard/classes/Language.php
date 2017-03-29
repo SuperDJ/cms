@@ -163,33 +163,30 @@ class Language extends Database implements Plugin {
 	 * @return bool
 	 */
 	public function data( int $id = null ) {
+		$query = "
+			SELECT `l`.`id`, `l`.`language`, `l`.`iso_code`, concat( round( 100 * count(`t`.`languages_id`) / `t2`.`cnt`, 0 ), '%') AS `translated`
+			FROM `languages` `l`
+			LEFT JOIN `translations` `t`
+				ON `l`.`id` = `t`.`languages_id`
+			CROSS JOIN (
+				SELECT count(`id`) `cnt`
+				FROM `translations`
+				WHERE `languages_id` = 1
+			) `t2`
+		";
+
 		if( !is_null( $id ) ) {
-			$stmt = $this->mysqli->prepare("
-				SELECT `l`.`id`, `l`.`language`, `l`.`iso_code`, concat( round( 100 * count(`t`.`languages_id`) / `t2`.`cnt`, 0 ), '%') AS `translated`
-				FROM `languages` `l`
-				  	LEFT JOIN `translations` `t`
-						ON `l`.`id` = `t`.`languages_id`
-				  	CROSS JOIN (
-						SELECT count(`id`) `cnt`
-						FROM `translations`
-						WHERE `languages_id` = 1
-					) `t2`
-				WHERE `l`.`id` = :id	 
-				GROUP BY `l`.`id`
-				LIMIT 1");
+			$query .= "
+					WHERE `l`.`id` = :id	 
+					GROUP BY `l`.`id`
+					LIMIT 1
+				";
+			$stmt = $this->mysqli->prepare($query);
+
 			$stmt->bindParam(':id', $id, PDO::PARAM_INT);
 		} else {
-			$stmt = $this->mysqli->prepare("
-				SELECT `l`.`id`, `l`.`language`, `l`.`iso_code`, concat( round( 100 * count(`t`.`languages_id`) / `t2`.`cnt`, 0 ), '%') AS `translated`
-				FROM `languages` `l`
-				  	LEFT JOIN `translations` `t`
-						ON `l`.`id` = `t`.`languages_id`
-				  	CROSS JOIN (
-						SELECT count(`id`) `cnt`
-						FROM `translations`
-						WHERE `languages_id` = 1
-					) `t2`	 
-				GROUP BY `l`.`id`");
+			$query .= "GROUP BY `l`.`id`";
+			$stmt = $this->mysqli->prepare($query);
 		}
 		$stmt->execute();
 
@@ -287,60 +284,16 @@ class Language extends Database implements Plugin {
 		$q = 0; // Store finished queries
 
 		if( !empty( $update ) ) {
-			$stmt = $this->mysqli->prepare("UPDATE `translations` SET `translation` = :translation WHERE `translations_id` = :translations_id AND `languages_id` = :languages_id");
-
-			$count = count($update);
-			$i = 0;
-			foreach( $update as $key => $value ) {
-				$stmt->bindParam(':translation', $value['value'], PDO::PARAM_STR);
-				$stmt->bindParam(':translations_id', $value['translations_id'], PDO::PARAM_INT);
-				$stmt->bindParam(':languages_id', $data['id'], PDO::PARAM_INT);
-				$stmt->execute();
-
-				if( $stmt->rowCount() >= 1 ) {
-					$i++;
-				} else {
-					$stmt = null;
-					return false;
-				}
-			}
-
-			if( $count === $i ) {
-				$stmt = null;
+			if( $this->editTranslation($update, $data['id']) ) {
 				$q++;
-			} else {
-				$stmt = null;
-				return false;
 			}
 		} else {
 			$q++;
 		}
 
 		if( !empty( $insert ) ) {
-			$stmt = $this->mysqli->prepare("INSERT INTO `translations` (`translation`, `translations_id`, `languages_id`) VALUES (:translation, :translations_id, :languages_id)");
-
-			$count = count($insert);
-			$i = 0;
-			foreach( $insert as $key => $value ) {
-				$stmt->bindParam(':translation', $value['value'], PDO::PARAM_STR);
-				$stmt->bindParam(':translations_id', $value['translations_id'], PDO::PARAM_INT);
-				$stmt->bindParam(':languages_id', $data['id'], PDO::PARAM_INT);
-				$stmt->execute();
-
-				if( $stmt->rowCount() >= 1 ) {
-					$i++;
-				} else {
-					$stmt = null;
-					return false;
-				}
-			}
-
-			if( $count === $i ) {
-				$stmt = null;
+			if( $this->addTranslation($insert, $data['id']) ) {
 				$q++;
-			} else {
-				$stmt = null;
-				return false;
 			}
 		} else {
 			$q++;
@@ -349,6 +302,78 @@ class Language extends Database implements Plugin {
 		if( $q === 2 ) {
 			return true;
 		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * Edit translations
+	 *
+	 * @param array $data
+	 * @param int   $id
+	 *
+	 * @return bool
+	 */
+	private function editTranslation( array $data, int $id ) {
+		$stmt = $this->mysqli->prepare("UPDATE `translations` SET `translation` = :translation WHERE `translations_id` = :translations_id AND `languages_id` = :languages_id");
+
+		$count = count($data);
+		$i = 0;
+		foreach( $data as $key => $value ) {
+			$stmt->bindParam(':translation', $value['value'], PDO::PARAM_STR);
+			$stmt->bindParam(':translations_id', $value['translations_id'], PDO::PARAM_INT);
+			$stmt->bindParam(':languages_id', $id, PDO::PARAM_INT);
+			$stmt->execute();
+
+			if( $stmt->rowCount() >= 1 ) {
+				$i++;
+			} else {
+				$stmt = null;
+				return false;
+			}
+		}
+
+		if( $count === $i ) {
+			$stmt = null;
+			return true;
+		} else {
+			$stmt = null;
+			return false;
+		}
+	}
+
+	/**
+	 * Add translations
+	 *
+	 * @param array $data
+	 * @param int   $id
+	 *
+	 * @return bool
+	 */
+	private function addTranslation( array $data, int $id ) {
+		$stmt = $this->mysqli->prepare("INSERT INTO `translations` (`translation`, `translations_id`, `languages_id`) VALUES (:translation, :translations_id, :languages_id)");
+
+		$count = count($data);
+		$i = 0;
+		foreach( $data as $key => $value ) {
+			$stmt->bindParam(':translation', $value['value'], PDO::PARAM_STR);
+			$stmt->bindParam(':translations_id', $value['translations_id'], PDO::PARAM_INT);
+			$stmt->bindParam(':languages_id', $id, PDO::PARAM_INT);
+			$stmt->execute();
+
+			if( $stmt->rowCount() >= 1 ) {
+				$i++;
+			} else {
+				$stmt = null;
+				return false;
+			}
+		}
+
+		if( $count === $i ) {
+			$stmt = null;
+			return true;
+		} else {
+			$stmt = null;
 			return false;
 		}
 	}

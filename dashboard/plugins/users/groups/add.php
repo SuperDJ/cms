@@ -92,7 +92,7 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 		    // Add group to database or give error message
             $group = new Group();
 		    if( $group->add( $validation ) ) {
-                $user->to('?path=groups/overview&message='.$language->translate('Group has been added').'&messageType=success');
+                $user->to('?path=users/groups/overview&message='.$language->translate('Group has been added').'&messageType=success');
             } else {
 		        echo '<div class="error sc-card sc-card-supporting" role="error">'.$language->translate('Something went wrong adding the group').'</div>';
             }

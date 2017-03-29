@@ -36,16 +36,16 @@ class Form extends Database {
 	 * Validate user input
 	 *
 	 * @param array    $source
-	 * @param  array   $items All form fields
+	 * @param array    $items     All form fields
 	 * @param callable $translate Translate function
-	 * @param   null   $id    When updating
-	 * @param bool     $html  True or false depending if you want to allow html input
+	 * @param int|null $id        When updating
+	 * @param bool     $html      True or false depending if you want to allow html input
 	 *
 	 * @return array|bool array          Return save data in array or error messages
 	 * @internal param $ type  $source $_POST or $_GET
 	 * @internal param $ type  $id     (Optional) Used to check field value with value from database
 	 */
-	public function check( array $source, array $items, callable $translate, $id = null, bool $html = false ) {
+	public function check( array $source, array $items, callable $translate, int $id = null, bool $html = false ) {
 		if( !is_array( $items ) ) {
 			return false;
 		}
@@ -281,7 +281,7 @@ class Form extends Database {
 	 *
 	 * @return bool
 	 */
-	public function media( array $data, callable $translate, string $type = '' ) {
+	public function media( array $data, callable $translate, string $type ) {
 		$totalFiles = count($data);
 
 		$i = 0;

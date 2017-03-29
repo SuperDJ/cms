@@ -8,14 +8,14 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 
 			$group = new Group();
 			if( $group->delete( $id ) ) {
-				$user->to('?path=groups/overview&message='.$language->translate('Group has been deleted').'&messageType=success');
+				$user->to('?path=users/groups/overview&message='.$language->translate('Group has been deleted').'&messageType=success');
 			} else {
-				$user->to('?path=groups/overview&message='.$language->translate('Group could not be deleted').'&messageType=error');
+				$user->to('?path=users/groups/overview&message='.$language->translate('Group could not be deleted').'&messageType=error');
 			}
 		} else {
-			$user->to('?path=groups/overview');
+			$user->to('?path=users/groups/overview');
 		}
 	} else {
-		$user->to('?path=groups/overview');
+		$user->to('?path=users/groups/overview');
 	}
 }

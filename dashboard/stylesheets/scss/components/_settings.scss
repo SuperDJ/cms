@@ -4,32 +4,36 @@
 - Colors
 - Global
 - Typography
-	- Font paths
-	- Font size
-	- Colors
 - Appbar
-	- Basic
-	- Colors
 - Bottom navigation
 - Bottom sheet
 - Buttons
 - Cards
 - Chips
+- Data tables
 - Dialogs
 - Grid
 - Icons
+- Menu
+- Navigation drawer / sidebar
+- Notifications
+- Pickers
 - Progress
 - Selection controls
-	- Checkbox
-	- Radio button
-	- Switch
-- Navigation drawer / sidebar
 - Sliders
 - Snackbars & Toasts
-- Tables
 - Tabs
 - Text fields
 - Tooltips
+
+/**************************************
+ * Imports
+ **************************************/
+// Font size
+$font-size: 14 !default; //px Default 14 or 15
+
+@import 'mixins'; // All mixins
+@import 'functions'; // All functions
 
 /**************************************
  * Colors
@@ -44,12 +48,14 @@
  		'yellow', 'amber', 'orange', 'deep-orange', 'brown', 'grey', 'blue-grey', 'shades');
  */
 
-/*$allowed-colors: (
-	'red', 'pink', 'purple', 'deep-purple', 'indigo', 'blue', 'light-blue', 'cyan', 'teal', 'green', 'light-green',
-	'lime', 'yellow', 'amber', 'orange', 'deep-orange', 'brown', 'grey', 'blue-grey', 'shades');*/
+$allowed-colors: (
+	/*'red', 'pink', 'purple', 'deep-purple', 'indigo', 'blue', 'light-blue', 'cyan', 'teal', 'green', 'light-green',
+	'lime', 'yellow', 'amber', 'orange', 'deep-orange', 'brown', 'grey', 'blue-grey', 'shades'*/);
 
-$main-color: $indigo;
-$secondary-color: $blue;
+@import 'colors';
+
+$main-color: $indigo !default;
+$secondary-color: $blue !default;
 
 $link-color: $main-color;
 $link-hover: $secondary-color;
@@ -58,8 +64,8 @@ $link-hover: $secondary-color;
  * Global
  **************************************/
 $theme: light !default; // Default either light or dark
-$typography: english; // Default english, dense or tall
-$select-background: $cyan-a200; // Default $cyan-a200
+$typography: english !default; // Default english, dense or tall
+$select-background: $cyan-a200 !default; // Default $cyan-a200
 $basic-transition: cubic-bezier(0.4, 0.0, 0.2, 1); // Default cubic-bezier(0.4, 0.0, 0.2, 1)
 $element-enter-transition: cubic-bezier(0.0, 0.0, 0.2, 1); // Default cubic-bezier(0.0, 0.0, 0.2, 1)
 $element-exit-transition: cubic-bezier(0.4, 0.0, 1, 1); // Default cubic-bezier(0.4, 0.0, 1, 1)
@@ -68,24 +74,23 @@ $transition-small-duration: 300ms; // Default 300ms
 $transition-medium-duration: 390ms; // Default 390ms
 $transition-large-duration: 200ms; // Default 200ms
 $background: if( $theme == light, $white, #303030); // Default if( $theme == light, $white, #303030)
-$text-direction: ltr; // Default either ltr or rtl
+$text-direction: ltr !default; // Default either ltr or rtl
+$border-radius: rem-calc(2px) !default;
 
 /**************************************
  * Typography settings
  **************************************/
-// Font paths
-$roboto-font-path: '/dashboard/stylesheets/scss/style/fonts/Roboto/';
-$noto-font-path: '/dashboard/stylesheets/scss/style/fonts/Noto/';
 
-// Font size
-$font-size: 14; //px Default 14 or 15
+// Font paths
+$roboto-font-path: '/dashboard/stylesheets/scss/components/fonts/Roboto/';
+$noto-font-path: '/dashboard/stylesheets/scss/components/fonts/Noto/';
 
 // Colors
-$font-color-display-4: if( $theme == light, rgba($black, .54), rgba($white, .54) ); // Default rgba($black, .54)
+$font-color-display-4: if( $theme == light, rgba($black, .54), rgba($white, .54) ); // Default if( $theme == light, rgba($black, .54), rgba($white, .54) )
 $font-color-display-3: $font-color-display-4; // Default $font-color-display-4
 $font-color-display-2: $font-color-display-4; // Default $font-color-display-4
 $font-color-display-1: $font-color-display-4; // Default $font-color-display-4
-$font-color-headline: if( $theme == light, rgba($black, .87), rgba($white, .87) ); // Default rgba($black, .87)
+$font-color-headline: if( $theme == light, rgba($black, .87), rgba($white, .87) ); // Default if( $theme == light, rgba($black, .87), rgba($white, .87) )
 $font-color-title: $font-color-headline; // Default $font-color-headline
 $font-color-subhead: $font-color-headline; // Default $font-color-headline
 $font-color-body-2: $font-color-headline; // Default $font-color-headline
@@ -218,6 +223,94 @@ $drawer-background: if( $theme == light, $background, $grey-800 ); // Default if
 $drawer-hover: $main-color; // Default $main-color
 $drawer-small-width: rem-calc(280px);
 $drawer-medium-width: rem-calc(320px);
+
+/**************************************
+ * Shadow & elevation
+ **************************************/
+$elevation-umbra-color: rgba($black, .2);
+$elevation-penumbra-color: rgba($black, .14);
+$elevation-ambient-color: rgba($black, .12);
+
+$elevation-umbra-map: (
+	1: rem-calc(0px) rem-calc(2px) rem-calc(1px) rem-calc(-1px),
+	2: rem-calc(0px) rem-calc(3px) rem-calc(1px) rem-calc(-2px),
+	3: rem-calc(0px) rem-calc(3px) rem-calc(3px) rem-calc(-2px),
+	4: rem-calc(0px) rem-calc(2px) rem-calc(4px) rem-calc(-1px),
+	5: rem-calc(0px) rem-calc(3px) rem-calc(5px) rem-calc(-1px),
+	6: rem-calc(0px) rem-calc(3px) rem-calc(5px) rem-calc(-1px),
+	7: rem-calc(0px) rem-calc(4px) rem-calc(5px) rem-calc(-2px),
+	8: rem-calc(0px) rem-calc(5px) rem-calc(5px) rem-calc(-3px),
+	9: rem-calc(0px) rem-calc(5px) rem-calc(6px) rem-calc(-3px),
+	10: rem-calc(0px) rem-calc(6px) rem-calc(6px) rem-calc(-3px),
+	11: rem-calc(0px) rem-calc(6px) rem-calc(7px) rem-calc(-4px),
+	12: rem-calc(0px) rem-calc(7px) rem-calc(8px) rem-calc(-4px),
+	13: rem-calc(0px) rem-calc(7px) rem-calc(8px) rem-calc(-4px),
+	14: rem-calc(0px) rem-calc(7px) rem-calc(9px) rem-calc(-4px),
+	15: rem-calc(0px) rem-calc(8px) rem-calc(9px) rem-calc(-5px),
+	16: rem-calc(0px) rem-calc(8px) rem-calc(10px) rem-calc(-5px),
+	17: rem-calc(0px) rem-calc(8px) rem-calc(11px) rem-calc(-5px),
+	18: rem-calc(0px) rem-calc(9px) rem-calc(11px) rem-calc(-5px),
+	19: rem-calc(0px) rem-calc(9px) rem-calc(12px) rem-calc(-6px),
+	20: rem-calc(0px) rem-calc(10px) rem-calc(13px) rem-calc(-6px),
+	21: rem-calc(0px) rem-calc(10px) rem-calc(13px) rem-calc(-6px),
+	22: rem-calc(0px) rem-calc(10px) rem-calc(14px) rem-calc(-6px),
+	23: rem-calc(0px) rem-calc(11px) rem-calc(14px) rem-calc(-7px),
+	24: rem-calc(0px) rem-calc(11px) rem-calc(15px) rem-calc(-7px)
+);
+
+$elevation-penumbra-map: (
+	1: rem-calc(0px) rem-calc(1px) rem-calc(1px) rem-calc(0px),
+	2: rem-calc(0px) rem-calc(2px) rem-calc(2px) rem-calc(0px),
+	3: rem-calc(0px) rem-calc(3px) rem-calc(4px) rem-calc(0px),
+	4: rem-calc(0px) rem-calc(4px) rem-calc(5px) rem-calc(0px),
+	5: rem-calc(0px) rem-calc(5px) rem-calc(8px) rem-calc(0px),
+	6: rem-calc(0px) rem-calc(6px) rem-calc(10px) rem-calc(0px),
+	7: rem-calc(0px) rem-calc(7px) rem-calc(10px) rem-calc(1px),
+	8: rem-calc(0px) rem-calc(8px) rem-calc(10px) rem-calc(1px),
+	9: rem-calc(0px) rem-calc(9px) rem-calc(12px) rem-calc(1px),
+	10: rem-calc(0px) rem-calc(10px) rem-calc(14px) rem-calc(1px),
+	11: rem-calc(0px) rem-calc(11px) rem-calc(15px) rem-calc(1px),
+	12: rem-calc(0px) rem-calc(12px) rem-calc(17px) rem-calc(2px),
+	13: rem-calc(0px) rem-calc(13px) rem-calc(19px) rem-calc(2px),
+	14: rem-calc(0px) rem-calc(14px) rem-calc(21px) rem-calc(2px),
+	15: rem-calc(0px) rem-calc(15px) rem-calc(22px) rem-calc(2px),
+	16: rem-calc(0px) rem-calc(16px) rem-calc(24px) rem-calc(2px),
+	17: rem-calc(0px) rem-calc(17px) rem-calc(26px) rem-calc(2px),
+	18: rem-calc(0px) rem-calc(18px) rem-calc(28px) rem-calc(2px),
+	19: rem-calc(0px) rem-calc(19px) rem-calc(29px) rem-calc(2px),
+	20: rem-calc(0px) rem-calc(20px) rem-calc(31px) rem-calc(3px),
+	21: rem-calc(0px) rem-calc(21px) rem-calc(33px) rem-calc(3px),
+	22: rem-calc(0px) rem-calc(22px) rem-calc(35px) rem-calc(3px),
+	23: rem-calc(0px) rem-calc(23px) rem-calc(36px) rem-calc(3px),
+	24: rem-calc(0px) rem-calc(24px) rem-calc(38px) rem-calc(3px)
+);
+
+$elevation-ambient-map: (
+	1: rem-calc(0px) rem-calc(1px) rem-calc(3px) rem-calc(0px),
+	2: rem-calc(0px) rem-calc(1px) rem-calc(5px) rem-calc(0px),
+	3: rem-calc(0px) rem-calc(1px) rem-calc(8px) rem-calc(0px),
+	4: rem-calc(0px) rem-calc(1px) rem-calc(10px) rem-calc(0px),
+	5: rem-calc(0px) rem-calc(1px) rem-calc(14px) rem-calc(0px),
+	6: rem-calc(0px) rem-calc(1px) rem-calc(18px) rem-calc(0px),
+	7: rem-calc(0px) rem-calc(2px) rem-calc(16px) rem-calc(1px),
+	8: rem-calc(0px) rem-calc(3px) rem-calc(14px) rem-calc(2px),
+	9: rem-calc(0px) rem-calc(3px) rem-calc(16px) rem-calc(2px),
+	10: rem-calc(0px) rem-calc(4px) rem-calc(18px) rem-calc(3px),
+	11: rem-calc(0px) rem-calc(4px) rem-calc(20px) rem-calc(3px),
+	12: rem-calc(0px) rem-calc(5px) rem-calc(22px) rem-calc(4px),
+	13: rem-calc(0px) rem-calc(5px) rem-calc(24px) rem-calc(4px),
+	14: rem-calc(0px) rem-calc(5px) rem-calc(26px) rem-calc(4px),
+	15: rem-calc(0px) rem-calc(6px) rem-calc(28px) rem-calc(5px),
+	16: rem-calc(0px) rem-calc(6px) rem-calc(30px) rem-calc(5px),
+	17: rem-calc(0px) rem-calc(6px) rem-calc(32px) rem-calc(5px),
+	18: rem-calc(0px) rem-calc(7px) rem-calc(34px) rem-calc(6px),
+	19: rem-calc(0px) rem-calc(7px) rem-calc(36px) rem-calc(6px),
+	20: rem-calc(0px) rem-calc(8px) rem-calc(38px) rem-calc(7px),
+	21: rem-calc(0px) rem-calc(8px) rem-calc(40px) rem-calc(7px),
+	22: rem-calc(0px) rem-calc(8px) rem-calc(42px) rem-calc(7px),
+	23: rem-calc(0px) rem-calc(9px) rem-calc(44px) rem-calc(8px),
+	24: rem-calc(0px) rem-calc(9px) rem-calc(46px) rem-calc(8px)
+);
 
 /**************************************
  * Sliders

@@ -4,7 +4,7 @@
  * Handles database connection and database requests
  */
 class Database {
-	protected $mysqli;
+	protected $mysqli = false;
 
 	// Set database credentials
 	private $_db = array();
@@ -15,7 +15,9 @@ class Database {
 			$this->_db = json_decode( file_get_contents( ROOT.'credentials.json' ) );
 
 			// Get connection
-			$this->connect();
+			if( !$this->mysqli ) {
+				$this->connect();
+			}
 		} else {
 			echo 'Could not connect to db';
 		}
@@ -45,7 +47,7 @@ class Database {
 	 *
 	 * @return string|bool Return string or bool depending on value in database
 	 */
-	public function detail( $detail, $table, $column, $value ) {
+	public function detail( string $detail, string $table, string $column, $value ) {
 		$stmt = $this->mysqli->prepare("SELECT `$detail` FROM `$table` WHERE `$column` = :value LIMIT 1");
 		$stmt->bindParam(':value', $value, ( is_numeric( $value ) ? PDO::PARAM_INT : PDO::PARAM_STR ));
 		$stmt->execute();
@@ -70,7 +72,7 @@ class Database {
 	 *
 	 * @return bool Return true or false depending if value already exists in database
 	 */
-	public function exists( $detail, $table, $column, $value ) {
+	public function exists( string $detail, string $table, string $column, $value ) {
 		$stmt = $this->mysqli->prepare("SELECT `$detail` FROM `$table` WHERE `$column` = :value LIMIT 1");
 		$stmt->bindParam(':value', $value, ( is_numeric( $value ) ? PDO::PARAM_INT : PDO::PARAM_STR ));
 		$stmt->execute();
@@ -94,7 +96,7 @@ class Database {
 	 *
 	 * @return bool Return true or false depending if value already exists in database
 	 */
-	public function count( $detail, $table, $column, $value ) {
+	public function count( string $detail, string $table, string $column, $value ) {
 		$stmt = $this->mysqli->prepare("SELECT `$detail` FROM `$table` WHERE `$column` = :value");
 		$stmt->bindParam(':value', $value, ( is_numeric( $value ) ? PDO::PARAM_INT : PDO::PARAM_STR ));
 		$stmt->execute();
@@ -111,27 +113,24 @@ class Database {
 	/**
 	 * Sanitize input of malicious characters (protect against sql-injection)
 	 *
-	 * @param string|int $value [description]
-	 * @param bool       $html  [description]
+	 * @param string|int $value
+	 * @param bool       $html
 	 *
-	 * @return string [type] [description]
+	 * @return string
 	 */
-	public function sanitize( $value, $html = false ) {
-		// Check if $value is numeric or an array
-		// If so change the way of sanitizing
-		switch( gettype($value) ) {
-			case 'integer':
-				$value = (int)$value;
-				break;
-			case 'array':
-				$value = json_encode( $value );
-				break;
+	public function sanitize( string $value, bool $html = false ) {
+		if( gettype( $value ) == 'integer' ) {
+			$value = (int)$value;
 		}
 
 		if( $html === true ) {
 			return trim( $value );
 		} else {
-			return trim( htmlentities( strip_tags( stripslashes( $value ) ) ) );
+			if( gettype( $value ) == 'array' ) {
+				return $value;
+			} else {
+				return trim( htmlentities( strip_tags( stripslashes( $value ) ) ) );
+			}
 		}
 	}
 }

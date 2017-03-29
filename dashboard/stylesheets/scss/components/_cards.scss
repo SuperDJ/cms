@@ -7,7 +7,7 @@
 .sc-card {
 	@include material-shadow(2);
 	@include border-radius(rem-calc(2px));
-	margin: rem-calc(8px);
+	//margin: rem-calc(8px);
 	width: 100%;
 	padding: 0;
 	position: relative;
@@ -99,7 +99,7 @@
 			float: left;
 			@include border-radius(50%);
 			margin: rem-calc(16px);
-			@include square( calc( #{rem-calc(72px)} - (#{rem-calc(16px)} * 2) ) );
+			@include square( rem-calc(72px) - (rem-calc(16px) * 2 ) );
 		}
 	}
 

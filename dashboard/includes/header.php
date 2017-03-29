@@ -55,10 +55,7 @@
                     <i class="material-icons sc-trigger" data-sc-trigger="profile-more">arrow_drop_down</i>
 
                     <nav class="sc-menu" id="profile-more">
-                        <a href="#">
-                            <i class="material-icons">add</i>
-                            <?php echo $language->translate('Add account'); ?>
-                        </a>
+                        <a href="?path=users/facebook-login"><?php echo $language->translate('Facebook login'); ?></a>
                         <a href="?path=users/profile">
                             <i class="material-icons">settings</i>
                             <?php echo $language->translate('Profile settings'); ?>

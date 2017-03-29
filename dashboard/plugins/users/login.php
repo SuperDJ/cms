@@ -93,11 +93,10 @@ if( $user->isLoggedIn() ) {
 
         <div class="sc-card-actions">
             <div class="sc-col sc-xs4 sc-s12">
-                <button type="submit" class="sc-raised-button"><?php echo $language->translate('Login' ); ?></button>
-
-                <!--<a href="?path=users/facebook-login" class="button facebook"><i	class="fa fa-facebook"></i> <?php echo $language->translate( 'Facebook login' ); ?></a>
-                <a href="?path=users/google-login" class="button google"><i	class="fa fa-google"></i> <?php echo $language->translate( 'Google login' ); ?></a>-->
-                <a href="?path=users/register" class="sc-flat-button"><?php echo $language->translate( 'Register' ); ?></a>
+                <div class="sc-row">
+                    <button type="submit" class="sc-raised-button"><?php echo $language->translate('Login' ); ?></button>
+                    <a href="?path=users/register" class="sc-flat-button"><?php echo $language->translate( 'Register' ); ?></a>
+                </div>
             </div>
 
             <div class="sc-col sc-xs4 sc-s12">

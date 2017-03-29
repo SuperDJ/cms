@@ -1,0 +1,26 @@
+/**************************************
+ * Elevation and shadows
+ *
+ * http://www.google.com/design/spec/what-is-material/elevation-shadows.html
+ * http://material-components-web.appspot.com/elevation.html
+ **************************************/
+// Create classes for elevation
+@each $depth, $setting in $elevation-umbra-map {
+	@if( in-array( quote($depth), $shadow-depths ) ) {
+		.sc-z#{$depth} {
+			@include box-shadow(
+				#{map-get($elevation-umbra-map, $depth)} $elevation-umbra-color unquote(',')
+				#{map-get($elevation-penumbra-map, $depth)} $elevation-penumbra-color unquote(',')
+				#{map-get($elevation-ambient-map, $depth)} $elevation-ambient-color
+			);
+
+			@media #{$medium-up} {
+				@include box-shadow(
+					#{map-get($elevation-umbra-map, ( $depth - 2 ))} $elevation-umbra-color unquote(',')
+					#{map-get($elevation-penumbra-map, ( $depth - 2 ))} $elevation-penumbra-color unquote(',')
+					#{map-get($elevation-ambient-map, ( $depth - 2 ))} $elevation-ambient-color
+				);
+			}
+		}
+	}
+}

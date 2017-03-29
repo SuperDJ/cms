@@ -148,7 +148,7 @@ $floating-mini-size: rem-calc(40px); // Default rem-calc(40px)
 		}
 
 		ul {
-			left: calc( (#{$floating-size} / 2) - ( #{$floating-sub-size} / 2 ) );
+			left: ( $floating-size / 2 ) - ( $floating-sub-size / 2 );
 			position: absolute;
 			visibility: hidden;
 			@include opacity(0);
@@ -159,7 +159,7 @@ $floating-mini-size: rem-calc(40px); // Default rem-calc(40px)
 				@include opacity(1);
 
 				li {
-					margin-top: calc( #{$floating-sub-size} / 2);
+					margin-top: $floating-sub-size / 2;
 				}
 			}
 
@@ -174,7 +174,7 @@ $floating-mini-size: rem-calc(40px); // Default rem-calc(40px)
 				position: absolute;
 				line-height: $floating-sub-size;
 				@include square($floating-sub-size);
-				margin-left: calc( #{$floating-sub-size} / 2.4 * -1 ); // TODO make 2.4 dynamic
+				margin-left: $floating-sub-size / 2.4 * -1; // TODO make 2.4 dynamic
 			}
 
 			img {

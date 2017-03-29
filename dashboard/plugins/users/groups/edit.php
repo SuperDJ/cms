@@ -3,7 +3,7 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 	$user->to('?path=users/login');
 } else {
     if( empty( $id ) && !$db->exists('id', 'groups', 'id', $id)) {
-        $user->to('?path=groups/overview');
+        $user->to('?path=users/groups/overview');
     } else {
 		$form = new Form();
 		$group = new Group();
@@ -98,7 +98,7 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 			if( empty( $form->errors ) ) {
 				// Edit group in database or give error message
 				if( $group->edit( $validation ) ) {
-					$user->to( '?path=groups/overview&message='.$language->translate( 'Group has been edited' ).'&messageType=success' );
+					$user->to( '?path=users/groups/overview&message='.$language->translate( 'Group has been edited' ).'&messageType=success' );
 				} else {
 					echo '<div class="error sc-card sc-card-supporting" role="error">'.$language->translate( 'Something went wrong editing the group' ).'</div>';
 				}

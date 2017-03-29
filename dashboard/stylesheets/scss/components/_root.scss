@@ -1,0 +1,12 @@
+/**************************************
+ * Define all CSS variables
+ */
+:root {
+	--theme: $theme;
+	--main-color: $main-color;
+	--secondary-color: $secondary-color;
+	--background: if( $theme == light, $white, #303030);
+	--border-radius: $border-radius;
+	--gutter: $gutter;
+	--large-gutter: $large-gutter;
+}

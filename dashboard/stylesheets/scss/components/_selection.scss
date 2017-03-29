@@ -63,8 +63,8 @@ input[type="checkbox"].sc-checkbox, input[type="radio"].sc-radio {
 		&:disabled:checked + label:before {
 			background: $selection-disabled-color;
 			border: none;
-			@include square(calc(#{$selection-size} + (#{$selection-border-size} * 2)));
-			line-height: calc(#{$selection-size} + (#{$selection-border-size} * 2));
+			@include square($selection-size + ($selection-border-size * 2));
+			line-height: $selection-size + ($selection-border-size * 2);
 			text-align: center;
 		}
 
@@ -108,8 +108,8 @@ input[type="checkbox"].sc-checkbox, input[type="radio"].sc-radio {
 			&:after {
 				display: inline-block;
 				position: relative;
-				top: calc((#{$selection-size} / 3) * -1);
-				left: calc((#{$selection-size} / 3) * -2);
+				top: ( $selection-size / 3 ) * -1;
+				left: ( $selection-size / 3 ) * -2;
 				@include square(0);
 				content: '';
 				@include border-radius(50%);
@@ -135,9 +135,9 @@ input[type="checkbox"].sc-checkbox, input[type="radio"].sc-radio {
 			&:after {
 				background: $selection-active-color;
 				top: rem-calc(1px);
-				left: calc(#{$selection-size} * -1);
-				@include square(calc((#{$selection-size} / 3) * 2));
-				margin: 0 calc((#{$selection-size} / 3) * -2) 0 0;
+				left: $selection-size * -1;
+				@include square( ( $selection-size / 3 ) * 2 );
+				margin: 0 ( ( $selection-size / 3 ) * -2 ) 0 0;
 			}
 		}
 

@@ -26,6 +26,22 @@ table {
 		&:hover {
 			background: none;
 		}
+
+		a, .sorted {
+			color: if( $theme == light, rgba($black, .54), rgba($white, .54));
+
+			.material-icons {
+				color: if( $theme == light, rgba($black, .54), rgba($white, .54));
+			}
+
+			&:hover {
+				color: if($theme == light, $black, $white);
+
+				.material-icons {
+					color: if($theme == light, $black, $white);
+				}
+			}
+		}
 	}
 
 	tbody td {

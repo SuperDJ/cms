@@ -37,9 +37,10 @@ $tab-padding: rem-calc(12px);
 	}
 
 	.sc-tab, .sc-tab-icon, .sc-tab-icon-text {
+		@include flex-item(1);
 		border-bottom: $tab-indicator-size solid $tab-background;
 		color: $tab-font-color;
-		display: inline-block;
+		//display: inline-block;
 		font-size: rem-calc(14px);
 		font-weight: 500;
 		max-width: rem-calc(264px);

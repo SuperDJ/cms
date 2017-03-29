@@ -68,7 +68,7 @@ class User extends Database implements Plugin {
 		$stmt->bindParam(':groups_id', $groups_id, PDO::PARAM_INT);
 		$stmt->execute();
 
-		if( $stmt->countRows() >= 1 ) {
+		if( $stmt->rowCount() >= 1 ) {
 			$stmt = null;
 			return true;
 		} else {
@@ -85,39 +85,49 @@ class User extends Database implements Plugin {
 	 * @return bool
 	 */
 	public function login( array $data ) {
-		$password = $this->passwordGenerate( $data['password_encrypted'] );
-		$hash = $this->detail('password', 'users', 'email', $data['email']);
-		$date = date('Y-m-d H:i:s');
+		// Check if user is activated
+		$stmt = $this->mysqli->prepare("SELECT `id` FROM `users` WHERE `active` = 1 AND `email` = :email");
+		$stmt->bindParam(':email', $data['email'], PDO::PARAM_STR);
+		$stmt->execute();
 
-		if( password_verify( $password, $hash ) ) {
-			// Check if better password methods are available
-			if( password_needs_rehash( $hash, PASSWORD_DEFAULT ) ) {
-				// Set rehashed password
-				$newHash = password_hash( $this->passwordGenerate( $data['password_encrypted'] ), PASSWORD_DEFAULT );
-				$stmt = $this->mysqli->prepare("UPDATE `users` SET `password` = :password WHERE `email` = :email");
-				$stmt->bindParam(':password', $newHash, PDO::PARAM_STR);
-				$stmt->bindParam(':email', $data['email'], PDO::PARAM_STR);
+		if( $stmt->rowCount() >= 1 ) {
+			$stmt = null; // Close query
+			$password = $this->passwordGenerate( $data['password_encrypted'] );
+			$hash = $this->detail( 'password', 'users', 'email', $data['email'] );
+			$date = date( 'Y-m-d H:i:s' );
+
+			if( password_verify( $password, $hash ) ) {
+				// Check if better password methods are available
+				if( password_needs_rehash( $hash, PASSWORD_DEFAULT ) ) {
+					// Set rehashed password
+					$newHash = password_hash( $this->passwordGenerate( $data['password_encrypted'] ), PASSWORD_DEFAULT );
+					$stmt = $this->mysqli->prepare( "UPDATE `users` SET `password` = :password WHERE `email` = :email" );
+					$stmt->bindParam( ':password', $newHash, PDO::PARAM_STR );
+					$stmt->bindParam( ':email', $data['email'], PDO::PARAM_STR );
+					$stmt->execute();
+
+					if( $stmt->rowCount() >= 1 ) {
+						$stmt = null;
+					} else {
+						$stmt = null;
+						return false;
+					}
+				}
+
+				// Login user
+				$stmt = $this->mysqli->prepare( "UPDATE `users` SET `active_date` = :active_date WHERE `email` = :email" );
+				$stmt->bindParam( ':active_date', $date, PDO::PARAM_STR );
+				$stmt->bindParam( ':email', $data['email'], PDO::PARAM_STR );
 				$stmt->execute();
 
 				if( $stmt->rowCount() >= 1 ) {
 					$stmt = null;
+					return true;
 				} else {
 					$stmt = null;
 					return false;
 				}
-			}
-
-			// Login user
-			$stmt = $this->mysqli->prepare("UPDATE `users` SET `active_date` = :active_date WHERE `email` = :email");
-			$stmt->bindParam(':active_date', $date, PDO::PARAM_STR);
-			$stmt->bindParam(':email', $data['email'], PDO::PARAM_STR);
-			$stmt->execute();
-
-			if( $stmt->rowCount() >= 1 ) {
-				$stmt = null;
-				return true;
 			} else {
-				$stmt = null;
 				return false;
 			}
 		} else {
@@ -132,7 +142,7 @@ class User extends Database implements Plugin {
 	 *
 	 * @return string
 	 */
-	private function passwordGenerate( $password ) {
+	private function passwordGenerate( string $password ) {
 		return hash( 'sha512', $password );
 	}
 
@@ -156,7 +166,7 @@ class User extends Database implements Plugin {
 	 *
 	 * @return bool
 	 */
-	public function hasPermission( $path ) {
+	public function hasPermission( string $path ) {
 		if( empty( $_SESSION['user'] ) ) {
 			return false;
 		}
@@ -195,7 +205,7 @@ class User extends Database implements Plugin {
 	 *
 	 * @param  string $url The url to go to
 	 */
-	public function to( $url ) {
+	public function to( string $url ) {
 		if( headers_sent() ) {
 			// For JavaScript and when JavaScript is turned off
 			echo '	<script>window.location = "'.$url.'";</script>
