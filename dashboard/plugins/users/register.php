@@ -68,7 +68,7 @@ if( $user->isLoggedIn() ) {
 	}
 	?>
 
-	<form action="" method="post">
+	<form action="" method="post" autocomplete="off">
 		<div class="sc-card-supporting sc-card-supporting-additional">
 			<div class="sc-floating-input">
 				<input type="text" name="first_name" id="first_name" required value="<?php echo $form->input('first_name'); ?>">

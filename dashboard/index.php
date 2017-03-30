@@ -4,6 +4,13 @@ require_once $_SERVER['DOCUMENT_ROOT'].'/dashboard/core/engine.php';
 // Check if path has been set
 if( !empty( $_GET['path'] ) ) {
  	$path = $db->sanitize( $_GET['path'] );
+
+ 	// Make sure Facebook works
+	if( strpos($path, 'facebook-login') !== false ) {
+		echo 3;
+		$path = rtrim($path, '/');
+	}
+
 	$plugins = new Plugins();
 	$dash = new Dashboard( $path, [ $language, 'translate' ] );
 

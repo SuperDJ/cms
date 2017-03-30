@@ -64,7 +64,7 @@ if( $user->isLoggedIn() ) {
 	}
 	?>
 
-        <form action="" method="post">
+        <form action="" method="post" autocomplete="off">
             <div class="sc-floating-input">
                 <input type="email" name="email" id="email" value="<?php echo $form->input('email'); ?>" required>
                 <label for="email"><?php echo $language->translate('Email'); ?></label>

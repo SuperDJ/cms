@@ -39,6 +39,7 @@ $db = new Database();
 $user = new User();
 $session = new Session();
 $cookie = new Cookie();
+$fb = new Facebook();
 
 // If a user is logged in set the desired language
 if( $user->isLoggedIn() ) {

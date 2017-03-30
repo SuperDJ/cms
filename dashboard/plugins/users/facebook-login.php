@@ -2,26 +2,25 @@
 if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 	$user->to('?path=overview/overview');
 } else {
-	$fb = new Facebook();
-	if( !empty( $_GET['code'] ) && !empty( $_GET['state'] ) ) {
-		if( !$session->exists( 'facebook' ) ) {
-			if( $fb->setAccessToken() ) {
 
-				$request = $fb->getRequest( [ 'id', 'first_name', 'last_name', 'email', 'languages', 'picture' ] );
-				print_r($request);
-				if( $user->facebookLogin( $request ) ) {
-					$fb->data = $request;
-					$user->to( '?path=overview/overview' );
-				} else {
-					echo 'Logging in using facebook went wrong';
-				}
-			} else {
-				echo 'Something went wrong setting token';
-			}
-		} else {
-			$user->to( '?path=overview/overview' );
-		}
+	// Request permission
+	if( empty( $_GET['code'] ) && empty( $_GET['state'] ) ) {
+		//$user->to( $helper->getLoginUrl( 'https://cms.dsuper.nl/dashboard/?path=users/facebook-login', [ 'email', 'user_likes' ] ) );
+		$user->to( $fb->urlGenerate( 'https://cms.dsuper.nl/dashboard/?path=users/facebook-login', [ 'email', 'user_likes' ] ) );
 	} else {
-		$user->to( $fb->urlGenerate( 'https://www.cms.dsuper.nl/dashboard/?path=users/facebook-login', [ 'email' ] ) );
+		$accessToken = $fb->getAccessToken();
+
+		if( !empty( $accessToken ) ) {
+			$fb->setAccessToken($accessToken);
+		} else {
+			echo 'Something went wrong with logging in into Facebook';
+		}
+
+		$fb->login();
+
+		$data = $fb->getRequest([ 'id', 'first_name', 'last_name', 'email', 'languages', 'picture' ]);
+
+		print_r($data);
+		//$user->facebookLogin($data);
 	}
 }

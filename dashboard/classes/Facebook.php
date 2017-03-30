@@ -1,16 +1,22 @@
 <?php
 class Facebook extends \Facebook\Facebook {
-	public 	$data = array();
+	public 	$data = array(),
+			$accessToken;
+
+	private $_helper,
+			$_credentials;
 
 	function __construct() {
 		// Get credentials
-		$credentials = json_decode( file_get_contents( ROOT.'/credentials.json' ) );
+		$this->_credentials = json_decode( file_get_contents( ROOT.'/credentials.json' ) );
 
 		parent::__construct([
-			'app_id' => $credentials->facebook->app_id,
-			'app_secret' => $credentials->facebook->app_secret,
-			'default_graph_version' => $credentials->facebook->version,
+			'app_id' => $this->_credentials->facebook->app_id,
+			'app_secret' => $this->_credentials->facebook->app_secret,
+			'default_graph_version' => $this->_credentials->facebook->version,
 		]);
+
+		$this->_helper = $this->getRedirectLoginHelper();
 	}
 
 	/**
@@ -21,31 +27,25 @@ class Facebook extends \Facebook\Facebook {
 	 *
 	 * @return string
 	 */
-	public function urlGenerate( $url, array $permission = array() ) {
-		$helper = $this->getRedirectLoginHelper();
-
+	public function urlGenerate( string $url, array $permission = array() ) {
 		if( !empty( $permission ) ) {
-			return $helper->getLoginUrl( $url, $permission );
+			return $this->_helper->getLoginUrl( $url, $permission );
 		} else {
-			return $helper->getLoginUrl( $url );
+			return $this->_helper->getLoginUrl( $url );
 		}
 	}
 
 	/**
-	 * Check access token
+	 * Return access token
 	 *
 	 * @return \Facebook\Authentication\AccessToken|null
 	 */
-	public function accessToken() {
-		$helper = $this->getRedirectLoginHelper();
-
+	public function getAccessToken() {
 		try {
-			$accessToken = $helper->getAccessToken();
-			echo $accessToken;
+			$accessToken = $this->_helper->getAccessToken();
 		} catch( Facebook\Exceptions\FacebookResponseException $e ) {
 			// When Graph returns an error
 			echo 'Graph returned an error: ' . $e->getMessage();
-			echo 1;
 			exit;
 		} catch( Facebook\Exceptions\FacebookSDKException $e ) {
 			// When validation fails or other local issues
@@ -53,24 +53,68 @@ class Facebook extends \Facebook\Facebook {
 			exit;
 		}
 
-		return $accessToken;
+		if( !isset( $accessToken ) ) {
+			if( $this->_helper->getError() ) {
+				header( 'HTTP/1.0 401 Unauthorized' );
+				echo "	Error: {$this->_helper->getError()}\r\n
+						Error Code: {$this->_helper->getErrorCode()}\r\n
+						Error Reason: {$this->_helper->getErrorReason()}\r\n
+						Error Description: {$this->_helper->getErrorDescription()}\r\n";
+			} else {
+				header( 'HTTP/1.0 400 Bad Request' );
+				echo 'Bad request';
+			}
+			exit;
+		} else {
+			return $accessToken;
+		}
 	}
 
 	/**
-	 * Set a default access token
+	 * Set access token in class
 	 *
-	 * @return bool
+	 * @param $token
 	 */
-	public function setAccessToken() {
-		// Logged in!
-		$_SESSION['facebook'] = $this->accessToken();
+	public function setAccessToken($token) {
+		$this->accessToken = $token;
+	}
 
-		// Replace short lived access token with long lived access token
+	/**
+	 * Set Facebook session
+	 */
+	public function login() {
+		// Logged in
+		/*echo '<h3>Access Token</h3>';
+		var_dump($accessToken->getValue());*/
+
+		// The OAuth 2.0 client handler helps us manage access tokens
 		$oAuth2Client = $this->getOAuth2Client();
-		$_SESSION['facebook'] =  $oAuth2Client->getLongLivedAccessToken($_SESSION['facebook']);
 
-		// Set default access token so it doesn't need to be called each time
-		$this->setDefaultAccessToken($_SESSION['facebook']);
+		// Get the access token metadata from /debug_token
+		$tokenMetadata = $oAuth2Client->debugToken($this->accessToken);
+		/*echo '<h3>Metadata</h3>';
+		var_dump($tokenMetadata);*/
+
+		// Validation (these will throw FacebookSDKException's when they fail)
+		$tokenMetadata->validateAppId($this->_credentials->facebook->app_id); // Replace {app-id} with your app id
+		// If you know the user ID this access token belongs to, you can validate it here
+		$tokenMetadata->validateUserId($tokenMetadata->getUserId());
+		$tokenMetadata->validateExpiration();
+
+		if( !$this->accessToken->isLongLived() ) {
+			// Exchanges a short-lived access token for a long-lived one
+			try {
+				$this->accessToken = $oAuth2Client->getLongLivedAccessToken($this->accessToken);
+			} catch( Facebook\Exceptions\FacebookSDKException $e ) {
+				echo "<p>Error getting long-lived access token: " . $this->_helper->getMessage() . "</p>\n\n";
+				exit;
+			}
+
+			echo '<h3>Long-lived</h3>';
+			var_dump($this->accessToken->getValue());
+		}
+
+		$_SESSION['facebook'] = base64_encode( (string) $this->accessToken );
 
 		if( !empty( $_SESSION['facebook'] ) ) {
 			return true;
@@ -79,12 +123,19 @@ class Facebook extends \Facebook\Facebook {
 		}
 	}
 
+	/**
+	 * Send request to Facebook
+	 *
+	 * @param array $fields
+	 *
+	 * @return array
+	 */
 	public function getRequest( array $fields = array() ) {
 		try {
 			if( !empty( $fields ) ) {
-				$response = $this->get('/me?fields='.implode(',', $fields ));
+				$response = $this->get('/me?fields='.implode(',', $fields ), $this->accessToken);
 			} else {
-				$response = $this->get( '/me' );
+				$response = $this->get( '/me', $this->accessToken );
 			}
 		} catch( Facebook\Exceptions\FacebookResponseException $e ) {
 			// When Graph returns an error
@@ -95,21 +146,6 @@ class Facebook extends \Facebook\Facebook {
 			echo 'Facebook SDK returned an error: ' . $e->getMessage();
 			exit;
 		}
-
 		return $response->getDecodedBody();
-	}
-
-	public function logout() {
-		if( !empty( $_SESSION['facebook'] ) ) {
-			unset( $_SESSION['facebook'] );
-
-			if( empty( $_SESSION['facebook'] ) ) {
-				return true;
-			} else {
-				return false;
-			}
-		} else {
-			return true;
-		}
 	}
 }

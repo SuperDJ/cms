@@ -415,4 +415,19 @@ class User extends Database implements Plugin {
 			return false;
 		}
 	}
+
+	public function facebookLogin( int $id ) {
+		$stmt = $this->mysqli->prepare("UPDATE `users` SET `facebook_id` = :facebook_id WHERE `id` = :id");
+		$stmt->bindParam(':facebook_id', $id, PDO::PARAM_INT);
+		$stmt->bindParam(':id', $this->data['id'], PDO::PARAM_INT);
+		$stmt->execute();
+
+		if( $stmt->rowCount() >= 1 ) {
+			$stmt = null;
+			return true;
+		} else {
+			$stmt = null;
+			return false;
+		}
+	}
 }
