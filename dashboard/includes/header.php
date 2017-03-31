@@ -49,13 +49,15 @@
 
         <nav id="sc-drawer" class="sc-drawer sc-drawer-persistent">
             <header class="sc-drawer-header">
-                <img src="/dashboard/stylesheets/images/profile.jpg" alt="Profile image" class="sc-drawer-profile-img">
+                <img src="<?php echo ( !empty( $user->data['picture'] ) ? $user->data['picture'] : '/dashboard/stylesheets/images/profile.jpg' ); ?>" alt="Profile image" class="sc-drawer-profile-img">
                 <div class="sc-drawer-profile-name"><?php echo substr( $user->data['first_name'], 0, 1 ).'. '.$user->data['last_name']; ?></div>
                 <div id="sc-drawer-profile-more" class="sc-drawer-profile-more">
                     <i class="material-icons sc-trigger" data-sc-trigger="profile-more">arrow_drop_down</i>
 
                     <nav class="sc-menu" id="profile-more">
-                        <a href="?path=users/facebook-login"><?php echo $language->translate('Facebook login'); ?></a>
+                        <?php
+                        echo ( $session->exists('facebook') ? '<a href="?path=users/facebook-logout">'.$language->translate('Facebook logout').'</a>' : '<a href="?path=users/facebook-login">'.$language->translate('Facebook login').'</a>' );
+                        ?>
                         <a href="?path=users/profile">
                             <i class="material-icons">settings</i>
                             <?php echo $language->translate('Profile settings'); ?>

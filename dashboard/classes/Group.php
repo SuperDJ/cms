@@ -54,6 +54,7 @@ class Group extends Database implements Plugin {
 
 		// $value is always 1
 		foreach( $data as $plugin_id => $value ) {
+			echo $id.' '.$plugin_id;
 			if( is_numeric( $plugin_id ) ) {
 				$insertQuery[] = '(?, ?)';
 				$insertData[] = $id;
@@ -260,7 +261,7 @@ class Group extends Database implements Plugin {
 		$add = array();
 		foreach( $plugins as $key => $plugin ) {
 			if( !in_array( $plugin, array_column( $rights, 'plugins_id' ) ) ) {
-				$add[] = $plugin;
+				$add[$plugin] = 1;
 			}
 		}
 

@@ -2,7 +2,6 @@
 if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 	$user->to('?path=overview/overview');
 } else {
-
 	// Request permission
 	if( empty( $_GET['code'] ) && empty( $_GET['state'] ) ) {
 		//$user->to( $helper->getLoginUrl( 'https://cms.dsuper.nl/dashboard/?path=users/facebook-login', [ 'email', 'user_likes' ] ) );
@@ -16,11 +15,19 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 			echo 'Something went wrong with logging in into Facebook';
 		}
 
+		// Set Facebook session
 		$fb->login();
 
-		$data = $fb->getRequest([ 'id', 'first_name', 'last_name', 'email', 'languages', 'picture' ]);
+		// Request user information
+		$data = $fb->getRequest([ 'id', 'picture' ]);
 
-		print_r($data);
-		//$user->facebookLogin($data);
+		//print_r($data);
+		if( $user->facebookLogin($data) && $session->exists('facebook') ) {
+			$user->to('?path=overview/overview&message='.$language->translate('Facebook logged in').'&messageType=success');
+		} else {
+			echo '	<div class="error sc-card sc-card-supporting-additional" role="alert">
+						'.$language->translate('Could not login to Facebook').'
+					</div>';
+		}
 	}
 }

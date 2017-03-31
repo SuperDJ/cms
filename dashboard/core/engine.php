@@ -30,6 +30,9 @@ if( TEST === true ) {
 // Auto loader for facebook
 require_once 'sdk/Facebook/autoload.php';
 
+// Auto loader for Google
+require_once 'sdk/Google/vendor/autoload.php';
+
 // Individually load classes
 spl_autoload_register(function( $class ) {
 	require_once 'classes/'.$class.'.php';

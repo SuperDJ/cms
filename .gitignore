@@ -1,0 +1,6 @@
+.idea/
+*.json
+dashboard/node_modules/
+db.sql
+erd.mwb
+erd.mwb.bak

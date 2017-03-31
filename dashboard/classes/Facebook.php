@@ -110,8 +110,8 @@ class Facebook extends \Facebook\Facebook {
 				exit;
 			}
 
-			echo '<h3>Long-lived</h3>';
-			var_dump($this->accessToken->getValue());
+			/*echo '<h3>Long-lived</h3>';
+			var_dump($this->accessToken->getValue());*/
 		}
 
 		$_SESSION['facebook'] = base64_encode( (string) $this->accessToken );
@@ -121,6 +121,10 @@ class Facebook extends \Facebook\Facebook {
 		} else {
 			return false;
 		}
+	}
+
+	public function logout($url) {
+	 	return $this->_helper->getLogoutUrl($this->accessToken, $url);
 	}
 
 	/**

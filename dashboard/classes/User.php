@@ -224,27 +224,21 @@ class User extends Database implements Plugin {
 	 * @return bool
 	 */
 	public function data( int $id = null ) {
-		if( !is_null( $id ) ) {
-			$stmt = $this->mysqli->prepare("
-				SELECT `u`.`id`, `first_name`, `last_name`, `email`, `register_date`, `active_date`, `groups_id`, `group`, `active`, `languages_id`, `language` 
+		$query = "
+				SELECT 	`u`.`id`, `first_name`, `last_name`, `email`, `register_date`, `active_date`, 
+						`groups_id`, `group`, `active`, `languages_id`, `language`, `picture` 
 				FROM `users` `u`
 			  	LEFT JOIN `groups` `g`
 					ON `g`.`id` = `u`.groups_id
 				LEFT JOIN `languages` `l`
-					ON `l`.`id` = `u`.languages_id
-				WHERE `u`.`id` = :id	
-				LIMIT 1
-			");
+					ON `l`.`id` = `u`.languages_id";
+		if( !is_null( $id ) ) {
+			$query .= "	WHERE `u`.`id` = :id	
+						LIMIT 1";
+			$stmt = $this->mysqli->prepare($query);
 			$stmt->bindParam(':id', $id, PDO::PARAM_INT);
 		} else {
-			$stmt = $this->mysqli->prepare("
-				SELECT `u`.`id`, `first_name`, `last_name`, `email`, `register_date`, `active_date`, `groups_id`, `group`, `active`, `languages_id`, `language` 
-				FROM `users` `u`
-			  	LEFT JOIN `groups` `g`
-					ON `g`.`id` = `u`.groups_id
-				LEFT JOIN `languages` `l`
-					ON `l`.`id` = `u`.languages_id
-			");
+			$stmt = $this->mysqli->prepare($query);
 		}
 		$stmt->execute();
 
@@ -416,9 +410,13 @@ class User extends Database implements Plugin {
 		}
 	}
 
-	public function facebookLogin( int $id ) {
-		$stmt = $this->mysqli->prepare("UPDATE `users` SET `facebook_id` = :facebook_id WHERE `id` = :id");
-		$stmt->bindParam(':facebook_id', $id, PDO::PARAM_INT);
+	public function facebookLogin( array $data ) {
+		$facebook = $data['id'];
+		$image = ( !empty( $data['picture']['data']['url'] ) ? $data['picture']['data']['url'] : '' );
+
+		$stmt = $this->mysqli->prepare("UPDATE `users` SET `facebook_id` = :facebook_id, `picture` = :picture WHERE `id` = :id");
+		$stmt->bindParam(':facebook_id', $facebook, PDO::PARAM_INT);
+		$stmt->bindParam(':picture', $image, PDO::PARAM_STR);
 		$stmt->bindParam(':id', $this->data['id'], PDO::PARAM_INT);
 		$stmt->execute();
 
