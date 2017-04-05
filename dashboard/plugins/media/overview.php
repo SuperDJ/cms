@@ -4,7 +4,7 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 } else {
 	$title = $language->translate( 'Overview' );
 	require_once $dash->getInclude( 'header' );
-	$media = new Media();
+	$media = new Media($db);
 	$data = $media->data();
 
 	echo '  <style>img, video, audio {max-width: 250px;}</style>

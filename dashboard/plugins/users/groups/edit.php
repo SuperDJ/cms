@@ -5,9 +5,9 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
     if( empty( $id ) && !$db->exists('id', 'groups', 'id', $id)) {
         $user->to('?path=users/groups/overview');
     } else {
-		$form = new Form();
-		$group = new Group();
-		$plugin = new Plugins();
+		$form = new Form( $db );
+		$group = new Group( $db );
+		$plugin = new Plugins( $db );
 		$data = $group->data( $id )[0]; // Get all data for group
 		$title = $language->translate( 'Edit' ).': '.$language->translate( $data['group'] );
 		require_once $dash->getInclude( 'header' );

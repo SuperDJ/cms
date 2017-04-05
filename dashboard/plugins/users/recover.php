@@ -14,7 +14,7 @@ if( $user->isLoggedIn() ) {
 			$title = $language->translate( 'Recover' );
 			require_once $plugins->getHeader( 'lr' );
 
-			$form = new Form();
+			$form = new Form($db);
 			// Check form
 			if( $_POST ) {
 				$validation = $form->check( $_POST, array(

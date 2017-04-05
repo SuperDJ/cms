@@ -5,8 +5,8 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 	if( empty( $id ) && !$db->exists( 'id', 'groups', 'id', $id ) ) {
 		$user->to( '?path=plugins/overview' );
 	} else {
-		$form = new Form();
-		$plugins = new Plugins();
+		$form = new Form( $db );
+		$plugins = new Plugins( $db );
 		$data = $plugins->data($id)[0];
 		$title = $language->translate( 'Edit' ).': '.$language->translate( $data['name'] );
 		require_once $dash->getInclude( 'header' );

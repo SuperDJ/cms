@@ -1,5 +1,13 @@
 <?php
-class Group extends Database implements Plugin {
+class Group implements Plugin {
+	private $_db;
+
+	function __construct( Database $db = null ) {
+		if( !is_null( $db ) ) {
+			$this->_db = $db;
+		}
+	}
+
 	/**
 	 * Add group to database
 	 *
@@ -9,13 +17,13 @@ class Group extends Database implements Plugin {
 	 */
 	public function add( array $data ) {
 		$q = 0; // Store completed queries
-		$stmt = $this->mysqli->prepare("INSERT INTO `groups` (`group`, `description`, `default`) VALUES (:group, :description, :default)");
+		$stmt = $this->_db->mysqli->prepare("INSERT INTO `groups` (`group`, `description`, `default`) VALUES (:group, :description, :default)");
 		$stmt->bindParam(':group', $data['group'], PDO::PARAM_STR);
 		$stmt->bindParam(':description', $data['description'], PDO::PARAM_STR);
 		$stmt->bindParam(':default', $data['default'], PDO::PARAM_INT);
 		$stmt->execute();
 
-		$id = $this->mysqli->lastInsertId(); // Store insert id
+		$id = $this->_db->mysqli->lastInsertId(); // Store insert id
 		if( $stmt->rowCount() >= 1 ) {
 			$stmt = null;
 			$q++;
@@ -54,7 +62,6 @@ class Group extends Database implements Plugin {
 
 		// $value is always 1
 		foreach( $data as $plugin_id => $value ) {
-			echo $id.' '.$plugin_id;
 			if( is_numeric( $plugin_id ) ) {
 				$insertQuery[] = '(?, ?)';
 				$insertData[] = $id;
@@ -64,7 +71,7 @@ class Group extends Database implements Plugin {
 
 		if( !empty( $insertQuery ) ) {
 			$query .= implode( ', ', $insertQuery );
-			$stmt = $this->mysqli->prepare($query);
+			$stmt = $this->_db->mysqli->prepare($query);
 			$stmt->execute($insertData);
 
 			if( $stmt->rowCount() >= 1 ) {
@@ -85,7 +92,7 @@ class Group extends Database implements Plugin {
 	 * @return bool
 	 */
 	public function delete( int $id ) {
-		$stmt = $this->mysqli->prepare("DELETE FROM `groups` WHERE `id` = :id");
+		$stmt = $this->_db->mysqli->prepare("DELETE FROM `groups` WHERE `id` = :id");
 		$stmt->bindParam(':id', $id, PDO::PARAM_INT);
 		$stmt->execute();
 
@@ -102,18 +109,19 @@ class Group extends Database implements Plugin {
 	 * Delete rights
 	 *
 	 * @param array $delete
-	 * @param array $data
+	 * @param int   $id
 	 *
 	 * @return bool
+	 * @internal param array $data
 	 */
-	private function deleteRights( array $delete, array $data ) {
-		$stmt = $this->mysqli->prepare("DELETE FROM `rights` WHERE `groups_id` = :groups_id AND `plugins_id` = :plugins_id");
+	private function deleteRights( array $delete, int $id ) {
+		$stmt = $this->_db->mysqli->prepare("DELETE FROM `rights` WHERE `groups_id` = :groups_id AND `plugins_id` = :plugins_id");
 
 		$count = count( $delete );
 		$i = 0;
 		foreach( $delete as $key => $row ) {
-			$stmt->bindParam(':groups_id', $data['id'], PDO::PARAM_INT);
-			$stmt->bindParam(':plugins_id', $row, PDO::PARAM_INT);
+			$stmt->bindParam(':groups_id', $id, PDO::PARAM_INT);
+			$stmt->bindParam(':plugins_id', $key, PDO::PARAM_INT);
 			$stmt->execute();
 
 			if( $stmt->rowCount() >= 1 ) {
@@ -154,11 +162,11 @@ class Group extends Database implements Plugin {
 				GROUP BY `g`.`id`
 				LIMIT 1
 			";
-			$stmt = $this->mysqli->prepare($query);
+			$stmt = $this->_db->mysqli->prepare($query);
 			$stmt->bindParam( ':id', $id, PDO::PARAM_INT );
 		} else {
 			$query .= "GROUP BY `g`.`id`";
-			$stmt = $this->mysqli->prepare($query);
+			$stmt = $this->_db->mysqli->prepare($query);
 		}
 		$stmt->execute();
 
@@ -180,7 +188,7 @@ class Group extends Database implements Plugin {
 	 * @return bool
 	 */
 	public function rights( int $id ) {
-		$stmt = $this->mysqli->prepare("SELECT `plugins_id` FROM `rights` WHERE `groups_id` = :id");
+		$stmt = $this->_db->mysqli->prepare("SELECT `plugins_id` FROM `rights` WHERE `groups_id` = :id");
 		$stmt->bindParam(':id', $id, PDO::PARAM_INT);
 		$stmt->execute();
 
@@ -204,15 +212,15 @@ class Group extends Database implements Plugin {
 	public function edit( array $data ) {
 		$q = 0; // Store query success
 		// Check if description or group needs to be update
-		if( $data['description'] != $this->detail('description', 'groups', 'id', $data['id']) &&
-			$data['group'] != $this->detail('group', 'groups', 'id', $data['id']) &&
-			$data['default'] != $this->detail('default', 'groups', 'id', $data['id'])
+		if( $data['description'] != $this->_db->detail('description', 'groups', 'id', $data['id']) &&
+			$data['group'] != $this->_db->detail('group', 'groups', 'id', $data['id']) &&
+			$data['default'] != $this->_db->detail('default', 'groups', 'id', $data['id'])
 		) {
 			if( !empty( $data['default'] ) ) {
-				$stmt = $this->mysqli->prepare("UPDATE `groups` SET `group` = :group, `description` = :description, `default` = :default WHERE `id` = :id");
+				$stmt = $this->_db->mysqli->prepare("UPDATE `groups` SET `group` = :group, `description` = :description, `default` = :default WHERE `id` = :id");
 				$stmt->bindParam(':default', $data['default'], PDO::PARAM_INT);
 			} else {
-				$stmt = $this->mysqli->prepare("UPDATE `groups` SET `group` = :group, `description` = :description, `default` = DEFAULT WHERE `id` = :id");
+				$stmt = $this->_db->mysqli->prepare("UPDATE `groups` SET `group` = :group, `description` = :description, `default` = DEFAULT WHERE `id` = :id");
 			}
 			$stmt->bindParam(':group', $data['group'], PDO::PARAM_STR);
 			$stmt->bindParam(':description', $data['description'], PDO::PARAM_STR);
@@ -246,13 +254,15 @@ class Group extends Database implements Plugin {
 		$delete = array();
 		foreach( $rights as $key => $field ) {
 			if( !in_array( $field['plugins_id'], $plugins ) ) {
-				$delete[] = $field['plugins_id'];
+				$delete[$field['plugins_id']] = 1;
 			}
 		}
 
 		// Delete rights
 		if( !empty( $delete ) ) {
-			$this->deleteRights($delete, $data);
+			if( $this->deleteRights($delete, $data['id']) ) {
+				$q++;
+			}
 		} else {
 			$q++;
 		}

@@ -8,11 +8,10 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 		$data = $user->data($id);
 		$title = $language->translate( 'Edit' ).': '.substr( $data[0]['first_name'], 0, 1 ).'. '.$data[0]['last_name'];
 		require_once $dash->getInclude( 'header' );
-
-		$group = new Group();
+		$group = new Group($db);
 		$groups = $group->data();
+		$form = new Form($db);
 
-		$form = new Form();
 		// Check form
 		if( $_POST ) {
 			$validation = $form->check( $_POST, array(
@@ -29,7 +28,7 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 			), [ $language, 'translate' ], $id );
 
 			if( empty( $form->errors ) ) {
-				if( $db->query( "UPDATE `users` SET `active` = ?, `groups_id` = ? WHERE `id` = ?", $validation ) ) {
+				if( $user->edit($validation) ) {
 					$user->to( '?path=users/overview&message='.$language->translate( 'User edited' ).'&messageType=success' );
 				} else {
 					echo '<div class="error sc-card sc-card-supporting" role="error">'.$language->translate( 'Something went wrong editing the user' ).'</div>';

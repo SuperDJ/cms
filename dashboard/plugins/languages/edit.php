@@ -10,7 +10,7 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 	$title = $language->translate( 'Edit' ).': '.$data['language'];
 	require_once $dash->getInclude( 'header' );
 
-	$form = new Form();
+	$form = new Form($db);
 
 	if( $_POST ) {
 		$validation = $form->check( $_POST, array(

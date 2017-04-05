@@ -4,9 +4,8 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 } else {
 	$title = $language->translate( 'Add' );
 	require_once $dash->getInclude( 'header' );
-	$form = new Form();
-
-	$plugin = new Plugins();
+	$form = new Form( $db );
+	$plugin = new Plugins( $db );
 	$plugins = $plugin->data();
 
 	function buildTree( array $elements, $parentId = 0 ) {
@@ -90,7 +89,7 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 
 		if( empty( $form->errors ) ) {
 		    // Add group to database or give error message
-            $group = new Group();
+            $group = new Group($db);
 		    if( $group->add( $validation ) ) {
                 $user->to('?path=users/groups/overview&message='.$language->translate('Group has been added').'&messageType=success');
             } else {

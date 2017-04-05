@@ -5,11 +5,11 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 	if( empty( $id ) && !$db->exists('id', 'pages', 'id', $id) ) {
 		$user->to('?path=pages/overview');
 	} else {
-		$page = new Page();
+		$page = new Page($db);
 		$data = $page->data( $id )[0];
 		$title = $language->translate( 'Edit' ).': '.$data['title'];
 		require_once $dash->getInclude( 'header' );
-		$form = new Form();
+		$form = new Form($db);
 
 		if( $_POST ) {
 			$validation = $form->check( $_POST, array(

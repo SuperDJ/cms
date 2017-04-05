@@ -1,5 +1,5 @@
 <?php
-class Form extends Database {
+class Form {
 	public 	$errors = array(), // Storing all errors
 			$return = array(), // Storing all fields and value to be used in database
 			$remember = array(), // Storing all fields and value to be used in form
@@ -18,10 +18,13 @@ class Form extends Database {
 				)
 			); // TODO add allowed file types for tracks
 
-	private $_page; // Store current page
+	private $_page,  // Store current page
+			$_db;
 
-	function __construct() {
-		parent::__construct();
+	function __construct( Database $db = null ) {
+		if( !is_null( $db ) ) {
+			$this->_db = $db;
+		}
 
 		// Delete form session to prevent errors in other forms
 		$_SESSION['page'] = $_SERVER['PHP_SELF'];
@@ -55,7 +58,7 @@ class Form extends Database {
 				if( isset( $source[$item] ) ) {
 					// Remove malicious characters
 					if( !empty( $source[$item] ) ) {
-						$value = $this->sanitize( $source[$item], $html );
+						$value = $this->_db->sanitize( $source[$item], $html );
 					} else {
 						$value = '';
 					}
@@ -113,16 +116,16 @@ class Form extends Database {
 					case 'unique':
 						if( !is_null( $id ) && !empty( $value ) ) {
 							// Get the current value
-							$current_value = $this->detail($item, $rule_value, 'id', $id);
+							$current_value = $this->_db->detail($item, $rule_value, 'id', $id);
 							// Check if the current value is not equal to the the value
 							if( $current_value != $value ) {
 								// Check if the value is unique in the database
-								if( $this->exists($item, $rule_value, $item, $value) ) {
+								if( $this->_db->exists($item, $rule_value, $item, $value) ) {
 									$this->addError($translate( $rules['name'] ).' '.$value.' '.$translate('already exists'));
 								}
 							}
 						} else {
-							if( $this->exists($item, $rule_value, $item, $value) && !empty( $value ) ) {
+							if( $this->_db->exists($item, $rule_value, $item, $value) && !empty( $value ) ) {
 								$this->addError($translate( $rules['name'] ).' '.$value.' '.$translate('already exists'));
 							}
 						}
@@ -137,11 +140,11 @@ class Form extends Database {
 					case 'exists':
 						// If $value is numeric most likely it's an id
 						if( is_numeric( $value ) ) {
-							if( !$this->exists( $item, $rule_value, 'id', $value) ) {
+							if( !$this->_db->exists( $item, $rule_value, 'id', $value) ) {
 								$this->addError( $translate( $rules['name'] ).' '.$value.' '.$translate( 'does not exists' ) );
 							}
 						} else {
-							if( !$this->exists( $item, $rule_value, $item, $value ) ) {
+							if( !$this->_db->exists( $item, $rule_value, $item, $value ) ) {
 								$this->addError( $translate( $rules['name'] ).' '.$value.' '.$translate( 'does not exists' ) );
 							}
 						}
@@ -281,7 +284,7 @@ class Form extends Database {
 	 *
 	 * @return bool
 	 */
-	public function media( array $data, callable $translate, string $type ) {
+	public function media( array $data, callable $translate, $type ) {
 		$totalFiles = count($data);
 
 		$i = 0;

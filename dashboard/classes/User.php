@@ -1,11 +1,14 @@
 <?php
-class User extends Database implements Plugin {
+class User implements Plugin {
 	public $data = array(); // Store logged in user data so it isn't queried each time
 
-	private $_id; // Store user id
+	private $_id, // Store user id
+			$_db;
 
-	function __construct() {
-		parent::__construct();
+	function __construct( Database $db = null ) {
+		if( !is_null( $db ) ) {
+			$this->_db = $db;
+		}
 
 		if( $this->isLoggedIn() ) {
 			$this->_id = (int)$_SESSION['user']['id'];
@@ -28,7 +31,7 @@ class User extends Database implements Plugin {
 		$register_date = date('Y-m-d H:i:s');
 		$active = 1;
 
-		$stmt = $this->mysqli->prepare("INSERT INTO `users` (`first_name`, `last_name`, `email`, `register_date`, `active`, `groups_id`) VALUES (:first_name, :last_name, :email, :register_date, :active, :groups_id)");
+		$stmt = $this->_db->mysqli->prepare("INSERT INTO `users` (`first_name`, `last_name`, `email`, `register_date`, `active`, `groups_id`) VALUES (:first_name, :last_name, :email, :register_date, :active, :groups_id)");
 		$stmt->bindParam(':first_name', $data['first_name'], PDO::PARAM_STR);
 		$stmt->bindParam(':last_name', $data['last_name'], PDO::PARAM_STR);
 		$stmt->bindParam(':email', $data['email'], PDO::PARAM_STR);
@@ -59,7 +62,7 @@ class User extends Database implements Plugin {
 		$groups_id = $this->detail('id', 'groups', 'default', 1);
 		$groups_id = ( !empty( $groups_id ) ? $groups_id : 0 );
 
-		$stmt = $this->mysqli->prepare("INSERT INTO `users` (`first_name`, `last_name`, `email`, `password`, `register_date`, `groups_id`) VALUES (:first_name, :last_name, :email, :password, :register_date, :groups_id)");
+		$stmt = $this->_db->mysqli->prepare("INSERT INTO `users` (`first_name`, `last_name`, `email`, `password`, `register_date`, `groups_id`) VALUES (:first_name, :last_name, :email, :password, :register_date, :groups_id)");
 		$stmt->bindParam(':first_name', $data['first_name'], PDO::PARAM_STR);
 		$stmt->bindParam(':last_name', $data['last_name'], PDO::PARAM_STR);
 		$stmt->bindParam(':email', $data['email'], PDO::PARAM_STR);
@@ -86,7 +89,7 @@ class User extends Database implements Plugin {
 	 */
 	public function login( array $data ) {
 		// Check if user is activated
-		$stmt = $this->mysqli->prepare("SELECT `id` FROM `users` WHERE `active` = 1 AND `email` = :email");
+		$stmt = $this->_db->mysqli->prepare("SELECT `id` FROM `users` WHERE `active` = 1 AND `email` = :email");
 		$stmt->bindParam(':email', $data['email'], PDO::PARAM_STR);
 		$stmt->execute();
 
@@ -101,7 +104,7 @@ class User extends Database implements Plugin {
 				if( password_needs_rehash( $hash, PASSWORD_DEFAULT ) ) {
 					// Set rehashed password
 					$newHash = password_hash( $this->passwordGenerate( $data['password_encrypted'] ), PASSWORD_DEFAULT );
-					$stmt = $this->mysqli->prepare( "UPDATE `users` SET `password` = :password WHERE `email` = :email" );
+					$stmt = $this->_db->mysqli->prepare( "UPDATE `users` SET `password` = :password WHERE `email` = :email" );
 					$stmt->bindParam( ':password', $newHash, PDO::PARAM_STR );
 					$stmt->bindParam( ':email', $data['email'], PDO::PARAM_STR );
 					$stmt->execute();
@@ -115,7 +118,7 @@ class User extends Database implements Plugin {
 				}
 
 				// Login user
-				$stmt = $this->mysqli->prepare( "UPDATE `users` SET `active_date` = :active_date WHERE `email` = :email" );
+				$stmt = $this->_db->mysqli->prepare( "UPDATE `users` SET `active_date` = :active_date WHERE `email` = :email" );
 				$stmt->bindParam( ':active_date', $date, PDO::PARAM_STR );
 				$stmt->bindParam( ':email', $data['email'], PDO::PARAM_STR );
 				$stmt->execute();
@@ -152,7 +155,7 @@ class User extends Database implements Plugin {
 	 * @return bool
 	 */
 	public function isLoggedIn() {
-		if( !empty( $_SESSION['user']['id'] ) && $this->exists('email', 'users', 'id', $_SESSION['user']['id'] ) ) {
+		if( !empty( $_SESSION['user']['id'] ) && $this->_db->exists('email', 'users', 'id', $_SESSION['user']['id'] ) ) {
 			return true;
 		} else {
 			return false;
@@ -172,8 +175,8 @@ class User extends Database implements Plugin {
 		}
 
 		$group = $_SESSION['user']['group'];
-		if( !empty( $_SESSION['user'] ) && $this->exists('id', 'groups', 'id', $group ) ) {
-			$stmt = $this->mysqli->prepare("
+		if( !empty( $_SESSION['user'] ) && $this->_db->exists('id', 'groups', 'id', $group ) ) {
+			$stmt = $this->_db->mysqli->prepare("
 				SELECT `url` FROM `plugins` `p`
 				JOIN `rights` `r`
 					ON `r`.`plugins_id` = `p`.`id`
@@ -235,10 +238,10 @@ class User extends Database implements Plugin {
 		if( !is_null( $id ) ) {
 			$query .= "	WHERE `u`.`id` = :id	
 						LIMIT 1";
-			$stmt = $this->mysqli->prepare($query);
+			$stmt = $this->_db->mysqli->prepare($query);
 			$stmt->bindParam(':id', $id, PDO::PARAM_INT);
 		} else {
-			$stmt = $this->mysqli->prepare($query);
+			$stmt = $this->_db->mysqli->prepare($query);
 		}
 		$stmt->execute();
 
@@ -260,9 +263,10 @@ class User extends Database implements Plugin {
 	 * @return bool
 	 */
 	public function edit( array $data ) {
-		$stmt = $this->mysqli->prepare("UPDATE `users` SET `active` = :active, `groups_id` = :groups_id");
+		$stmt = $this->_db->mysqli->prepare("UPDATE `users` SET `active` = :active, `groups_id` = :groups_id WHERE `id` = :id ");
 		$stmt->bindParam(':active', $data['active'], PDO::PARAM_INT);
-		$stmt->bindParam(':groups_id', $data['groups_id'], PDO::PARAM_INT);
+		$stmt->bindParam(':groups_id', $data['group'], PDO::PARAM_INT);
+		$stmt->bindParam(':id', $data['id'], PDO::PARAM_INT);
 		$stmt->execute();
 
 		if( $stmt->rowCount() >= 1 ) {
@@ -282,7 +286,7 @@ class User extends Database implements Plugin {
 	 * @return bool
 	 */
 	public function delete( int $id ) {
-		$stmt = $this->mysqli->prepare("DELETE FROM `users` WHERE `id` = :id");
+		$stmt = $this->_db->mysqli->prepare("DELETE FROM `users` WHERE `id` = :id");
 		$stmt->bindParam(':id', $id, PDO::PARAM_INT);
 		$stmt->execute();
 
@@ -314,7 +318,7 @@ class User extends Database implements Plugin {
 				$password = password_hash( $this->passwordGenerate( $data['password_encrypted'] ), PASSWORD_DEFAULT );
 				$active = 1;
 
-				$stmt = $this->mysqli->prepare("UPDATE `users` SET `password` = :password, active = :active WHERE `email` = :email");
+				$stmt = $this->_db->mysqli->prepare("UPDATE `users` SET `password` = :password, active = :active WHERE `email` = :email");
 				$stmt->bindParam(':password', $password, PDO::PARAM_STR);
 				$stmt->bindParam(':active', $active, PDO::PARAM_INT);
 				$stmt->bindParam(':email', $data['email'], PDO::PARAM_STR);
@@ -331,7 +335,7 @@ class User extends Database implements Plugin {
 				return false;
 			}
 		} else {
-			$stmt = $this->mysqli->prepare("SELECT `first_name`, `last_name`, `active_date` FROM `users` WHERE `email` = :email LIMIT 1");
+			$stmt = $this->_db->mysqli->prepare("SELECT `first_name`, `last_name`, `active_date` FROM `users` WHERE `email` = :email LIMIT 1");
 			$stmt->bindParam(':email', $data['email'], PDO::PARAM_STR);
 			$stmt->execute();
 			$stmt->fetch();
@@ -354,7 +358,7 @@ class User extends Database implements Plugin {
 			// Set active to 0 if necessary
 			if( $this->detail('active', 'users', 'email', $data['email']) !== 0 ) {
 				$active = null;
-				$stmt = $this->mysqli->prepare( "UPDATE `users` SET `active` = :active WHERE `email` = :email" );
+				$stmt = $this->_db->mysqli->prepare( "UPDATE `users` SET `active` = :active WHERE `email` = :email" );
 				$stmt->bindParam(':active', $active, PDO::PARAM_NULL);
 				$stmt->bindParam(':email', $data['email'], PDO::PARAM_STR);
 				$stmt->execute();
@@ -382,7 +386,7 @@ class User extends Database implements Plugin {
 	 * @return bool
 	 */
 	public function profile( array $data ) {
-		$stmt = $this->mysqli->prepare("
+		$stmt = $this->_db->mysqli->prepare("
 			UPDATE `users` SET 
 				`first_name` = :first_name,
 				`last_name` = :last_name,
@@ -414,7 +418,7 @@ class User extends Database implements Plugin {
 		$facebook = $data['id'];
 		$image = ( !empty( $data['picture']['data']['url'] ) ? $data['picture']['data']['url'] : '' );
 
-		$stmt = $this->mysqli->prepare("UPDATE `users` SET `facebook_id` = :facebook_id, `picture` = :picture WHERE `id` = :id");
+		$stmt = $this->_db->mysqli->prepare("UPDATE `users` SET `facebook_id` = :facebook_id, `picture` = :picture WHERE `id` = :id");
 		$stmt->bindParam(':facebook_id', $facebook, PDO::PARAM_INT);
 		$stmt->bindParam(':picture', $image, PDO::PARAM_STR);
 		$stmt->bindParam(':id', $this->data['id'], PDO::PARAM_INT);

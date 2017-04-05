@@ -4,7 +4,7 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 } else {
 	$title = $language->translate( 'Add' );
 	require_once $dash->getInclude( 'header' );
-	$form = new Form();
+	$form = new Form($db);
 
 	if( $_POST ) {
 		$validation = $form->check($_POST, array(
@@ -64,12 +64,16 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 
 		<select name="group" id="group" class="sc-select">
 			<?php
-			$group = new Group();
+			$group = new Group($db);
 			foreach($group->data() as $row => $field ) {
 				echo '<option value="'.$field['id'].'">'.$language->translate($field['group']).'</option>';
 			}
 			?>
 		</select>
+
+        <button class="sc-raised-button">
+            <i class="material-icons">add</i> <?php echo $language->translate('Add'); ?>
+        </button>
 	</form>
 <?php
 	require_once $dash->getInclude('footer');

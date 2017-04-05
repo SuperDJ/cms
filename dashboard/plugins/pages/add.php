@@ -4,7 +4,7 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 } else {
 	$title = $language->translate( 'Add' );
 	require_once $dash->getInclude( 'header' );
-	$form = new Form();
+	$form = new Form($db);
 
 	if( $_POST ) {
 	    $validation = $form->check($_POST, array(
@@ -29,7 +29,7 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
         ), [$language, 'translate'], null, true);
 
 	    if( empty( $form->errors ) ) {
-	        $page = new Page();
+	        $page = new Page($db);
 	        if( $page->add($validation) ) {
 	            $user->to('?path=pages/overview&message='.$language->translate('Page added').'&messageType=success');
             } else {

@@ -1,15 +1,18 @@
 <?php
 //TODO Load all CMS settings from database
-class Dashboard extends Database {
+class Dashboard {
 	public $path,
 			$menu;
 
-	private $_pluginsPath;
+	private $_pluginsPath,
+			$_db;
 
-	function __construct( $path, $translate ) {
-		parent::__construct();
+	function __construct( Database $db = null, $path, $translate ) {
+		if( !is_null( $db ) ) {
+			$this->_db = $db;
+		}
 
-		$this->path = $this->sanitize($path);
+		$this->path = $this->_db->sanitize($path);
 
 		$this->_pluginsPath = PLUGINS;
 
@@ -25,7 +28,7 @@ class Dashboard extends Database {
 	 */
 	private function getMenuItems() {
 		// TODO add check for user permission
-		$stmt = $this->mysqli->prepare("
+		$stmt = $this->_db->mysqli->prepare("
 SELECT `p`.`id`, `name`, `parent`, `icon`, `url` FROM `plugins` `p`
 JOIN `rights` `r`
   ON `p`.`id` = `r`.`plugins_id`

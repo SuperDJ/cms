@@ -6,7 +6,7 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 		$id = (int)$db->sanitize( base64_decode( $_GET['id'] ) );
 		if( $db->exists('id', 'emails', 'id', $id) ) {
 
-			$email = new Email();
+			$email = new Email($db);
 			if( $email->delete( $id ) ) {
 				$user->to('?path=emails/overview&message='.$language->translate('Email has been deleted').'&messageType=success');
 			} else {

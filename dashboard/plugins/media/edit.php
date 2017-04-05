@@ -8,8 +8,8 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 		$title = $language->translate( 'Edit' );
 		require_once $dash->getInclude( 'header' );
 
-		$form = new Form();
-		$media = new Media();
+		$form = new Form($db);
+		$media = new Media($db);
 
 		if( $_POST ) {
 		    $validation = $form->check($_POST, array(

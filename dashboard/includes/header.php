@@ -56,7 +56,8 @@
 
                     <nav class="sc-menu" id="profile-more">
                         <?php
-                        echo ( $session->exists('facebook') ? '<a href="?path=users/facebook-logout">'.$language->translate('Facebook logout').'</a>' : '<a href="?path=users/facebook-login">'.$language->translate('Facebook login').'</a>' );
+                        echo ( $fb->isLoggedIn() ? '<a href="?path=users/facebook-logout">'.$language->translate('Facebook logout').'</a>' : '<a href="?path=users/facebook-login">'.$language->translate('Facebook login').'</a>' );
+						echo ( $google->isLoggedIn() ? '<a href="?path=users/google-logout">'.$language->translate('Google logout').'</a>' : '<a href="?path=users/google-login">'.$language->translate('Google login').'</a>' );
                         ?>
                         <a href="?path=users/profile">
                             <i class="material-icons">settings</i>

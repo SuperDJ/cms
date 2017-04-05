@@ -5,7 +5,7 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 	$title = $language->translate( 'Overview' );
 	require_once $dash->getInclude( 'header' );
 
-	$email = new Email();
+	$email = new Email($db);
 	$data = $email->data();
 
 	echo '	<p class="sc-col sc-xs4 sc-s12">

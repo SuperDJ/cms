@@ -6,7 +6,7 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 		$id = (int)$db->sanitize( base64_decode( $_GET['id'] ) );
 		if( $db->exists('id', 'groups', 'id', $id) ) {
 
-			$group = new Group();
+			$group = new Group($db);
 			if( $group->delete( $id ) ) {
 				$user->to('?path=users/groups/overview&message='.$language->translate('Group has been deleted').'&messageType=success');
 			} else {

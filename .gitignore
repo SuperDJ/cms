@@ -1,5 +1,5 @@
 .idea/
-*.json
+credentials.json
 dashboard/node_modules/
 db.sql
 erd.mwb

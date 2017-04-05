@@ -11,8 +11,8 @@ if( !empty( $_GET['path'] ) ) {
 		$path = rtrim($path, '/');
 	}
 
-	$plugins = new Plugins();
-	$dash = new Dashboard( $path, [ $language, 'translate' ] );
+	$plugins = new Plugins( $db );
+	$dash = new Dashboard( $db, $path, [ $language, 'translate' ] );
 
 	if( !empty( $_GET['id'] ) ) {
 		$id = (int)$db->sanitize( base64_decode( $_GET['id'] ) );

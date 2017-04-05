@@ -6,7 +6,7 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 	$title = $language->translate('Edit profile').': '.substr( $user->data['first_name'], 0, 1 ).'. '.$user->data['last_name'];
 	require_once $dash->getInclude('header');
 
-	$form = new Form();
+	$form = new Form($db);
 
 	if( $_POST ) {
 	    // TODO add timezone, profile image

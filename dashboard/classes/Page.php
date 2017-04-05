@@ -1,10 +1,17 @@
 <?php
-class Page extends Database implements Plugin {
+class Page implements Plugin {
+	private $_db;
+
+	function __construct( Database $db = null ) {
+		if( !is_null( $db ) ) {
+			$this->_db = $db;
+		}
+	}
 
 	public function add( array $data ) {
 		$date = date('Y-m-d H:i:s');
 		$user = $_SESSION['user']['id'];
-		$stmt = $this->mysqli->prepare("
+		$stmt = $this->_db->mysqli->prepare("
 			INSERT INTO `pages` (`title`, `content`, `languages_id`, `create_date`, `created_by`, `keywords`) 
 			VALUES (:title, :content,  :languages_id, :create_date, :created_by, :keywords)
 		");
@@ -29,7 +36,7 @@ class Page extends Database implements Plugin {
 	public function edit( array $data ) {
 		$date = date('Y-m-d H:i:s');
 		$user = $_SESSION['user']['id'];
-		$stmt = $this->mysqli->prepare("UPDATE `pages` SET `title` = :title, `content` = :content, `languages_id` = :languages_id, `edit_date` = :edit_date, `edited_by` = :edited_by, `keywords` = :keywords WHERE `id` = :id");
+		$stmt = $this->_db->mysqli->prepare("UPDATE `pages` SET `title` = :title, `content` = :content, `languages_id` = :languages_id, `edit_date` = :edit_date, `edited_by` = :edited_by, `keywords` = :keywords WHERE `id` = :id");
 		$stmt->bindParam(':title', $data['title'], PDO::PARAM_STR);
 		$stmt->bindParam(':content', $data['content'], PDO::PARAM_STR);
 		/*$stmt->bindParam(':sidebars_id', $data['sidebars_id'], PDO::PARAM_STR);*/
@@ -56,7 +63,7 @@ class Page extends Database implements Plugin {
 	 * @return bool
 	 */
 	public function delete( int $id ) {
-		$stmt = $this->mysqli->prepare("DELETE FROM `pages` WHERE `id` = :id");
+		$stmt = $this->_db->mysqli->prepare("DELETE FROM `pages` WHERE `id` = :id");
 		$stmt->bindParam(':id', $id, PDO::PARAM_INT);
 		$stmt->execute();
 
@@ -70,31 +77,21 @@ class Page extends Database implements Plugin {
 	}
 
 	public function data( int $id = null ) {
-		if( !is_null( $id ) ) {
-			$stmt = $this->mysqli->prepare( "
-				SELECT `p`.`id`, `title`, `content`, `sidebars_id`, `p`.`languages_id`, `language`, `create_date`, `edit_date`, `u`.`first_name` AS `c_first_name`, `u`.`last_name` AS `c_last_name`, `us`.`first_name` AS `e_first_name`, `us`.`last_name` AS `e_last_name`, `keywords`
+		$query = "SELECT `p`.`id`, `title`, `content`, `sidebars_id`, `p`.`languages_id`, `language`, `create_date`, `edit_date`, `u`.`first_name` AS `c_first_name`, `u`.`last_name` AS `c_last_name`, `us`.`first_name` AS `e_first_name`, `us`.`last_name` AS `e_last_name`, `keywords`
 				FROM `pages` `p`
 				JOIN `languages` `l`
 					 ON `l`.`id` = `p`.`languages_id`
 				JOIN `users` `u`
 					 ON `u`.`id` = `created_by` 
               	LEFT JOIN `users` `us`
-              	 	ON `us`.`id` = `p`.`edited_by`
-				WHERE `p`.`id` = :id
-				LIMIT 1
-			");
+              	 	ON `us`.`id` = `p`.`edited_by`";
+		if( !is_null( $id ) ) {
+			$query .= "WHERE `p`.`id` = :id
+				LIMIT 1";
+			$stmt = $this->_db->mysqli->prepare($query);
 			$stmt->bindParam(':id', $id, PDO::PARAM_INT);
 		} else {
-			$stmt = $this->mysqli->prepare( "
-				SELECT `p`.`id`, `title`, `content`, `sidebars_id`, `p`.`languages_id`, `language`, `create_date`, `edit_date`, `u`.`first_name` AS `c_first_name`, `u`.`last_name` AS `c_last_name`, `us`.`first_name` AS `e_first_name`, `us`.`last_name` AS `e_last_name`, `keywords`
-				FROM `pages` `p`
-				JOIN `languages` `l`
-					 ON `l`.`id` = `p`.`languages_id`
-				JOIN `users` `u`
-					 ON `u`.`id` = `created_by` 
-              	LEFT JOIN `users` `us`
-              	 	ON `us`.`id` = `p`.`edited_by`
-			" );
+			$stmt = $this->_db->mysqli->prepare($query);
 		}
 		$stmt->execute();
 

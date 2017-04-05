@@ -1,12 +1,15 @@
 <?php
-class Language extends Database implements Plugin {
+class Language implements Plugin {
 	public $languages;
 
-	public $_current, // Store current language
-			$_translations = array(); // Store translation of language
+	private	$_current, // Store current language
+			$_translations = array(), // Store translation of language
+			$_db;
 
-	function __construct( $language ) {
-		parent::__construct();
+	function __construct( Database $db = null, $language ) {
+		if( !is_null( $db ) ) {
+			$this->_db = $db;
+		}
 
 		$this->_current = $language;
 		$this->languages = array_column( $this->data(), 'id');
@@ -26,14 +29,14 @@ class Language extends Database implements Plugin {
 			return false;
 		} else {
 			// If word already in database return translation else add word to database
-			if( in_array( $word, array_keys( $this->_translations ) ) || $this->exists('translation', 'translations', 'translation', $word) ) {
+			if( in_array( $word, array_keys( $this->_translations ) ) || $this->_db->exists('translation', 'translations', 'translation', $word) ) {
 				if( empty($this->_translations[ $word ] ) ) {
 					return $word;
 				} else {
 					return $this->_translations[$word];
 				}
 			} else {
-				$stmt = $this->mysqli->prepare("INSERT INTO `translations` (`translation`) VALUES (:translation)");
+				$stmt = $this->_db->mysqli->prepare("INSERT INTO `translations` (`translation`) VALUES (:translation)");
 				$stmt->bindParam(':translation', $word, PDO::PARAM_STR);
 				$stmt->execute();
 
@@ -56,14 +59,14 @@ class Language extends Database implements Plugin {
 	private function translations( $id ) {
 		// TODO Make 1 dynamic
 		if( $id != 1 ) {
-			$stmt = $this->mysqli->prepare( "
+			$stmt = $this->_db->mysqli->prepare( "
 				SELECT `d`.`translation` AS `default`, `t`.`translation` FROM `translations` `d`
 				CROSS JOIN `translations` `t`
 				ON `d`.`id` = `t`.`translations_id`
 				WHERE `t`.`languages_id` = :languages_id
 			" );
 		} else {
-			$stmt = $this->mysqli->prepare("SELECT `translation` AS `default`, `translation` FROM `translations` WHERE `languages_id` = :languages_id");
+			$stmt = $this->_db->mysqli->prepare("SELECT `translation` AS `default`, `translation` FROM `translations` WHERE `languages_id` = :languages_id");
 		}
 		$stmt->bindParam(':languages_id', $id, PDO::PARAM_INT);
 		$stmt->execute();
@@ -96,7 +99,7 @@ class Language extends Database implements Plugin {
 	 * @return bool
 	 */
 	public function add( array $data ) {
-		$stmt = $this->mysqli->prepare("INSERT INTO `languages` (`language`, `iso_code`) VALUES (:language, :iso_code)");
+		$stmt = $this->_db->mysqli->prepare("INSERT INTO `languages` (`language`, `iso_code`) VALUES (:language, :iso_code)");
 		$stmt->bindParam(':language', $data['language'], PDO::PARAM_STR);
 		$stmt->bindParam(':iso_code', $data['iso_code'], PDO::PARAM_STR);
 		$stmt->execute();
@@ -118,7 +121,7 @@ class Language extends Database implements Plugin {
 	 * @return bool
 	 */
 	public function edit( array $data ) {
-		$stmt = $this->mysqli->prepare("UPDATE `languages` SET `language` = :language, `iso_code` = :iso_code WHERE `id` = :id");
+		$stmt = $this->_db->mysqli->prepare("UPDATE `languages` SET `language` = :language, `iso_code` = :iso_code WHERE `id` = :id");
 		$stmt->bindParam(':language', $data['language'], PDO::PARAM_STR);
 		$stmt->bindParam(':iso_code', $data['iso_code'], PDO::PARAM_STR);
 		$stmt->bindParam(':id', $data['id'], PDO::PARAM_INT);
@@ -141,7 +144,7 @@ class Language extends Database implements Plugin {
 	 * @return bool
 	 */
 	public function delete( int $id ) {
-		$stmt = $this->mysqli->prepare("DELETE FROM `languages` WHERE `id` = :id");
+		$stmt = $this->_db->mysqli->prepare("DELETE FROM `languages` WHERE `id` = :id");
 		$stmt->bindParam(':id', $id, PDO::PARAM_INT);
 		$stmt->execute();
 
@@ -181,12 +184,12 @@ class Language extends Database implements Plugin {
 					GROUP BY `l`.`id`
 					LIMIT 1
 				";
-			$stmt = $this->mysqli->prepare($query);
+			$stmt = $this->_db->mysqli->prepare($query);
 
 			$stmt->bindParam(':id', $id, PDO::PARAM_INT);
 		} else {
 			$query .= "GROUP BY `l`.`id`";
-			$stmt = $this->mysqli->prepare($query);
+			$stmt = $this->_db->mysqli->prepare($query);
 		}
 		$stmt->execute();
 
@@ -208,7 +211,7 @@ class Language extends Database implements Plugin {
 	 * @return bool
 	 */
 	public function translationData( int $id ) {
-		$stmt = $this->mysqli->prepare("SELECT `id`, `translation` FROM `translations`WHERE `languages_id` = :languages_id");
+		$stmt = $this->_db->mysqli->prepare("SELECT `id`, `translation` FROM `translations`WHERE `languages_id` = :languages_id");
 		$stmt->bindParam(':languages_id', $id, PDO::PARAM_INT);
 		$stmt->execute();
 
@@ -232,7 +235,7 @@ class Language extends Database implements Plugin {
 	 */
 	public function translated( int $id ) {
 		// Get all translated fields
-		$stmt = $this->mysqli->prepare("SELECT `translation`, `translations_id` FROM `translations` WHERE `languages_id` = :languages_id");
+		$stmt = $this->_db->mysqli->prepare("SELECT `translation`, `translations_id` FROM `translations` WHERE `languages_id` = :languages_id");
 		$stmt->bindParam(':languages_id', $id, PDO::PARAM_INT);
 		$stmt->execute();
 
@@ -315,7 +318,7 @@ class Language extends Database implements Plugin {
 	 * @return bool
 	 */
 	private function editTranslation( array $data, int $id ) {
-		$stmt = $this->mysqli->prepare("UPDATE `translations` SET `translation` = :translation WHERE `translations_id` = :translations_id AND `languages_id` = :languages_id");
+		$stmt = $this->_db->mysqli->prepare("UPDATE `translations` SET `translation` = :translation WHERE `translations_id` = :translations_id AND `languages_id` = :languages_id");
 
 		$count = count($data);
 		$i = 0;
@@ -351,7 +354,7 @@ class Language extends Database implements Plugin {
 	 * @return bool
 	 */
 	private function addTranslation( array $data, int $id ) {
-		$stmt = $this->mysqli->prepare("INSERT INTO `translations` (`translation`, `translations_id`, `languages_id`) VALUES (:translation, :translations_id, :languages_id)");
+		$stmt = $this->_db->mysqli->prepare("INSERT INTO `translations` (`translation`, `translations_id`, `languages_id`) VALUES (:translation, :translations_id, :languages_id)");
 
 		$count = count($data);
 		$i = 0;

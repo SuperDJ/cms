@@ -5,7 +5,7 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 
 	if( !empty( $id ) && $db->exists('id', 'files', 'id', $id) ) {
 		// Delete file from database and from server
-		$media = new Media();
+		$media = new Media($db);
 		if(  $media->delete($id) ) {
 			$user->to('?path=media/overview&message='.$language->translate('Media has been deleted').'&messageType=success');
 		} else {

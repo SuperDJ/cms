@@ -1,5 +1,13 @@
 <?php
-class Media extends Database implements Plugin {
+class Media implements Plugin {
+	private $_db;
+
+	function __construct( Database $db = null ) {
+		if( !is_null( $db ) ) {
+			$this->_db = $db;
+		}
+	}
+
 	/**
 	 * Add media to database
 	 *
@@ -11,7 +19,7 @@ class Media extends Database implements Plugin {
 		$keys = array_keys($data);
 		$files = count( $data[$keys[0]]['name'] );
 
-		$stmt = $this->mysqli->prepare("INSERT INTO `files` (`path`, `mime`, `upload_date`) VALUES (:path, :mime, :upload_date)");
+		$stmt = $this->_db->mysqli->prepare("INSERT INTO `files` (`path`, `mime`, `upload_date`) VALUES (:path, :mime, :upload_date)");
 		for( $i = 0; $i < $files; $i++ ) {
 			// Set file properties in variables
 			$name = $data[$keys[0]]['name'][$i];
@@ -53,7 +61,7 @@ class Media extends Database implements Plugin {
 	 */
 	public function delete( int $id ) {
 		$path = $this->detail('path', 'files', 'id', $id);
-		$stmt = $this->mysqli->prepare("DELETE FROM `files` WHERE `id` = :id");
+		$stmt = $this->_db->mysqli->prepare("DELETE FROM `files` WHERE `id` = :id");
 		$stmt->bindParam(':id', $id, PDO::PARAM_INT);
 		$stmt->execute();
 
@@ -74,7 +82,7 @@ class Media extends Database implements Plugin {
 	 * @return bool
 	 */
 	public function edit( array $data ) {
-		$stmt = $this->mysqli->prepare("UPDATE `files` SET `title` = :title, `description` = :description WHERE `id` = :id");
+		$stmt = $this->_db->mysqli->prepare("UPDATE `files` SET `title` = :title, `description` = :description WHERE `id` = :id");
 		$stmt->bindParam(':title', $data['title'], PDO::PARAM_STR);
 		$stmt->bindParam(':description', $data['description'], PDO::PARAM_STR);
 		$stmt->bindParam(':id', $data['id'], PDO::PARAM_INT);
@@ -97,10 +105,10 @@ class Media extends Database implements Plugin {
 	 */
 	public function data( int $id = null ) {
 		if( !is_null( $id ) ) {
-			$stmt = $this->mysqli->prepare("SELECT `id`, `path`, `mime`, `upload_date`, `title`, `description` FROM `files` WHERE `id` = :id LIMIT 1");
+			$stmt = $this->_db->mysqli->prepare("SELECT `id`, `path`, `mime`, `upload_date`, `title`, `description` FROM `files` WHERE `id` = :id LIMIT 1");
 			$stmt->bindParam(':id', $id, PDO::PARAM_INT);
 		} else {
-			$stmt = $this->mysqli->prepare("SELECT `id`, `path`, `mime`, `upload_date`, `title`, `description` FROM `files`");
+			$stmt = $this->_db->mysqli->prepare("SELECT `id`, `path`, `mime`, `upload_date`, `title`, `description` FROM `files`");
 		}
 		$stmt->execute();
 

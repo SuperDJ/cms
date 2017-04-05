@@ -7,7 +7,7 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 	} else {
 		$title = $language->translate( 'Translate' ).': '.$language->translate($db->detail('language', 'languages', 'id', $id));
 		require_once $dash->getInclude( 'header' );
-		$form = new Form();
+		$form = new Form($db);
 
 		$data = $language->translationData(1); // TODO Get default `languages_id` from database
 		//print_r($data);

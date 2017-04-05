@@ -5,7 +5,7 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 	$title = $language->translate( 'Add' );
 	require_once $dash->getInclude( 'header' );
 
-	$form = new Form();
+	$form = new Form($db);
 
 	if( $_POST ) {
 		$validation = $form->check( $_POST, array(
@@ -23,7 +23,7 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 		), [$language, 'translate']);
 
 		if( empty( $validation->errors ) ) {
-			if( $db->query("INSERT INTO `languages` (`language`, `iso_code`) VALUES (?, ?)", $validation ) ) {
+			if( $language->add($validation) ) {
 				$user->to('?path=languages/overview&message='.$language->translate('Language added').'&messageType=success');
 			} else {
 				echo '<div class="alert sc-card sc-card-supporting">'.$language->translate('Something went wrong adding the language').': '.$validation['language'].'</div>';

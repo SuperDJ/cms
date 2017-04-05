@@ -39,10 +39,11 @@ spl_autoload_register(function( $class ) {
 });
 
 $db = new Database();
-$user = new User();
+$user = new User( $db );
 $session = new Session();
 $cookie = new Cookie();
 $fb = new Facebook();
+$google = new Google();
 
 // If a user is logged in set the desired language
 if( $user->isLoggedIn() ) {
@@ -62,8 +63,8 @@ if( !$session->exists('language') ) {
 if( $session->exists('language') ) {
 	if( $session->get('language') != $cookie->get('language') ) {
 		$cookie->set( 'language', $session->get( 'language' ), 31536000 ); // Set cookie for 1 year // TODO Make length dynamic
-		$language = new Language( $session->get( 'language' ) );
+		$language = new Language( $db, $session->get( 'language' ) );
 	} else {
-		$language = new Language( $session->get( 'language' ) );
+		$language = new Language( $db, $session->get( 'language' ) );
 	}
 }

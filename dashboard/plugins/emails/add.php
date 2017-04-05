@@ -4,8 +4,8 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 } else {
 	$title = $language->translate( 'Add' );
 	require_once $dash->getInclude( 'header' );
-	$form = new Form();
-	$email = new Email();
+	$form = new Form($db);
+	$email = new Email($db);
 
 	if( $_POST ) {
 		$validation = $form->check($_POST, array(

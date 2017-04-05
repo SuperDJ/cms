@@ -1,5 +1,13 @@
 <?php
-class Email extends Database implements Plugin {
+class Email  implements Plugin {
+	private $_db;
+
+	function __construct( Database $db = null ) {
+		if( !is_null( $db ) ) {
+			$this->_db = $db;
+		}
+	}
+
 	/**
 	 * Add email to database and send email
 	 *
@@ -10,7 +18,7 @@ class Email extends Database implements Plugin {
 	public function add( array $data ) {
 		// Insert email in database
 		$user = $_SESSION['user']['id'];
-		$stmt = $this->mysqli->prepare("INSERT INTO `emails` (`subject`, `content`, `send_by`, `languages_id`, `to`) VALUES (:subject, :content, :send_by, :languages_id, :to)");
+		$stmt = $this->_db->mysqli->prepare("INSERT INTO `emails` (`subject`, `content`, `send_by`, `languages_id`, `to`) VALUES (:subject, :content, :send_by, :languages_id, :to)");
 		$stmt->bindParam(':subject', $data['subject'], PDO::PARAM_STR);
 		$stmt->bindParam(':content', $data['content'], PDO::PARAM_STR);
 		$stmt->bindParam(':send_by', $user, PDO::PARAM_INT);
@@ -22,7 +30,7 @@ class Email extends Database implements Plugin {
 			$stmt = null;
 
 			// Get user data and create "$headers"
-			$stmt = $this->mysqli->prepare("SELECT `first_name`, `last_name`, `email` FROM `users` WHERE `id` = :id");
+			$stmt = $this->_db->mysqli->prepare("SELECT `first_name`, `last_name`, `email` FROM `users` WHERE `id` = :id");
 			$stmt->bindParam(':id', $user, PDO::PARAM_INT);
 			$stmt->execute();
 
@@ -37,7 +45,7 @@ class Email extends Database implements Plugin {
 
 			// If empty "$data['to']" send batch of emails else send to one
 			if( empty( $data['to'] ) ) {
-				$stmt = $this->mysqli->prepare("SELECT `email` FROM `users` WHERE `languages_id` = :languages_id");
+				$stmt = $this->_db->mysqli->prepare("SELECT `email` FROM `users` WHERE `languages_id` = :languages_id");
 				$stmt->bindParam(':languages_id', $data['languages_id'], PDO::PARAM_INT);
 				$stmt->execute();
 
@@ -65,7 +73,7 @@ class Email extends Database implements Plugin {
 					return false;
 				}
 			} else {
-				$to = $this->detail('email', 'users', 'id', $data['to']);
+				$to = $this->_db->detail('email', 'users', 'id', $data['to']);
 				if( mail( $to, $data['subject'], $data['content'], $headers ) ) {
 					return true;
 				} else {
@@ -97,7 +105,7 @@ class Email extends Database implements Plugin {
 	 * @return bool
 	 */
 	public function delete( int $id ) {
-		$stmt = $this->mysqli->prepare("DELETE FROM `emails` WHERE `id` = :id");
+		$stmt = $this->_db->mysqli->prepare("DELETE FROM `emails` WHERE `id` = :id");
 		$stmt->bindParam(':id', $id, PDO::PARAM_INT);
 		$stmt->execute();
 
@@ -119,7 +127,7 @@ class Email extends Database implements Plugin {
 	 */
 	public function data( int $id = null ) {
 		if( !is_null( $id ) ) {
-			$stmt = $this->mysqli->prepare("
+			$stmt = $this->_db->mysqli->prepare("
 				SELECT `e`.`id`, `subject`, `content`, `send_by`, `u`.`email`, `read`, `e`.`languages_id`, `language`, `to`
 				FROM `emails` `e`
 				JOIN `users` `u`
@@ -130,7 +138,7 @@ class Email extends Database implements Plugin {
 			");
 			$stmt->bindParam(':id', $id, PDO::PARAM_INT);
 		} else {
-			$stmt = $this->mysqli->prepare( "
+			$stmt = $this->_db->mysqli->prepare( "
 				SELECT `e`.`id`, `subject`, `content`, `send_by`, `u`.`email`, `read`, `e`.`languages_id`, `language`, `to`
 				FROM `emails` `e`
 				LEFT JOIN `users` `u`

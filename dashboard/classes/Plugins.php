@@ -1,13 +1,16 @@
 <?php
-class Plugins extends Database {
+class Plugins {
 	private $_dir, // Plugins location
 			$_directory = array(), // All installed plugins from plugins folder
 			$_database = array(), // All plugins from database
 			$_compareDir = array(), // All urls from directory
-			$_compareDb = array(); // All urls from database
+			$_compareDb = array(), // All urls from database
+			$_db;
 
-	function __construct() {
-		parent::__construct();
+	function __construct( Database $db = null ) {
+		if( !is_null( $db ) ) {
+			$this->_db = $db;
+		}
 
 		$this->_dir = PLUGINS;
 		$this->_directory = $this->getFromDir($this->_dir); // Get all installed plugins from directory
@@ -74,14 +77,14 @@ class Plugins extends Database {
 				if( !$this->exists('url', 'plugins', 'url', $url) ) {
 					$plugin = ucfirst( str_replace( '-', ' ', $key ) );
 
-					$stmt = $this->mysqli->prepare( "INSERT INTO `plugins` (`name`, `parent`, `url`) VALUES (:name, :parent, :url)" );
+					$stmt = $this->_db->mysqli->prepare( "INSERT INTO `plugins` (`name`, `parent`, `url`) VALUES (:name, :parent, :url)" );
 					$stmt->bindParam(':name', $plugin, PDO::PARAM_STR);
 					$stmt->bindParam(':parent', $parentID, PDO::PARAM_INT);
 					$stmt->bindParam(':url', $url, PDO::PARAM_STR);
 					$stmt->execute();
 
 					if( $stmt->rowCount() >= 1 ) {
-						$id = $this->mysqli->lastInsertId();
+						$id = $this->_db->mysqli->lastInsertId();
 					 	$stmt = null;
 						$this->insertInDb( $value, $url, $id );
 					} else {
@@ -101,7 +104,7 @@ class Plugins extends Database {
 				if( !$this->exists('url', 'plugins', 'url', $url) ) {
 					$plugin = ucfirst( str_replace( '-', ' ', substr( $value, 0, -4 ) ) );
 
-					$stmt = $this->mysqli->prepare( "INSERT INTO `plugins` (`name`, `parent`, `url`) VALUES (:name, :parent, :url)" );
+					$stmt = $this->_db->mysqli->prepare( "INSERT INTO `plugins` (`name`, `parent`, `url`) VALUES (:name, :parent, :url)" );
 					$stmt->bindParam(':name', $plugin, PDO::PARAM_STR);
 					$stmt->bindParam(':parent', $parentID, PDO::PARAM_INT);
 					$stmt->bindParam(':url', $url, PDO::PARAM_STR);
@@ -140,7 +143,7 @@ class Plugins extends Database {
 		// Delete difference
 		$deleted = 0;
 		foreach( $diff as $key => $value ) {
-			$stmt = $this->mysqli->prepare("DELETE FROM `plugins` WHERE `url` = ?");
+			$stmt = $this->_db->mysqli->prepare("DELETE FROM `plugins` WHERE `url` = ?");
 			$stmt->execute( array( $value ) );
 
 			if( $stmt->rowCount() >= 1 ) {
@@ -228,7 +231,7 @@ class Plugins extends Database {
 	 * @return array|bool
 	 */
 	private function getFromDb() {
-		$stmt = $this->mysqli->prepare( "SELECT `url` FROM `plugins`" );
+		$stmt = $this->_db->mysqli->prepare( "SELECT `url` FROM `plugins`" );
 		$stmt->execute();
 
 		$data = array();
@@ -253,10 +256,10 @@ class Plugins extends Database {
 	 */
 	public function data( int $id = null ) {
 		if( !is_null( $id ) ) {
-			$stmt = $this->mysqli->prepare("SELECT `id`, `name`, `parent`, `icon`, `sort` FROM `plugins` WHERE `id` = :id LIMIT 1");
+			$stmt = $this->_db->mysqli->prepare("SELECT `id`, `name`, `parent`, `icon`, `sort` FROM `plugins` WHERE `id` = :id LIMIT 1");
 			$stmt->bindParam(':id', $id, PDO::PARAM_INT);
 		} else {
-			$stmt = $this->mysqli->prepare( "SELECT `id`, `name`, `parent`, `icon`, `sort` FROM `plugins`" );
+			$stmt = $this->_db->mysqli->prepare( "SELECT `id`, `name`, `parent`, `icon`, `sort` FROM `plugins`" );
 		}
 		$stmt->execute();
 
@@ -279,7 +282,7 @@ class Plugins extends Database {
 	 */
 	public function edit( array $data ) {
 		$icon = str_replace(' ', '_', $data['icon']);
-		$stmt = $this->mysqli->prepare("UPDATE `plugins` SET `name` = :name, `icon` = :icon, `sort` = :sort WHERE `id` = :id");
+		$stmt = $this->_db->mysqli->prepare("UPDATE `plugins` SET `name` = :name, `icon` = :icon, `sort` = :sort WHERE `id` = :id");
 		$stmt->bindParam(':name', $data['name'], PDO::PARAM_STR);
 		$stmt->bindParam(':icon', $icon, PDO::PARAM_STR);
 		$stmt->bindParam(':sort', $data['sort'], PDO::PARAM_INT);

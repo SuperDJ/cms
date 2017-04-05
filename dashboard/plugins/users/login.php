@@ -7,7 +7,7 @@ if( $user->isLoggedIn() ) {
 	require_once $dash->getInclude('header', 'lr');
 
 	echo '<div class="sc-card-supporting sc-card-supporting-additional">';
-	$form = new Form();
+	$form = new Form($db);
 	// Check form
 	if( $_POST ) {
 		$validation = $form->check( $_POST, array(
