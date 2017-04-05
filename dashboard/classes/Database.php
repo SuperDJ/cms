@@ -29,6 +29,7 @@ class Database {
 	private function connect() {
 		$mysqli = new PDO('mysql:host='.$this->_db->database->host.';dbname='.$this->_db->database->database.';charset=utf8', $this->_db->database->username, $this->_db->database->password);
 
+		// Only execute when in test mode
 		if( TEST ) {
 			$mysqli->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 			$mysqli->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);

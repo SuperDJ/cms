@@ -59,7 +59,7 @@ class User implements Plugin {
 	public function register( array $data ) {
 		$password = password_hash( $this->passwordGenerate( $data['password_encrypted'] ), PASSWORD_DEFAULT );
 		$register_date = date('Y-m-d H:i:s');
-		$groups_id = $this->detail('id', 'groups', 'default', 1);
+		$groups_id = $this->_db->detail('id', 'groups', 'default', 1);
 		$groups_id = ( !empty( $groups_id ) ? $groups_id : 0 );
 
 		$stmt = $this->_db->mysqli->prepare("INSERT INTO `users` (`first_name`, `last_name`, `email`, `password`, `register_date`, `groups_id`) VALUES (:first_name, :last_name, :email, :password, :register_date, :groups_id)");
@@ -96,7 +96,7 @@ class User implements Plugin {
 		if( $stmt->rowCount() >= 1 ) {
 			$stmt = null; // Close query
 			$password = $this->passwordGenerate( $data['password_encrypted'] );
-			$hash = $this->detail( 'password', 'users', 'email', $data['email'] );
+			$hash = $this->_db->detail( 'password', 'users', 'email', $data['email'] );
 			$date = date( 'Y-m-d H:i:s' );
 
 			if( password_verify( $password, $hash ) ) {
@@ -228,8 +228,8 @@ class User implements Plugin {
 	 */
 	public function data( int $id = null ) {
 		$query = "
-				SELECT 	`u`.`id`, `first_name`, `last_name`, `email`, `register_date`, `active_date`, 
-						`groups_id`, `group`, `active`, `languages_id`, `language`, `picture` 
+				SELECT 	`u`.`id`, `first_name`, `last_name`, `email`, `register_date`, `active_date`, `active`,
+						`groups_id`, `group`, `facebook_id`, `languages_id`, `language`, `picture` 
 				FROM `users` `u`
 			  	LEFT JOIN `groups` `g`
 					ON `g`.`id` = `u`.groups_id
@@ -314,7 +314,7 @@ class User implements Plugin {
 			$active_date = $explode[0];
 			$email = $explode[1];
 
-			if( $email == $data['email'] && $this->detail('active_date', 'users', 'email', $data['email']) === $active_date ) {
+			if( $email == $data['email'] && $this->_db->detail('active_date', 'users', 'email', $data['email']) === $active_date ) {
 				$password = password_hash( $this->passwordGenerate( $data['password_encrypted'] ), PASSWORD_DEFAULT );
 				$active = 1;
 
@@ -356,7 +356,7 @@ class User implements Plugin {
 			$stmt = null;
 
 			// Set active to 0 if necessary
-			if( $this->detail('active', 'users', 'email', $data['email']) !== 0 ) {
+			if( $this->_db->detail('active', 'users', 'email', $data['email']) !== 0 ) {
 				$active = null;
 				$stmt = $this->_db->mysqli->prepare( "UPDATE `users` SET `active` = :active WHERE `email` = :email" );
 				$stmt->bindParam(':active', $active, PDO::PARAM_NULL);
@@ -417,6 +417,11 @@ class User implements Plugin {
 	public function facebookLogin( array $data ) {
 		$facebook = $data['id'];
 		$image = ( !empty( $data['picture']['data']['url'] ) ? $data['picture']['data']['url'] : '' );
+
+		// Check if values have changed
+		if( $facebook == $this->data['facebook_id'] && $image == $this->data['picture'] ) {
+			return true;
+		}
 
 		$stmt = $this->_db->mysqli->prepare("UPDATE `users` SET `facebook_id` = :facebook_id, `picture` = :picture WHERE `id` = :id");
 		$stmt->bindParam(':facebook_id', $facebook, PDO::PARAM_INT);

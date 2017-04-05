@@ -22,7 +22,10 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 		$data = $fb->getRequest([ 'id', 'picture' ]);
 
 		//print_r($data);
-		if( $user->facebookLogin($data) && $session->exists('facebook') ) {
+		$sess =  $session->exists('facebook');
+		$log = $user->facebookLogin($data);
+		echo $sess.' '.$log;
+		if( $log && $sess ) {
 			$user->to('?path=overview/overview&message='.$language->translate('Facebook logged in').'&messageType=success');
 		} else {
 			echo '	<div class="error sc-card sc-card-supporting-additional" role="alert">

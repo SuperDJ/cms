@@ -4,6 +4,5 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 } else {
 	$title = $language->translate( 'Overview' );
 	require_once $dash->getInclude('header');
-
 	require_once $dash->getInclude('footer');
 }

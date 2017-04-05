@@ -74,7 +74,7 @@ class Plugins {
 			if( is_array( $value ) ) {
 				$url = $parent.$key.'/';
 
-				if( !$this->exists('url', 'plugins', 'url', $url) ) {
+				if( !$this->_db->exists('url', 'plugins', 'url', $url) ) {
 					$plugin = ucfirst( str_replace( '-', ' ', $key ) );
 
 					$stmt = $this->_db->mysqli->prepare( "INSERT INTO `plugins` (`name`, `parent`, `url`) VALUES (:name, :parent, :url)" );
@@ -92,16 +92,16 @@ class Plugins {
 						return false;
 					}
 				} else {
-					$this->insertInDb($value, $url, $this->detail('id', 'plugins', 'url', $url));
+					$this->insertInDb($value, $url, $this->_db->detail('id', 'plugins', 'url', $url));
 				}
 			} else {
 				$url = $parent.substr( $value, 0, -4 );
 
 				if( empty( $parentID ) ) {
-					$parentID = $this->detail('id', 'plugins', 'url', $url);
+					$parentID = $this->_db->detail('id', 'plugins', 'url', $url);
 				}
 
-				if( !$this->exists('url', 'plugins', 'url', $url) ) {
+				if( !$this->_db->exists('url', 'plugins', 'url', $url) ) {
 					$plugin = ucfirst( str_replace( '-', ' ', substr( $value, 0, -4 ) ) );
 
 					$stmt = $this->_db->mysqli->prepare( "INSERT INTO `plugins` (`name`, `parent`, `url`) VALUES (:name, :parent, :url)" );

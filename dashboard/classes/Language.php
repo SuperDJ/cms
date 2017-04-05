@@ -289,6 +289,8 @@ class Language implements Plugin {
 		if( !empty( $update ) ) {
 			if( $this->editTranslation($update, $data['id']) ) {
 				$q++;
+			} else {
+				return false;
 			}
 		} else {
 			$q++;
@@ -297,6 +299,8 @@ class Language implements Plugin {
 		if( !empty( $insert ) ) {
 			if( $this->addTranslation($insert, $data['id']) ) {
 				$q++;
+			} else {
+				return false;
 			}
 		} else {
 			$q++;

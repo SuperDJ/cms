@@ -2,5 +2,7 @@
 if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 	$user->to('?path=overview/overview');
 } else {
-	$user->to($fb->logout('https://cms.dsuper.nl/dashboard/'));
+	if( $fb->logout() ) {
+		$user->to('?path=overview/overview&message='.$language->translate('Facebook logged out').'&messageType=success');
+	}
 }

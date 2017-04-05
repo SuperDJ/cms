@@ -27,7 +27,7 @@ if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 			)
 		), [$language, 'translate'], $id);
 
-		if( empty( $validation->errors ) ) {
+		if( empty( $form->errors ) ) {
 			if( $language->edit($validation) ) {
 				$user->to('?path=languages/overview&message='.$language->translate('Language edited').'&messageType=success');
 			} else {

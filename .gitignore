@@ -1,6 +1,6 @@
 .idea/
-credentials.json
 dashboard/node_modules/
+credentials.json
 db.sql
 erd.mwb
 erd.mwb.bak

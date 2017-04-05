@@ -262,6 +262,8 @@ class Group implements Plugin {
 		if( !empty( $delete ) ) {
 			if( $this->deleteRights($delete, $data['id']) ) {
 				$q++;
+			} else {
+				return false;
 			}
 		} else {
 			$q++;
@@ -279,6 +281,8 @@ class Group implements Plugin {
 		if( !empty( $add ) ) {
 			if( $this->addRights($add, $data['id']) ) {
 				$q++;
+			} else {
+				return false;
 			}
 		} else {
 			$q++;

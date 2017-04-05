@@ -75,7 +75,7 @@ class Facebook extends \Facebook\Facebook {
 	 *
 	 * @param $token
 	 */
-	public function setAccessToken($token) {
+	public function setAccessToken( $token ) {
 		$this->accessToken = $token;
 	}
 
@@ -123,8 +123,20 @@ class Facebook extends \Facebook\Facebook {
 		}
 	}
 
-	public function logout($url) {
-	 	return $this->_helper->getLogoutUrl($this->accessToken, $url);
+	/**
+	 * Logout user
+	 *
+	 * @return bool
+	 */
+	public function logout() {
+	 	unset( $_SESSION['facebook'] );
+	 	unset( $_SESSION['FBRLH_state'] );
+
+	 	if( empty( $_SESSION['facebook'] ) && empty( $_SESSION['FBRLH_state'] ) ) {
+	 		return true;
+		} else {
+	 		return false;
+		}
 	}
 
 	/**
@@ -151,5 +163,17 @@ class Facebook extends \Facebook\Facebook {
 			exit;
 		}
 		return $response->getDecodedBody();
+	}
+
+	/**
+	 * Check if user is logged in into facebook
+	 * @return bool
+	 */
+	public function isLoggedIn() {
+		if( isset( $_SESSION['facebook'] ) && !empty( $_SESSION['facebook'] ) ) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 }

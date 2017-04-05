@@ -93,4 +93,3 @@ if( !empty( $_GET['message'] ) ) {
                     </div>    
                 </div>';
 }
-?>
