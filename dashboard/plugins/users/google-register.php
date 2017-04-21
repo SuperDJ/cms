@@ -1,13 +1,11 @@
 <?php
-if( $user->isLoggedIn() ) {
+if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 	$user->to('?path=overview/overview');
 } else {
-	$google->setRedirectUri('https://cms.dsuper.nl/dashboard/?path=users/google-login');
-
 	if( !empty( $_GET['code'] ) ) {
 		$google->authenticate($_GET['code']);
 		$session->set('google', $google->getAccessToken());
-		$user->to('?path=users/google-login');
+		$user->to('?path=users/google-register');
 	}
 
 	if( $session->exists('google') ) {
@@ -19,7 +17,7 @@ if( $user->isLoggedIn() ) {
 		//Get user profile data from google
 		$data = $oauth->userinfo->get();
 
-		if( $user->googleLogin($data) ) {
+		if( $user->googleRegister($data) ) {
 			$user->to('?path=overview/overview&message='.$language->translate('Google logged in').'&messageType=success');
 		} else {
 			$user->to('?path=overview/overview&message='.$language->translate('Google not logged in').'&messageType=error');

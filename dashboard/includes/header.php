@@ -49,15 +49,15 @@
 
         <nav id="sc-drawer" class="sc-drawer sc-drawer-persistent">
             <header class="sc-drawer-header">
-                <img src="<?php echo ( !empty( $user->data['picture'] ) ? $user->data['picture'] : '/dashboard/stylesheets/images/profile.jpg' ); ?>" alt="Profile image" class="sc-drawer-profile-img">
+                <img src="<?php echo ( !empty( $user->data[$user->data['picture']] ) ? $user->data[$user->data['picture']] : '/dashboard/stylesheets/images/profile.jpg' ); ?>" alt="Profile image" class="sc-drawer-profile-img">
                 <div class="sc-drawer-profile-name"><?php echo substr( $user->data['first_name'], 0, 1 ).'. '.$user->data['last_name']; ?></div>
                 <div id="sc-drawer-profile-more" class="sc-drawer-profile-more">
                     <i class="material-icons sc-trigger" data-sc-trigger="profile-more">arrow_drop_down</i>
 
                     <nav class="sc-menu" id="profile-more">
                         <?php
-                        echo ( $fb->isLoggedIn() ? '<a href="?path=users/facebook-logout">'.$language->translate('Facebook logout').'</a>' : '<a href="?path=users/facebook-login">'.$language->translate('Facebook login').'</a>' );
-						echo ( $google->isLoggedIn() ? '<a href="?path=users/google-logout">'.$language->translate('Google logout').'</a>' : '<a href="?path=users/google-login">'.$language->translate('Google login').'</a>' );
+                        echo ( $fb->isLoggedIn() ? '<a href="?path=users/facebook-logout">'.$language->translate('Facebook logout').'</a>' : '<a href="?path=users/facebook-register">'.$language->translate('Facebook register').'</a>' );
+						echo ( $session->exists('google') ? '<a href="?path=users/google-logout">'.$language->translate('Google logout').'</a>' : '<a href="?path=users/google-register">'.$language->translate('Google register').'</a>' );
                         ?>
                         <a href="?path=users/profile">
                             <i class="material-icons">settings</i>

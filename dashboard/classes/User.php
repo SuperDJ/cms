@@ -81,6 +81,36 @@ class User implements Plugin {
 	}
 
 	/**
+	 * Set user session
+	 *
+	 * @param $id
+	 *
+	 * @return bool
+	 */
+	public function _login( $id ) {
+		$id = $id['id'];
+		$stmt = $this->_db->mysqli->prepare("SELECT `groups_id` FROM `users` WHERE `id` = :id LIMIT 1");
+		$stmt->bindParam(':id', $id, PDO::PARAM_STR);
+		$stmt->execute();
+
+		if( $stmt->rowCount() >= 1 ) {
+			$result = $stmt->fetch(PDO::FETCH_ASSOC)['groups_id'];
+			$stmt = null;
+
+			$_SESSION['user'] = array('id' => $id, 'group' => $result);
+
+			if( !empty( $_SESSION['user'] ) ) {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			$stmt = null;
+			return false;
+		}
+	}
+
+	/**
 	 * Login user
 	 *
 	 * @param array $data All data needed to login user
@@ -89,16 +119,18 @@ class User implements Plugin {
 	 */
 	public function login( array $data ) {
 		// Check if user is activated
-		$stmt = $this->_db->mysqli->prepare("SELECT `id` FROM `users` WHERE `active` = 1 AND `email` = :email");
+		$stmt = $this->_db->mysqli->prepare("SELECT `id` FROM `users` WHERE `active` = 1 AND `email` = :email LIMIT 1");
 		$stmt->bindParam(':email', $data['email'], PDO::PARAM_STR);
 		$stmt->execute();
 
 		if( $stmt->rowCount() >= 1 ) {
+			$result = $stmt->fetch(PDO::FETCH_ASSOC);
 			$stmt = null; // Close query
 			$password = $this->passwordGenerate( $data['password_encrypted'] );
 			$hash = $this->_db->detail( 'password', 'users', 'email', $data['email'] );
 			$date = date( 'Y-m-d H:i:s' );
 
+			// Check if password is valid
 			if( password_verify( $password, $hash ) ) {
 				// Check if better password methods are available
 				if( password_needs_rehash( $hash, PASSWORD_DEFAULT ) ) {
@@ -125,7 +157,8 @@ class User implements Plugin {
 
 				if( $stmt->rowCount() >= 1 ) {
 					$stmt = null;
-					return true;
+
+					return $this->_login( $result );
 				} else {
 					$stmt = null;
 					return false;
@@ -229,7 +262,7 @@ class User implements Plugin {
 	public function data( int $id = null ) {
 		$query = "
 				SELECT 	`u`.`id`, `first_name`, `last_name`, `email`, `register_date`, `active_date`, `active`,
-						`groups_id`, `group`, `facebook_id`, `languages_id`, `language`, `picture` 
+						`groups_id`, `group`, `facebook_id`, `google_id`, `picture`, `languages_id`, `language`, `facebook_picture`, `google_picture` 
 				FROM `users` `u`
 			  	LEFT JOIN `groups` `g`
 					ON `g`.`id` = `u`.groups_id
@@ -391,13 +424,15 @@ class User implements Plugin {
 				`first_name` = :first_name,
 				`last_name` = :last_name,
 				`email` = :email,
-				`languages_id` = :languages_id
+				`languages_id` = :languages_id,
+				`picture` = :picture
 			WHERE `id` = :id");
 
 		$stmt->bindParam(':first_name', $data['first_name'], PDO::PARAM_STR);
 		$stmt->bindParam(':last_name', $data['last_name'], PDO::PARAM_STR);
 		$stmt->bindParam(':email', $data['email'], PDO::PARAM_STR);
 		$stmt->bindParam(':languages_id', $data['language'], PDO::PARAM_INT);
+		$stmt->bindParam(':picture', $data['picture'], PDO::PARAM_STR);
 		$stmt->bindParam(':id', $data['id'], PDO::PARAM_INT);
 		$stmt->execute();
 
@@ -415,6 +450,35 @@ class User implements Plugin {
 	}
 
 	public function facebookLogin( array $data ) {
+		$date = date('Y-m-d H:i:s');
+
+		// Check if user has registered Facebook account and if user is active
+		$stmt = $this->_db->mysqli->prepare("SELECT `id` FROM `users` WHERE `facebook_id` = :id AND `active` = 1 LIMIT 1");
+		$stmt->bindParam(':id', $data['id'], PDO::PARAM_STR);
+		$stmt->execute();
+
+		if( $stmt->rowCount() >= 1 ) {
+			$result = $stmt->fetch(PDO::FETCH_ASSOC);
+			$stmt = null;
+
+			$stmt = $this->_db->mysqli->prepare("UPDATE `users` SET `active_date` = :active_date, `facebook_picture` = :picture WHERE `facebook_id` = :facebook_id")	;
+			$stmt->bindParam(':active_date', $date, PDO::PARAM_STR);
+			$stmt->bindParam(':picture', $data['picture']['data']['url'], PDO::PARAM_STR);
+			$stmt->bindParam(':facebook_id', $data['id'], PDO::PARAM_STR);
+			$stmt->execute();
+
+			if( $stmt->rowCount() >= 1 ) {
+				$stmt = null;
+
+				return $this->_login( $result );
+			} else {
+				$stmt = null;
+				return false;
+			}
+		}
+	}
+
+	public function facebookRegister( $data ) {
 		$facebook = $data['id'];
 		$image = ( !empty( $data['picture']['data']['url'] ) ? $data['picture']['data']['url'] : '' );
 
@@ -435,6 +499,76 @@ class User implements Plugin {
 		} else {
 			$stmt = null;
 			return false;
+		}
+	}
+
+	/**
+	 * Login with Google account
+	 *
+	 * @param $data
+	 *
+	 * @return bool
+	 */
+	public function googleLogin( $data ) {
+		$date = date( 'Y-m-d H:i:s' );
+
+		// Check if user has registered Google account and if user is active
+		$stmt = $this->_db->mysqli->prepare("SELECT `id` FROM `users` WHERE `google_id` = :id AND `active` = 1 LIMIT 1");
+		$stmt->bindParam(':google_id', $data->id, PDO::PARAM_STR);
+		$stmt->execute();
+
+		if( $stmt->rowCount() >= 1 ) {
+			$result = $stmt->fetch(PDO::FETCH_ASSOC);
+			$stmt = null;
+
+			$stmt = $this->_db->mysqli->prepare("UPDATE `users` SET `active_date` = :active_date, `google_picture` = :pciture WHERE `google_id` = :google_id");
+			$stmt->bindParam(':active_date', $date, PDO::PARAM_STR);
+			$stmt->bindParam(':picture', $data->picture, PDO::PARAM_STR);
+			$stmt->bindParam(':google_id', $data->id, PDO::PARAM_STR);
+			$stmt->execute();
+
+			if( $stmt->rowCount() >= 1 ) {
+				$stmt = null;
+
+				return $this->_login( $result );
+			} else {
+				$stmt = null;
+				return false;
+			}
+		} else {
+			$stmt = null;
+			return false;
+		}
+	}
+
+	/**
+	 * Register Google account
+	 *
+	 * @param $data
+	 *
+	 * @return bool
+	 */
+	public function googleRegister( $data ) {
+		if( $this->_db->exists('google_id', 'users', 'google_id', $data->id) ) {
+			echo 1;
+			return true;
+		} else {
+			echo 2;
+			$stmt = $this->_db->mysqli->prepare( "UPDATE `users` SET `google_id` = :google_id, `google_picture` = :picture WHERE `id` = :id" );
+			$stmt->bindParam( ':google_id', $data->id, PDO::PARAM_STR );
+			$stmt->bindParam( ':picture', $data->picture, PDO::PARAM_STR );
+			$stmt->bindParam( ':id', $this->data['id'], PDO::PARAM_INT );
+			$stmt->execute();
+
+			if( $stmt->rowCount() >= 1 ) {
+				echo 3;
+				$stmt = null;
+				return true;
+			} else {
+				echo 4;
+				$stmt = null;
+				return false;
+			}
 		}
 	}
 }

@@ -16,7 +16,7 @@ class Database {
 
 			// Get connection
 			if( !$this->mysqli ) {
-				$this->connect();
+				$this->mysqli = $this->connect();
 			}
 		} else {
 			echo 'Could not connect to db';
@@ -24,7 +24,9 @@ class Database {
 	}
 
 	/**
-	 * Create database connection
+	 * Get database connection
+	 * 
+	 * @return bool|\PDO
 	 */
 	private function connect() {
 		$mysqli = new PDO('mysql:host='.$this->_db->database->host.';dbname='.$this->_db->database->database.';charset=utf8', $this->_db->database->username, $this->_db->database->password);
@@ -36,8 +38,7 @@ class Database {
 		}
 
 		if( $mysqli ) {
-			$this->mysqli = $mysqli;
-			return true;
+			return $mysqli;
 		} else {
 			return false;
 		}

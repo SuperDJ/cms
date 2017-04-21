@@ -41,19 +41,7 @@ if( $user->isLoggedIn() ) {
 		// If there are no errors register user else show errors
 		if( empty( $form->errors ) ) {
 			if( $user->login( $validation ) ) {
-			    $details = array(
-			        'id' => $db->detail('id', 'users', 'email', $validation['email']),
-                    'group' => $db->detail('groups_id', 'users', 'email', $validation['email'])
-                );
-				if( $session->set('user', $details) ) {
-				    // If the user wants to be remembered
-				    /*if( $validation['remember'] == 1 ) {
-				        $cookie->set('user', $session->get('user'), 60*60*24*30); // TODO Make cookie time a setting/ dynamic
-                    }            */
-					$user->to( '?path=overview/overview' );
-				} else {
-					echo '<div class="alert sc-card-supporting sc-card-supporting-additional">'.$language->translate('Something went wrong logging you in').'</div>';
-				}
+                $user->to( '?path=overview/overview' );
 			} else {
 				echo '<div class="alert sc-card-supporting sc-card-supporting-additional">'.$language->translate('Something went wrong logging you in').'</div>';
 			}
@@ -61,6 +49,7 @@ if( $user->isLoggedIn() ) {
 			// Show errors
 			echo $form->outputErrors();
 		}
+
 	}
 	?>
 
@@ -101,6 +90,13 @@ if( $user->isLoggedIn() ) {
 
             <div class="sc-col sc-xs4 sc-s12">
                 <a href="?path=users/recover-request"><?php echo $language->translate('Forgot password'); ?>?</a>
+            </div>
+
+            <hr>
+
+            <div class="sc-col sc-xs4">
+                <a href="?path=users/google-login" class="sc-raised-button google"><?php echo $language->translate('Google login'); ?></a>
+                <a href="?path=users/facebook-login" class="sc-raised-button facebook"><?php echo $language->translate('Facebook login'); ?></a>
             </div>
         </form>
     </div>

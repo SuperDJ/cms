@@ -43,7 +43,11 @@ $user = new User( $db );
 $session = new Session();
 $cookie = new Cookie();
 $fb = new Facebook();
-$google = new Google();
+$credentials = json_decode( file_get_contents( ROOT.'/credentials.json' ) );
+$google = new Google_Client();
+$google->setClientId($credentials->google->client_id);
+$google->setClientSecret($credentials->google->api_key);
+$google->setScopes('email');
 
 // If a user is logged in set the desired language
 if( $user->isLoggedIn() ) {
