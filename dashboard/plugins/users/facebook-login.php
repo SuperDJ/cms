@@ -22,7 +22,7 @@ if( $user->isLoggedIn() ) {
 
 		$sess =  $session->exists('facebook');
 		$log = $user->facebookLogin($data);
-		
+
 		if( $log && $sess ) {
 			$user->to('?path=overview/overview&message='.$language->translate('Facebook logged in').'&messageType=success');
 		} else {

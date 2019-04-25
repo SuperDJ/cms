@@ -2,10 +2,11 @@
 if( !$user->isLoggedIn() && !$user->hasPermission($path) ) {
 	$user->to('?path=overview/overview');
 } else {
+	$google->setRedirectUri('https://cms.dsuper.nl/dashboard/?path=users/google-register');
+
 	if( !empty( $_GET['code'] ) ) {
 		$google->authenticate($_GET['code']);
 		$session->set('google', $google->getAccessToken());
-		$user->to('?path=users/google-register');
 	}
 
 	if( $session->exists('google') ) {

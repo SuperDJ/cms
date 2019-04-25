@@ -113,8 +113,9 @@ main {
 	vertical-align: middle;
 }
 
-.sc-divider {
+hr, .sc-divider {
 	background: if( $theme == light, rgba($black, .12), rgba($white, .12) );
+	border: rem-calc(1px) solid if( $theme == light, rgba($black, .12), rgba($white, .12) );
 	height: rem-calc(1px);
 }
 

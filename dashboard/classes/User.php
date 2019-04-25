@@ -449,12 +449,19 @@ class User implements Plugin {
 		}
 	}
 
+	/**
+	 * Login with Facebook
+	 *
+	 * @param array $data
+	 *
+	 * @return bool
+	 */
 	public function facebookLogin( array $data ) {
 		$date = date('Y-m-d H:i:s');
 
 		// Check if user has registered Facebook account and if user is active
-		$stmt = $this->_db->mysqli->prepare("SELECT `id` FROM `users` WHERE `facebook_id` = :id AND `active` = 1 LIMIT 1");
-		$stmt->bindParam(':id', $data['id'], PDO::PARAM_STR);
+		$stmt = $this->_db->mysqli->prepare("SELECT `id` FROM `users` WHERE `facebook_id` = :facebook_id AND `active` = 1 LIMIT 1");
+		$stmt->bindParam(':facebook_id', $data['id'], PDO::PARAM_STR);
 		$stmt->execute();
 
 		if( $stmt->rowCount() >= 1 ) {
@@ -478,18 +485,22 @@ class User implements Plugin {
 		}
 	}
 
+	/**
+	 * Register with Facebook
+	 *
+	 * @param $data
+	 *
+	 * @return bool
+	 */
 	public function facebookRegister( $data ) {
-		$facebook = $data['id'];
-		$image = ( !empty( $data['picture']['data']['url'] ) ? $data['picture']['data']['url'] : '' );
-
 		// Check if values have changed
-		if( $facebook == $this->data['facebook_id'] && $image == $this->data['picture'] ) {
+		if( $data['id'] == $this->data['facebook_id'] ) {
 			return true;
 		}
 
 		$stmt = $this->_db->mysqli->prepare("UPDATE `users` SET `facebook_id` = :facebook_id, `picture` = :picture WHERE `id` = :id");
-		$stmt->bindParam(':facebook_id', $facebook, PDO::PARAM_INT);
-		$stmt->bindParam(':picture', $image, PDO::PARAM_STR);
+		$stmt->bindParam(':facebook_id', $data['id'], PDO::PARAM_INT);
+		$stmt->bindParam(':picture', $data['picture']['data']['url'], PDO::PARAM_STR);
 		$stmt->bindParam(':id', $this->data['id'], PDO::PARAM_INT);
 		$stmt->execute();
 
@@ -513,7 +524,7 @@ class User implements Plugin {
 		$date = date( 'Y-m-d H:i:s' );
 
 		// Check if user has registered Google account and if user is active
-		$stmt = $this->_db->mysqli->prepare("SELECT `id` FROM `users` WHERE `google_id` = :id AND `active` = 1 LIMIT 1");
+		$stmt = $this->_db->mysqli->prepare("SELECT `id` FROM `users` WHERE `google_id` = :google_id AND `active` = 1 LIMIT 1");
 		$stmt->bindParam(':google_id', $data->id, PDO::PARAM_STR);
 		$stmt->execute();
 
@@ -521,7 +532,7 @@ class User implements Plugin {
 			$result = $stmt->fetch(PDO::FETCH_ASSOC);
 			$stmt = null;
 
-			$stmt = $this->_db->mysqli->prepare("UPDATE `users` SET `active_date` = :active_date, `google_picture` = :pciture WHERE `google_id` = :google_id");
+			$stmt = $this->_db->mysqli->prepare("UPDATE `users` SET `active_date` = :active_date, `google_picture` = :picture WHERE `google_id` = :google_id");
 			$stmt->bindParam(':active_date', $date, PDO::PARAM_STR);
 			$stmt->bindParam(':picture', $data->picture, PDO::PARAM_STR);
 			$stmt->bindParam(':google_id', $data->id, PDO::PARAM_STR);
@@ -550,10 +561,8 @@ class User implements Plugin {
 	 */
 	public function googleRegister( $data ) {
 		if( $this->_db->exists('google_id', 'users', 'google_id', $data->id) ) {
-			echo 1;
 			return true;
 		} else {
-			echo 2;
 			$stmt = $this->_db->mysqli->prepare( "UPDATE `users` SET `google_id` = :google_id, `google_picture` = :picture WHERE `id` = :id" );
 			$stmt->bindParam( ':google_id', $data->id, PDO::PARAM_STR );
 			$stmt->bindParam( ':picture', $data->picture, PDO::PARAM_STR );
@@ -561,11 +570,9 @@ class User implements Plugin {
 			$stmt->execute();
 
 			if( $stmt->rowCount() >= 1 ) {
-				echo 3;
 				$stmt = null;
 				return true;
 			} else {
-				echo 4;
 				$stmt = null;
 				return false;
 			}

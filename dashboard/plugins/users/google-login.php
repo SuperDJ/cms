@@ -2,12 +2,9 @@
 if( $user->isLoggedIn() ) {
 	$user->to('?path=overview/overview');
 } else {
-	$google->setRedirectUri('https://cms.dsuper.nl/dashboard/?path=users/google-login');
-
 	if( !empty( $_GET['code'] ) ) {
 		$google->authenticate($_GET['code']);
 		$session->set('google', $google->getAccessToken());
-		$user->to('?path=users/google-login');
 	}
 
 	if( $session->exists('google') ) {
@@ -25,6 +22,7 @@ if( $user->isLoggedIn() ) {
 			$user->to('?path=overview/overview&message='.$language->translate('Google not logged in').'&messageType=error');
 		}
 	} else {
+		$google->setRedirectUri('https://cms.dsuper.nl/dashboard/?path=users/google-login');
 		$user->to( $google->createAuthUrl() );
 	}
 }

@@ -29,3 +29,13 @@ main {
 		@include border-radius-top(rem-calc(2px));
 	}
 }
+
+.sc-raised-button {
+	&.google {
+		background: #dd4b39;
+	}
+
+	&.facebook {
+		background: #3b5998;
+	}
+}

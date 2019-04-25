@@ -95,8 +95,8 @@ if( $user->isLoggedIn() ) {
             <hr>
 
             <div class="sc-col sc-xs4">
-                <a href="?path=users/google-login" class="sc-raised-button google"><?php echo $language->translate('Google login'); ?></a>
-                <a href="?path=users/facebook-login" class="sc-raised-button facebook"><?php echo $language->translate('Facebook login'); ?></a>
+                <a href="?path=users/google-login" class="sc-raised-button google"><?php echo $language->translate('Google'); ?></a>
+                <a href="?path=users/facebook-login" class="sc-raised-button facebook"><?php echo $language->translate('Facebook'); ?></a>
             </div>
         </form>
     </div>

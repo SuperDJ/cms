@@ -45,6 +45,8 @@ $cookie = new Cookie();
 $fb = new Facebook();
 $credentials = json_decode( file_get_contents( ROOT.'/credentials.json' ) );
 $google = new Google_Client();
+
+// Set google information
 $google->setClientId($credentials->google->client_id);
 $google->setClientSecret($credentials->google->api_key);
 $google->setScopes('email');
